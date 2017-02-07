@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: cp_ctor,cp_assignment = default;
+# key: cpdef
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} const& that) = default;
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} const& that) = default;
+$0

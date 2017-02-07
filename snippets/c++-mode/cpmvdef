@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: cp,mv X ctor,assignment = default
+# key: cpmvdef
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} const& that) = default;
+${1:$(yas-c++-class-name yas-text)}(${1:$(yas-c++-class-name yas-text)} && that) = default;
+
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} const& that) = default;
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} && that) = default;
+
+$0

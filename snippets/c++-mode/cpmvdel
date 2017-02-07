@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: cp,mv X ctor,assignment = delete
+# key: cpmvdel
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} const& that) = delete;
+${1:$(yas-c++-class-name yas-text)}(${1:$(yas-c++-class-name yas-text)} && that) = delete;
+
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} const& that) = delete;
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} && that) = delete;
+
+$0

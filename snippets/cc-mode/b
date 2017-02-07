@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: open+close braces on next line
+# key: b
+# --
+{
+    $0
+}

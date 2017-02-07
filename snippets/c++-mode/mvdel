@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: mv_ctor,mv_assigment=default
+# key: mvdel
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} && that) = delete;
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} && that) = delete;
+$0

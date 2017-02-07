@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: cpass
+# key: cpass
+# --
+${1:Name}& operator= (${1:$(yas-c++-class-name yas-text)} const& that)$0

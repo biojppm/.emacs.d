@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: cp,mv X ctor,assignment
+# key: cpmv
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} const& that);
+${1:$(yas-c++-class-name yas-text)}(${1:$(yas-c++-class-name yas-text)} && that) noexcept;
+
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} const& that);
+${1:$(yas-c++-class-name yas-text)}& operator= (${1:$(yas-c++-class-name yas-text)} && that) noexcept;
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mvass
+# key: mvass
+# --
+${1:Name}& operator= (${1:$(yas-c++-class-name yas-text)} && that) noexcept$0

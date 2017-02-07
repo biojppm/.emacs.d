@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: template<...> class...
+# key: tplc
+# --
+template< ${2} ${3:T} >
+class ${1:Name}
+{
+public:
+
+    using ${4:value_type} = ${3:T};
+
+public:
+
+    ${1:$(yas-c++-class-name yas-text)}()
+    {
+    }
+
+    ${6:virtual }~${1:$(yas-c++-class-name yas-text)}() noexcept
+    {
+    }
+
+private:
+
+    $0
+
+};

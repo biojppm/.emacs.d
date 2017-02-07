@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mvctor
+# key: mvctor
+# --
+${1:Name}(${1:$(yas-c++-class-name yas-text)} && that) noexcept$0
