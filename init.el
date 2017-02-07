@@ -318,7 +318,6 @@
   (setq term-buffer-maximum-size 8192)
   )
 
-
 (if (eq system-type 'windows-nt)
     (udf-windows-setup))
 
@@ -334,6 +333,7 @@
 (setq ido-use-filename-at-point 'guess)
 ; ... or this
 ;(setq ido-use-url-at-point t) ; disables find file at point
+; don't ask
 (setq ido-create-new-buffer 'always)
 ; give priority to certain extensions when presenting candidates in the minibuffer
 (setq ido-file-extensions-order '(
@@ -358,7 +358,7 @@
 ;     ido-case-fold). Available in Dirs / Files / Buffers
 ; TAB Attempt to complete the input like the normal completing read
 ;     functionality. Available in Dirs / Files / Buffers
-; C-p Toggles prefix matching; when it’s on the input will only match the
+; C-p Toggles prefix matching; when it's on the input will only match the
 ;     beginning of a filename instead of any part of it.
 ;
 ; Files
@@ -373,11 +373,11 @@
 ;             sense to do so.. Available everywhere
 ; C-SPC / C-@
 ;             Restricts the completion list to anything that matches your
-;             current input. * Available everywhere*
+;             current input. Available everywhere
 ; //
 ;             Like most Linux shells two forward slashes in a path means
-;             “ignore the preceding path, and go back to the top-most
-;             directory”. Works the same in Ido but it’s more interactive: it
+;             "ignore the preceding path, and go back to the top-most
+;             directory". Works the same in Ido but it's more interactive: it
 ;             will go to the root / (or the root of the current drive in
 ;             Windows) Available in Files
 ; ~/
@@ -386,16 +386,16 @@
 ;             Files / Dirs
 ; M-d
 ;             Searches for the input in all sub-directories to the directory
-;             you’re in.. Available in Files
+;             you're in.. Available in Files
 ; C-k
 ;             Kills the currently focused buffer or deletes the file
 ;             depending on the mode.. Available in Files / Buffers
 ; M-m
-;             Creates a new sub-directory to the directory you’re
+;             Creates a new sub-directory to the directory you're
 ;             in. Available in Files
 ;
-; OK, so you probably won’t get in the habit of using all the commands;
-; that’s fine, but some are more important to remember than others, like:
+; OK, so you probably won't get in the habit of using all the commands;
+; that's fine, but some are more important to remember than others, like:
 ; Backspace; C-s and C-r; // and ~/; and C-d.
 ;
 ; If Ido is getting in your way, remember the fallback commands:
