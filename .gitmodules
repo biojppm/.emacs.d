@@ -1,0 +1,3 @@
+[submodule "emacs-c-ide-demo"]
+	path = emacs-c-ide-demo
+	url = https://github.com/biojppm/emacs-c-ide-demo
