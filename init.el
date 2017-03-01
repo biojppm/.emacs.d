@@ -104,6 +104,8 @@
     ; turn on highlighting current line
     (global-hl-line-mode 1)
 
+    (scroll-bar-mode 0)
+
     ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
     (require 'maximize)
     (require 'frame-cmds)
@@ -349,6 +351,14 @@
 ;(setq ido-ignore-files '())
 
 ; General-purpose IDO Commands
+;
+; To skip IDO's current suggestion and accept what's already typed-in,
+; hit C-j
+;
+; Tricks for windows:
+;  * for opening a file/dir in a different drive (eg D:), do: C-x C-f D:/
+;    and IDO will intelligently switch to D:
+;  * for opening a file/dir in the home directory do: C-X C-f ~/
 ;
 ; C-b Reverts to the old switch-buffer completion engine. Available in Buffers.
 ; C-f Reverts to the old find-file completion engine. Available in Files
@@ -702,6 +712,7 @@ With argument ARG, do this that many times."
 ;; show unnecessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
           (lambda () (interactive)
+            (disable-line-wrapping)
             (setq show-trailing-whitespace 1)))
 
 ;; The ws-butler package takes care of whitespaces discretely by

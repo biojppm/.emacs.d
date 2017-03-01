@@ -5,4 +5,4 @@ ede-projects.el
 persp-confs/
 semanticdb/
 tramp
-
+__pycache__
