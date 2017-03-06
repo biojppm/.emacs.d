@@ -89,6 +89,21 @@
 
 
 ;-------------------------------------------------------------------------------
+; Important shortcuts:
+;
+; C-x z
+;    repeat previous command. After this, pressing z will repeat again
+; F3
+;    start recording macro
+; F4
+;    stop recording macro
+
+; M-x
+;    Run an interative command
+; M-:
+;    Run elisp code
+
+;-------------------------------------------------------------------------------
 
 (setq visible-bell t)       ; Disable bell
 (setq inhibit-startup-screen t) ; Disable startup screen
@@ -662,8 +677,8 @@ With argument ARG, do this that many times."
       (delete-char 1)
       (move-to-column previous-column))))
 
-;; Now bind the delete line function to the F8 key
-(global-set-key [f8] 'nuke-line)
+;; Now bind the delete line function to Alt-F8
+(global-set-key [M-f8] 'nuke-line)
 
 
 ;;-------------------------------------------------------------------------
@@ -880,7 +895,77 @@ With argument ARG, do this that many times."
 ;
 ;  (setq inferior-lisp-program "sbcl --dynamic-space-size 1024"))
 
+;;-------------------------------------------------------------------------
+; Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
+;
+; M-x compile
+;     Run a compiler asynchronously under Emacs, with error messages going to the *compilation* buffer.
+; M-x recompile
+;     Invoke a compiler with the same command as in the last invocation of M-x compile.
+; M-x kill-compilation
+;     Kill the running compilation subprocess.
 
+; Compilation mode commands: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode
+;
+; M-g M-n
+; M-g n
+; C-x `
+;     Visit the locus of the next error message or match (next-error).
+; M-g M-p
+; M-g p
+;     Visit the locus of the previous error message or match (previous-error).
+; M-n
+;     Move point to the next error message or match, without visiting its locus (compilation-next-error).
+; M-p
+;     Move point to the previous error message or match, without visiting its locus (compilation-previous-error).
+; M-}
+;     Move point to the next error message or match occurring in a different file (compilation-next-file).
+; M-{
+;     Move point to the previous error message or match occurring in a different file (compilation-previous-file).
+; C-c C-f
+;     Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
+;
+
+; see https://www.emacswiki.org/emacs/CompilationMode#toc4
+(defun my-compile()
+  "run compile"
+  (interactive)
+  (progn
+    (call-interactively 'compile)
+    (setq cur (selected-window))
+    (setq w (get-buffer-window "*compilation*"))
+    (select-window w)
+    (linum-mode 0)         ; WTF? these two are necessary
+    (setq linum-mode 0)    ; WTF? these two are necessary
+    ;(setq h (window-height w))
+    ;(shrink-window (- h 10))
+    (select-window cur)
+    )
+  )
+(defun my-compilation-hook()
+  )
+(add-hook 'compilation-mode-hook 'my-compilation-hook)
+(global-set-key [C-pause] 'kill-compilation)
+(global-set-key [f5] 'my-compile)
+(global-set-key [f6] 'recompile)
+(global-set-key [f8] 'next-error)
+(global-set-key [S-f8] 'previous-error)
+
+;;-------------------------------------------------------------------------
+; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
+
+; M-x grep
+; M-x lgrep
+;     Run grep asynchronously under Emacs, listing matching lines in the buffer named *grep*.
+; M-x grep-find
+; M-x find-grep
+; M-x rgrep
+;     Run grep via find, and collect output in the *grep* buffer.
+; M-x zrgrep
+;     Run zgrep and collect output in the *grep* buffer.
+; M-x kill-grep
+;     Kill the running grep subprocess.
+;
 ;;-------------------------------------------------------------------------
 
 (use-package projectile
@@ -980,7 +1065,7 @@ With argument ARG, do this that many times."
   )
   (progn
     ;;otherwise run this block
-    ;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "Inconsolata")))))
   )
 )
 ;
@@ -999,5 +1084,5 @@ With argument ARG, do this that many times."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Consolas"))))
+; '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Consolas"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))) t))
