@@ -677,8 +677,8 @@ With argument ARG, do this that many times."
       (delete-char 1)
       (move-to-column previous-column))))
 
-;; Now bind the delete line function to Alt-F8
-(global-set-key [M-f8] 'nuke-line)
+;; Now bind the delete line function to F8
+(global-set-key [S-delete] 'nuke-line)
 
 
 ;;-------------------------------------------------------------------------
@@ -946,10 +946,192 @@ With argument ARG, do this that many times."
   )
 (add-hook 'compilation-mode-hook 'my-compilation-hook)
 (global-set-key [C-pause] 'kill-compilation)
-(global-set-key [f5] 'my-compile)
+(global-set-key [S-f6] 'my-compile)
 (global-set-key [f6] 'recompile)
 (global-set-key [f8] 'next-error)
 (global-set-key [S-f8] 'previous-error)
+
+;;-------------------------------------------------------------------------
+;; Debugging https://www.gnu.org/software/emacs/manual/html_node/emacs/GDB-Graphical-Interface.html#GDB-Graphical-Interface
+;;
+;; M-x gdb
+;;    start an interactive gdb GUI session
+;; M-x gdb-restore-windows
+;;    restore the many windows layout
+;;
+;; If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
+;;
+;; +--------------------------------+--------------------------------+
+;; |   GUD interaction buffer       |   Locals/Registers buffer      |
+;; |--------------------------------+--------------------------------+
+;; |   Primary Source buffer        |   I/O buffer for debugged pgm  |
+;; |--------------------------------+--------------------------------+
+;; |   Stack buffer                 |   Breakpoints/Threads buffer   |
+;; +--------------------------------+--------------------------------+
+;;
+;; GUD provides commands for setting and clearing breakpoints,
+;; selecting stack frames, and stepping through the program.
+;;
+;; C-x C-a C-b
+;;
+;;     Set a breakpoint on the source line that point is on.
+;;
+;; C-x C-a C-b
+;;
+;;     (gud-break), when called in a source buffer, sets a debugger
+;;     breakpoint on the current source line. This command is
+;;     available only after starting GUD. If you call it in a buffer
+;;     that is not associated with any debugger subprocess, it signals
+;;     a error.
+;;
+;; The following commands are available both in the GUD interaction
+;; buffer and globally, but with different key bindings. The keys
+;; starting with C-c are available only in the GUD interaction buffer,
+;; while those starting with C-x C-a are available globally. Some of
+;; these commands are also available via the tool bar; some are not
+;; supported by certain debuggers.
+;;
+;; C-c C-l
+;; C-x C-a C-l
+;;     (gud-refresh) Display, in another window, the last source line
+;;     referred to in the GUD interaction buffer (gud-refresh).
+;;
+;; C-c C-s
+;; C-x C-a C-s
+;;     (gud-step) Execute the next single line of code (gud-step). If
+;;     the line contains a function call, execution stops after
+;;     entering the called function.
+;;
+;; C-c C-n
+;; C-x C-a C-n
+;;     (gud-next) Execute the next single line of code, stepping
+;;     across function calls without stopping inside the functions
+;;     (gud-next).
+;;
+;; C-c C-i
+;; C-x C-a C-i
+;;     (gud-stepi) Execute a single machine instruction (gud-stepi).
+;;
+;; C-c C-p
+;; C-x C-a C-p
+;;     (gud-print) Evaluate the expression at point (gud-print). If
+;;     Emacs does not print the exact expression that you want, mark
+;;     it as a region first.
+;;
+;; C-c C-r
+;; C-x C-a C-r
+;;     (gud-cont) Continue execution without specifying any stopping
+;;     point. The program will run until it hits a breakpoint,
+;;     terminates, or gets a signal that the debugger is checking for
+;;     (gud-cont).
+;;
+;; C-c C-d
+;; C-x C-a C-d
+;;     (gud-remove) Delete the breakpoint(s) on the current source
+;;     line, if any (gud-remove). If you use this command in the GUD
+;;     interaction buffer, it applies to the line where the program
+;;     last stopped.
+;;
+;; C-c C-t
+;; C-x C-a C-t
+;;     (gud-tbreak) Set a temporary breakpoint on the current source
+;;     line, if any (gud-tbreak). If you use this command in the GUD
+;;     interaction buffer, it applies to the line where the program
+;;     last stopped.
+;;
+;; C-c <
+;; C-x C-a <
+;;     (gud-up) Select the next enclosing stack frame (gud-up). This
+;;     is equivalent to the GDB command ‘up’.
+;;
+;; C-c >
+;; C-x C-a >
+;;     (gud-down)
+;;     Select the next inner stack frame (gud-down). This is
+;;     equivalent to the GDB command ‘down’.
+;;
+;; C-c C-u
+;; C-x C-a C-u
+;;     (gud-until) Continue execution to the current line. The program
+;;     will run until it hits a breakpoint, terminates, gets a signal
+;;     that the debugger is checking for, or reaches the line on which
+;;     the cursor currently sits.
+;;
+;; C-x C-a C-w
+;;     (gud-watch) Add a watch expression of the variable in the point
+;;     to the speedbar. If you specify a prefix argument you can enter
+;;     the variable name in the minibuffer. see
+;;     https://www.gnu.org/software/emacs/manual/html_node/emacs/Watch-Expressions.html
+;;
+;; C-c C-f
+;; C-x C-a C-f
+;;     (gud-finish) Run the program until the selected stack frame
+;;     returns or stops for some other reason (gud-finish).
+;;
+;;
+;; If you are using GDB, these additional key bindings are available:
+;;
+;; C-x C-a C-j
+;;     Only useful in a source buffer, gud-jump transfers the
+;;     program’s execution point to the current line. In other words,
+;;     the next line that the program executes will be the one where
+;;     you gave the command. If the new execution line is in a
+;;     different function from the previously one, GDB prompts for
+;;     confirmation since the results may be bizarre. See the GDB
+;;     manual entry regarding jump for details.
+;;
+;; TAB
+;;     With GDB, complete a symbol name
+;;     (gud-gdb-complete-command). This key is available only in the
+;;     GUD interaction buffer.
+;;
+;;
+;; These commands interpret a numeric argument as a repeat count, when
+;; that makes sense.
+;;
+;; Because TAB serves as a completion command, you can’t use it to
+;; enter a tab as input to the program you are debugging with
+;; GDB. Instead, type C-q TAB to enter a tab.
+
+(setq gdb-many-windows t)
+(setq gdb-speedbar-auto-raise t)
+(defun my-gdb-hook ()
+  (gud-def my-gdb-run-program "run" "" "(re)start the program")
+  (gud-def my-gdb-kill-program "kill" "" "kill the program")
+
+  (global-set-key [f5] 'my-gdb-run-program)
+  (global-set-key [S-f5] 'my-gdb-kill-program)
+  (global-set-key [f7] 'gud-cont)      ; continue
+  (global-set-key [f9] 'gud-break)     ; add breakpoint
+  (global-set-key [C-f9] 'gud-remove)  ; remove breakpoint
+  (global-set-key [S-f9] 'gud-print)   ; print var under cursor or region
+  (global-set-key [C-S-f9] 'gud-watch) ; watch var under cursor or region
+  (global-set-key [f10] 'gud-next)     ; step over
+  (global-set-key [C-f10] 'gud-until)  ; execute until current line
+  (global-set-key [f11] 'gud-step)     ; step into
+  (global-set-key [S-f11] 'gud-finish) ; finish current function
+  )
+(add-hook 'gdb-mode-hook 'my-gdb-hook)
+(global-set-key [f5] 'gdb)
+
+;; Problems with source files opening in different windows:
+;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
+;; http://stackoverflow.com/questions/3473134/emacs-23-1-1-with-gdb-forcing-source-windows
+;;(defadvice gud-display-line (around do-it-better activate)
+;;  "Always use the same window to show source code."
+;;  (let* ...
+;;     (window (and buffer
+;;                  (or (if (eq gud-minor-mode 'gdbmi)
+;;                          (unless (gdb-display-source-buffer buffer)
+;;                            (gdb-display-buffer buffer nil 'visible)))
+;;                      (get-buffer-window buffer)
+;;                      (display-buffer buffer))))
+;;  ...)
+(defadvice gud-display-line (before one-source-window activate)
+  "Always use the same window to show source code."
+  (let ((buf (get-file-buffer true-file)))
+    (when (and buf gdb-source-window)
+      (set-window-buffer gdb-source-window buf))))
 
 ;;-------------------------------------------------------------------------
 ; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
@@ -966,6 +1148,10 @@ With argument ARG, do this that many times."
 ; M-x kill-grep
 ;     Kill the running grep subprocess.
 ;
+
+; Search and replace:
+; https://www.emacswiki.org/emacs/CategorySearchAndReplace
+
 ;;-------------------------------------------------------------------------
 
 (use-package projectile
@@ -1065,7 +1251,7 @@ With argument ARG, do this that many times."
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "Inconsolata")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata")))))
   )
 )
 ;
