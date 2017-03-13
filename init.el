@@ -603,6 +603,10 @@ If point was already at that position, move point to beginning of line."
 ;;=========================================================================
 ;; EDITING
 
+;;------------------------------------------------------------------
+;; drag line/selection up or down
+;; http://emacs.stackexchange.com/questions/13941/move-selected-lines-up-and-down
+
 (use-package drag-stuff
   :commands (drag-stuff-up drag-stuff-down)
   :bind
@@ -986,8 +990,7 @@ With argument ARG, do this that many times."
     (setq w (get-buffer-window "*compilation*"))
     (select-window w)
     (disable-line-wrapping)
-    (linum-mode 0)         ; WTF? these two are necessary
-    (setq linum-mode 0)    ; WTF? these two are necessary
+    (linum-mode 0)
     ;(setq h (window-height w))
     ;(shrink-window (- h 10))
     (select-window cur)
@@ -1135,7 +1138,6 @@ With argument ARG, do this that many times."
 ;;     With GDB, complete a symbol name
 ;;     (gud-gdb-complete-command). This key is available only in the
 ;;     GUD interaction buffer.
-;;
 ;;
 ;; These commands interpret a numeric argument as a repeat count, when
 ;; that makes sense.
