@@ -28,6 +28,15 @@
 ; http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
 
+(setq visible-bell t)       ; Disable bell
+(setq inhibit-startup-screen t) ; Disable startup screen
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1)) ; remove toolbar
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1)) ; remove menu
+; Avoid the symlink Version-Control warning
+; http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
+; http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
+(setq vc-follow-symlinks t)
+
 ;-------------------------------------------------------------------------------
 ; MELPA - package installer
 ; http://melpa.milkbox.net/#/getting-started
@@ -88,31 +97,63 @@
 ;  )
 
 
-;-------------------------------------------------------------------------------
-; Important shortcuts:
-;
-; C-x z
-;    repeat previous command. After this, pressing z will repeat again
-; F3
-;    start recording macro
-; F4
-;    stop recording macro
+;;-------------------------------------------------------------------------------
+;; Important shortcuts:
 
-; M-x
-;    Run an interative command
-; M-:
-;    Run elisp code
+;; M-x
+;;    Run an interative command
+;; M-:
+;;    Run elisp code
 
-;-------------------------------------------------------------------------------
+;; F3
+;; C-x (
+;;    start recording macro
+;; F4
+;; C-x )
+;;    stop recording macro
 
-(setq visible-bell t)       ; Disable bell
-(setq inhibit-startup-screen t) ; Disable startup screen
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1)) ; remove toolbar
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1)) ; remove menu
-; Avoid the symlink Version-Control warning
-; http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
-; http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
-(setq vc-follow-symlinks t)
+;; C-x z
+;;    repeat previous command. After this, pressing z will repeat again
+
+(global-set-key [f2] 'repeat)  ; does the same as C-x z
+
+;; C-h k
+;; F1 k
+;;    describe the command which is bound to a shortcut
+;; C-h c <command-name>
+;; F1 c
+;;    describe command
+;; C-h w <command-name>
+;; F1 w
+;;    describe only the shortcuts where the command is bound (not the full documentation)
+;; C-h f <function-name>
+;; F1 f
+;;    describe command name OR non-interactive function
+;; C-h ?
+;;    get help on getting help
+
+
+;;------------------------------------------------------------------------------
+;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
+
+;; C-x space
+;; C-space <movement> C-space
+;;    start rectangular selection
+;; C-x r t
+;;    (replace-rectangle) replace text in selected rectangle
+;; C-x r k
+;;    (kill-rectangle) kill rectangle
+;; C-x r d
+;;    (delete-rectangle) delete rectangle
+;; C-x r y
+;;    (yank-rectangle) paste rectangular selection
+;; C-x r o
+;;    (open-rectangle) insert a whitespace rectangle into the region
+;; C-x r N
+;;    (rectangle-number-lines) insert numbers in a vertical column
+
+
+;;------------------------------------------------------------------------------
 
 (if window-system
   (progn
@@ -121,21 +162,23 @@
 
     (scroll-bar-mode 0)
 
-    ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
-    (require 'maximize)
-    (require 'frame-cmds)
-
-    (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
-    (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
-    (global-set-key (kbd   "C-<f10>") 'shrink-frame)
-
-    (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
-    (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
-    (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
-
-    (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
+;    ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
+;    (require 'maximize)
+;    (require 'frame-cmds)
+;
+;    (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
+;    (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
+;    (global-set-key (kbd   "C-<f10>") 'shrink-frame)
+;
+;    (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
+;    (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
+;    (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
+;
+;    (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
   )
 )
+
+;;-------------------------------------------
 
 (require 'column-marker)
 ; http://askubuntu.com/questions/4820/keeping-emacs-from-splitting-the-window-when-openning-multiple-files
@@ -560,6 +603,13 @@ If point was already at that position, move point to beginning of line."
 ;;=========================================================================
 ;; EDITING
 
+(use-package drag-stuff
+  :commands (drag-stuff-up drag-stuff-down)
+  :bind
+  (("M-<up>" . drag-stuff-up)
+   ("M-<down>" . drag-stuff-down))
+)
+
 ;;------------------------------------------------------------------
 ; easily show the kill-ring
 
@@ -935,6 +985,7 @@ With argument ARG, do this that many times."
     (setq cur (selected-window))
     (setq w (get-buffer-window "*compilation*"))
     (select-window w)
+    (disable-line-wrapping)
     (linum-mode 0)         ; WTF? these two are necessary
     (setq linum-mode 0)    ; WTF? these two are necessary
     ;(setq h (window-height w))
