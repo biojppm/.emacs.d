@@ -7,3 +7,5 @@ semanticdb/
 tramp
 __pycache__
 ido.last
+*.pyc
+
