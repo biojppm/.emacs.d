@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+emacs --maximized --execute "(gdb \"gdb -i=mi $*\")"
+
+exit 0
