@@ -163,7 +163,7 @@
     (scroll-bar-mode 0)
 
 ;    ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
-;    (require 'maximize)
+    (require 'maximize)
 ;    (require 'frame-cmds)
 ;
 ;    (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
@@ -289,6 +289,8 @@
   ; monokai-theme: https://github.com/oneKelvinSmith/monokai-emacs
   (interactive)
   (load-theme 'monokai t)
+  (set-face-background 'hl-line "#373737")
+  (set-face-background 'region "#666666")
 )
 
 (defun my-set-theme-firebelly()
