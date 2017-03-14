@@ -37,6 +37,21 @@
 ; http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
 
+;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
+(defun run-command-in-new-frame-simple (command)
+  (select-frame (make-frame))
+  (funcall #'command))
+
+(defun run-command-in-new-frame (prefixarg command-name)
+  "open a new frame and interactively run a command in it"
+  (interactive (list current-prefix-arg (read-extended-command)))
+  (let ((command (intern-soft command-name)))
+    (unless command
+      (error "%s is not a valid command name" command-name))
+    (select-frame (make-frame))
+    (let ((prefix-arg prefixarg))
+      (command-execute command))))
+
 ;-------------------------------------------------------------------------------
 ; MELPA - package installer
 ; http://melpa.milkbox.net/#/getting-started
@@ -100,23 +115,6 @@
 ;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
 
-;; M-x
-;;    Run an interative command
-;; M-:
-;;    Run elisp code
-
-;; F3
-;; C-x (
-;;    start recording macro
-;; F4
-;; C-x )
-;;    stop recording macro
-
-;; C-x z
-;;    repeat previous command. After this, pressing z will repeat again
-
-(global-set-key [f2] 'repeat)  ; does the same as C-x z
-
 ;; C-h k
 ;; F1 k
 ;;    describe the command which is bound to a shortcut
@@ -132,6 +130,28 @@
 ;; C-h ?
 ;;    get help on getting help
 
+;; M-x
+;;    Run an interactive command ('execute-extended-command)
+;; M-:
+;;    Run elisp code
+;; M-x eval-region
+;;    execute selected elisp code
+;; M-x eval-buffer
+;;    execute selected elisp buffer
+;; C-x e
+;;    execute elisp code region or buffer
+
+;; F3
+;; C-x (
+;;    start recording macro
+;; F4
+;; C-x )
+;;    stop recording macro
+
+;; C-x z
+;;    repeat previous command. After this, pressing z will repeat again
+
+(global-set-key [f2] 'repeat)  ; does the same as C-x z
 
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
@@ -1165,28 +1185,96 @@ With argument ARG, do this that many times."
   (global-set-key [C-f10] 'gud-until)  ; execute until current line
   (global-set-key [f11] 'gud-step)     ; step into
   (global-set-key [S-f11] 'gud-finish) ; finish current function
+
+  ; make the gdb prompt sticky to its window
+  ; this assumes that the gud window is focused
+  (sticky-buffer-mode 1)
+
+  ;; Problems with source files opening in different windows:
+  ;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
+
+  ;; in ubuntu this was in /usr/share/emacs/24.5/lisp/progmodes/gud.el.gz
+
+  ;;(defadvice gud-display-line (around do-it-better activate)
+  ;;  "Always use the same window to show source code."
+  ;;  (let* ...
+  ;;     (window (and buffer
+  ;;                  (or (if (eq gud-minor-mode 'gdbmi)
+  ;;                          (unless (gdb-display-source-buffer buffer)
+  ;;                            (gdb-display-buffer buffer nil 'visible)))
+  ;;                      (get-buffer-window buffer)
+  ;;                      (display-buffer buffer))))
+  ;;  ...)
+
+  ;; Make sure the file named TRUE-FILE is in a buffer that appears on the screen
+  ;; and that its line LINE is visible.
+  ;; Put the overlay-arrow on the line LINE in that buffer.
+  ;; Most of the trickiness in here comes from wanting to preserve the current
+  ;; region-restriction if that's possible.  We use an explicit display-buffer
+  ;; to get around the fact that this is called inside a save-excursion.
+  (defun gud-display-line (true-file line)
+    (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+           (buffer
+            (with-current-buffer gud-comint-buffer
+              (gud-find-file true-file)))
+           (window (and buffer
+                        (or (get-buffer-window buffer)
+                            (display-buffer buffer))))
+           (pos))
+      (when buffer
+        (with-current-buffer buffer
+          (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+            (if (yes-or-no-p
+                 (format "File %s changed on disk.  Reread from disk? "
+                         (buffer-name)))
+                (revert-buffer t t)
+              (setq gud-keep-buffer t)))
+          (save-restriction
+            (widen)
+            (goto-char (point-min))
+            (forward-line (1- line))
+            (setq pos (point))
+            (or gud-overlay-arrow-position
+                (setq gud-overlay-arrow-position (make-marker)))
+            (set-marker gud-overlay-arrow-position (point) (current-buffer))
+            ;; If they turned on hl-line, move the hl-line highlight to
+            ;; the arrow's line.
+            (when (featurep 'hl-line)
+              (cond
+               (global-hl-line-mode
+                (global-hl-line-highlight))
+               ((and hl-line-mode hl-line-sticky-flag)
+                (hl-line-highlight)))))
+          (cond ((or (< pos (point-min)) (> pos (point-max)))
+                 (widen)
+                 (goto-char pos))))
+        (when window
+          (set-window-point window gud-overlay-arrow-position)
+          (if (eq gud-minor-mode 'gdbmi)
+              (unless (gdb-display-source-buffer buffer)
+                (gdb-display-buffer buffer nil 'visible))
+            (message "aqui caralho 0")
+            )
+          (message "aqui caralho 1")
+          (get-buffer-window buffer)
+          (display-buffer buffer)
+          )
+        ;(when window
+        ;  (set-window-point window gud-overlay-arrow-position)
+        ;  (if (eq gud-minor-mode 'gdbmi)
+        ;      (setq gdb-source-window window))
+        ;  )
+        )
+      )
+    )
   )
 (add-hook 'gdb-mode-hook 'my-gdb-hook)
 (global-set-key [f5] 'gdb)
 
-;; Problems with source files opening in different windows:
-;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
-;; http://stackoverflow.com/questions/3473134/emacs-23-1-1-with-gdb-forcing-source-windows
-;;(defadvice gud-display-line (around do-it-better activate)
-;;  "Always use the same window to show source code."
-;;  (let* ...
-;;     (window (and buffer
-;;                  (or (if (eq gud-minor-mode 'gdbmi)
-;;                          (unless (gdb-display-source-buffer buffer)
-;;                            (gdb-display-buffer buffer nil 'visible)))
-;;                      (get-buffer-window buffer)
-;;                      (display-buffer buffer))))
-;;  ...)
-(defadvice gud-display-line (before one-source-window activate)
-  "Always use the same window to show source code."
-  (let ((buf (get-file-buffer true-file)))
-    (when (and buf gdb-source-window)
-      (set-window-buffer gdb-source-window buf))))
+(defun edb ()
+  "start a debugging session in a new frame"
+  (interactive)
+  (run-command-in-new-frame "" "gdb"))
 
 ;;-------------------------------------------------------------------------
 ; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
