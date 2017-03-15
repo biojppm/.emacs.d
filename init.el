@@ -8,11 +8,11 @@
 ;;; Emacs Load Path
 (add-to-list 'load-path emacs-dir)
 
-; http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
+;;http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
 
 ;-------------------------------------------------------------------------------
-; setup backup stuff
+;;setup backup stuff
 ;(require 'backup-dir)
 ;(setq bkup-backup-directory-info '((t "~/.backups" ok-create full-path)))
 (setq
@@ -24,17 +24,17 @@
    kept-old-versions 2
    version-control t)       ; use versioned backups
 
-; reload files automatically
-; http://www.emacswiki.org/emacs/RevertBuffer
+;;reload files automatically
+;;http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
 
 (setq visible-bell t)       ; Disable bell
 (setq inhibit-startup-screen t) ; Disable startup screen
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)) ; remove toolbar
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1)) ; remove menu
-; Avoid the symlink Version-Control warning
-; http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
-; http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
+;;Avoid the symlink Version-Control warning
+;;http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
+;;http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
 
 ;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
@@ -53,8 +53,8 @@
       (command-execute command))))
 
 ;-------------------------------------------------------------------------------
-; MELPA - package installer
-; http://melpa.milkbox.net/#/getting-started
+;;MELPA - package installer
+;;http://melpa.milkbox.net/#/getting-started
 
 (require 'package)
 (add-to-list 'package-archives
@@ -62,14 +62,14 @@
 (add-to-list 'package-archives
              '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 ;(when (not package-archive-contents)
-;  (package-refresh-contents))
+;; (package-refresh-contents))
 (package-initialize)
 ;(setq package-enable-at-startup nil)
 
-; causes the package(s) to be installed automatically if not already present
+;;causes the package(s) to be installed automatically if not already present
 ;(setq use-package-always-ensure t)
 
-; use-package: https://github.com/jwiegley/use-package
+;;use-package: https://github.com/jwiegley/use-package
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (setq use-package-verbose t)
@@ -84,32 +84,32 @@
 ;; an example with inline explanations
 ;(use-package the-package
 ;
-;  ; code to execute before the package is loaded
-;  :init (setq the-package-variable t)
+;; ; code to execute before the package is loaded
+;; :init (setq the-package-variable t)
 ;
-;  ; code to execute after the package is loaded. When the load is done lazily,
-;  ; this execution is deferred until after the autoload occurs.
-;  :config (the-package-mode 1)
+;; ; code to execute after the package is loaded. When the load is done lazily,
+;; ; this execution is deferred until after the autoload occurs.
+;; :config (the-package-mode 1)
 ;
-;  ; create autoloads for these commands and defer loading of the
-;  ; package until any them are used
-;  :commands (the-package-cmd3 the-package-cmd4)
+;; ; create autoloads for these commands and defer loading of the
+;; ; package until any them are used
+;; :commands (the-package-cmd3 the-package-cmd4)
 ;
-;  ; bind a key to primary commands within the package. Note the following:
-;  ;   * Special keys like tab or F1-Fn can be written in square brackets,
-;  ;     ie [tab] instead of "tab"
-;  ;   * To bind a key within a local keymap that only exists after the
-;  ;     package is loaded, use a :map modifier, taking the local keymap
-;  ;     to bind to. See https://github.com/jwiegley/use-package#binding-within-local-keymaps
-;  :bind (("C-." . the-package-cmd1)  ; commands here are implicitly added to the commands list
-;         ("C-:" . the-package-cmd2))
+;; ; bind a key to primary commands within the package. Note the following:
+;; ;   * Special keys like tab or F1-Fn can be written in square brackets,
+;; ;     ie [tab] instead of "tab"
+;; ;   * To bind a key within a local keymap that only exists after the
+;; ;     package is loaded, use a :map modifier, taking the local keymap
+;; ;     to bind to. See https://github.com/jwiegley/use-package#binding-within-local-keymaps
+;; :bind (("C-." . the-package-cmd1)  ; commands here are implicitly added to the commands list
+;;        ("C-:" . the-package-cmd2))
 ;
-;  ; establish a deferred binding within the auto-mode-alist variable
-;  :mode ("\\.py\\'" . python-mode)
+;; ; establish a deferred binding within the auto-mode-alist variable
+;; :mode ("\\.py\\'" . python-mode)
 ;
-;  ; establish a deferred binding within the interpreter-mode-alist variable
-;  :interpreter ("\\.py\\'" . python-mode)
-;  )
+;; ; establish a deferred binding within the interpreter-mode-alist variable
+;; :interpreter ("\\.py\\'" . python-mode)
+;; )
 
 
 ;;-------------------------------------------------------------------------------
@@ -182,26 +182,26 @@
 
     (scroll-bar-mode 0)
 
-;    ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
+;;   ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
     (require 'maximize)
-;    (require 'frame-cmds)
+;;   (require 'frame-cmds)
 ;
-;    (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
-;    (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
-;    (global-set-key (kbd   "C-<f10>") 'shrink-frame)
+;;   (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
+;;   (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
+;;   (global-set-key (kbd   "C-<f10>") 'shrink-frame)
 ;
-;    (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
-;    (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
-;    (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
+;;   (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
+;;   (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
+;;   (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
 ;
-;    (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
+;;   (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
   )
 )
 
 ;;-------------------------------------------
 
 (require 'column-marker)
-; http://askubuntu.com/questions/4820/keeping-emacs-from-splitting-the-window-when-openning-multiple-files
+;;http://askubuntu.com/questions/4820/keeping-emacs-from-splitting-the-window-when-openning-multiple-files
 (add-hook 'emacs-startup-hook (lambda ()
   (if window-system
     (progn (maximize-toggle-frame-vmax))
@@ -210,12 +210,22 @@
   (column-marker-1 80)
   (column-marker-2 100)
   ;(set-frame-width (selected-frame) 130)
-))
+  )
+)
 
 ;;-------------------------------------------
-; DIRTREE: https://github.com/zk/emacs-dirtree
-; To refresh a tree node hit g with the cursor on it
-; To delete a tree hit D with the cursor on it http://stackoverflow.com/questions/9546562/emacs-dirtree-directory-tree-view-setup
+;; DIRTREE: https://github.com/zk/emacs-dirtree
+;;
+;; shortcuts:
+;;
+;; RET open node or open file in other window
+;; U  go up to parent directory
+;; n  next node
+;; p  previous node
+;; g  refresh node
+;; D  delete tree
+;;
+;; http://stackoverflow.com/questions/9546562/emacs-dirtree-directory-tree-view-setup
 (use-package dirtree
   :commands (dirtree dirtree-show)
   :bind  ("C-o" . dirtree-show)
@@ -226,13 +236,13 @@
   "Set the selected window's width."
   (adjust-window-trailing-edge (selected-window) (- n (window-width)) t))
 
-; http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
+;;http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
 (define-minor-mode sticky-buffer-mode
   "Make the current window always display this buffer, ie, lock a buffer to the current window"
   nil " sticky" nil
   (set-window-dedicated-p (selected-window) sticky-buffer-mode))
 
-; (Try to) get a function to show the file tree on the left
+;;(Try to) get a function to show the file tree on the left
 (defun myide()
   (interactive)
 ;(maximize-frame-horizontally)
@@ -258,18 +268,18 @@
 
 
 ;;-------------------------------------------
-; COLOR-THEME
+;;COLOR-THEME
 
-; THEME GALLERY: https://pawelbx.github.io/emacs-theme-gallery/
-; zenburn-theme: https://github.com/bbatsov/zenburn-emacs
-; solarized-theme: https://github.com/bbatsov/solarized-emacs
-; monokai-theme: https://github.com/oneKelvinSmith/monokai-emacs
-; firebelly-theme: https://github.com/startling/firebelly
-; hemisu-dark-theme: https://github.com/andrzejsliwa/hemisu-theme
+;;THEME GALLERY: https://pawelbx.github.io/emacs-theme-gallery/
+;;zenburn-theme: https://github.com/bbatsov/zenburn-emacs
+;;solarized-theme: https://github.com/bbatsov/solarized-emacs
+;;monokai-theme: https://github.com/oneKelvinSmith/monokai-emacs
+;;firebelly-theme: https://github.com/startling/firebelly
+;;hemisu-dark-theme: https://github.com/andrzejsliwa/hemisu-theme
 
-; If Emacs looks considerably uglier in a terminal try setting this
-; environment variable:
-; export TERM=xterm-256color
+;;If Emacs looks considerably uglier in a terminal try setting this
+;;environment variable:
+;;export TERM=xterm-256color
 
 (setq color-theme-is-global t)
 
@@ -334,27 +344,27 @@
 ;(my-set-theme-tango-2)
 
 ;(defun plist-to-alist (the-plist) ; emacs24 needs this
-;  (defun get-tuple-from-plist (the-plist)
-;    (when the-plist
-;      (cons (car the-plist) (cadr the-plist))))
-;  (let ((alist '()))
-;    (while the-plist
-;      (add-to-list 'alist (get-tuple-from-plist the-plist))
-;      (setq the-plist (cddr the-plist)))
-;  alist))
+;; (defun get-tuple-from-plist (the-plist)
+;;   (when the-plist
+;;     (cons (car the-plist) (cadr the-plist))))
+;; (let ((alist '()))
+;;   (while the-plist
+;;     (add-to-list 'alist (get-tuple-from-plist the-plist))
+;;     (setq the-plist (cddr the-plist)))
+;; alist))
 ;(if window-system
-;  (progn
-;    (require 'color-theme)
-;    (add-to-list 'load-path "~/.emacs.d/color-theme-solarized-master")
-;    (require 'color-theme-solarized)
-;    (setq color-theme-is-global t)
-;    (color-theme-solarized-dark)))
+;; (progn
+;;   (require 'color-theme)
+;;   (add-to-list 'load-path "~/.emacs.d/color-theme-solarized-master")
+;;   (require 'color-theme-solarized)
+;;   (setq color-theme-is-global t)
+;;   (color-theme-solarized-dark)))
 ;
 
 ;;-------------------------------------------
 ;; Show line numbers
 (global-linum-mode 1)
-; Use C-<F5> to toggle line numbers
+;;Use C-<F5> to toggle line numbers
 (global-set-key (kbd "C-<f5>") 'linum-mode)
 
 ;; Show column number
@@ -407,89 +417,100 @@
 ;; IDO mode: (Interactively DO things)
 ;; https://www.masteringemacs.org/article/introduction-to-ido-mode
 
+(require 'flx-ido) ; https://github.com/lewang/flx
 (setq ido-everywhere t) ; enable basic IDO support for files and buffers
 (setq ido-enable-flex-matching t)
 (ido-mode 1)
-; FIND FILE AT POINT:
-; either this:
+(flx-ido-mode)
+
+;; disable ido faces to see flx highlights.
+(setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
+
+;; set garbage-collection threshold to 10MB to speed up flx-ido:
+;; see https://github.com/lewang/flx
+(setq gc-cons-threshold 10000000)
+
+;;FIND FILE AT POINT:
+;;either this:
 (setq ido-use-filename-at-point 'guess)
-; ... or this
+;;... or this
 ;(setq ido-use-url-at-point t) ; disables find file at point
-; don't ask
+;;don't ask
 (setq ido-create-new-buffer 'always)
-; give priority to certain extensions when presenting candidates in the minibuffer
+;;give priority to certain extensions when presenting candidates in the minibuffer
 (setq ido-file-extensions-order '(
    ".hpp" ".h" ".cpp" ".c"
    ".py"
    ".cmake"
    ".txt" ".el" ".ini" ".cfg" ".cnf"))
-; Takes a list of buffers to ignore in C-x b
+;;Takes a list of buffers to ignore in C-x b
 ;(setq ido-ignore-buffers '())
-; Takes a list of directories to ignore in C-x d and C-x C-f
+;;Takes a list of directories to ignore in C-x d and C-x C-f
 ;(setq ido-ignore-directories '())
-; Takes a list of files to ignore in C-x C-f
+;;Takes a list of files to ignore in C-x C-f
 ;(setq ido-ignore-files '())
 
-; General-purpose IDO Commands
+;;General-purpose IDO Commands
 ;
-; To skip IDO's current suggestion and accept what's already typed-in,
-; hit C-j
+;;To skip IDO's current suggestion and accept what's already typed-in,
+;;hit C-j
 ;
-; Tricks for windows:
-;  * for opening a file/dir in a different drive (eg D:), do: C-x C-f D:/
-;    and IDO will intelligently switch to D:
-;  * for opening a file/dir in the home directory do: C-X C-f ~/
+;;Tricks for windows:
+;; * for opening a file/dir in a different drive (eg D:), do: C-x C-f D:/
+;;   and IDO will intelligently switch to D:
+;; * for opening a file/dir in the home directory do: C-X C-f ~/
 ;
-; C-b Reverts to the old switch-buffer completion engine. Available in Buffers.
-; C-f Reverts to the old find-file completion engine. Available in Files
-; C-d Opens a dired buffer in the current directory. Available in Dirs / Files
-; C-a Toggles showing ignored files (see ido-ignore-files). Available in Files / Buffers
-; C-c Toggles if searching of buffer and file names should ignore case. (see
-;     ido-case-fold). Available in Dirs / Files / Buffers
-; TAB Attempt to complete the input like the normal completing read
-;     functionality. Available in Dirs / Files / Buffers
-; C-p Toggles prefix matching; when it's on the input will only match the
-;     beginning of a filename instead of any part of it.
+;;C-b Reverts to the old switch-buffer completion engine. Available in Buffers.
+;;C-f Reverts to the old find-file completion engine. Available in Files
+;;C-d Opens a dired buffer in the current directory. Available in Dirs / Files
+;;C-a Toggles showing ignored files (see ido-ignore-files). Available in Files / Buffers
+;;C-c Toggles if searching of buffer and file names should ignore case. (see
+;;    ido-case-fold). Available in Dirs / Files / Buffers
+;;TAB Attempt to complete the input like the normal completing read
+;;    functionality. Available in Dirs / Files / Buffers
+;;C-p Toggles prefix matching; when it's on the input will only match the
+;;    beginning of a filename instead of any part of it.
 ;
-; Files
+;;Files
 ;
-; C-s / C-r
-;             Moves to the next and previous match, respectively. Available
-;             everywhere
-; C-t
-;             Toggles matching by Emacs regular expression.. Available everywhere
-; Backspace
-;             Deletes characters as usual or goes up one directory if it makes
-;             sense to do so.. Available everywhere
-; C-SPC / C-@
-;             Restricts the completion list to anything that matches your
-;             current input. Available everywhere
-; //
-;             Like most Linux shells two forward slashes in a path means
-;             "ignore the preceding path, and go back to the top-most
-;             directory". Works the same in Ido but it's more interactive: it
-;             will go to the root / (or the root of the current drive in
-;             Windows) Available in Files
-; ~/
-;             Jumps to the home directory. On Windows this would be typically
-;             be %USERPROFILE% or %HOME%, if it is defined. Available in
-;             Files / Dirs
-; M-d
-;             Searches for the input in all sub-directories to the directory
-;             you're in.. Available in Files
-; C-k
-;             Kills the currently focused buffer or deletes the file
-;             depending on the mode.. Available in Files / Buffers
-; M-m
-;             Creates a new sub-directory to the directory you're
-;             in. Available in Files
+;;C-s / C-r
+;;            Moves to the next and previous match, respectively. Available
+;;            everywhere
+;;C-t
+;;            Toggles matching by Emacs regular expression.. Available everywhere
+;;Backspace
+;;            Deletes characters as usual or goes up one directory if it makes
+;;            sense to do so.. Available everywhere
+;;C-SPC / C-@
+;;            Restricts the completion list to anything that matches your
+;;            current input. Available everywhere
+;;//
+;;            Like most Linux shells two forward slashes in a path means
+;;            "ignore the preceding path, and go back to the top-most
+;;            directory". Works the same in Ido but it's more interactive: it
+;;            will go to the root / (or the root of the current drive in
+;;            Windows) Available in Files
+;;~/
+;;            Jumps to the home directory. On Windows this would be typically
+;;            be %USERPROFILE% or %HOME%, if it is defined. Available in
+;;            Files / Dirs
+;;M-d
+;;            Searches for the input in all sub-directories to the directory
+;;            you're in.. Available in Files
+;;C-k
+;;            Kills the currently focused buffer or deletes the file
+;;            depending on the mode.. Available in Files / Buffers
+;;M-m
+;;            Creates a new sub-directory to the directory you're
+;;            in. Available in Files
 ;
-; OK, so you probably won't get in the habit of using all the commands;
-; that's fine, but some are more important to remember than others, like:
-; Backspace; C-s and C-r; // and ~/; and C-d.
+;;OK, so you probably won't get in the habit of using all the commands;
+;;that's fine, but some are more important to remember than others, like:
+;;Backspace; C-s and C-r; // and ~/; and C-d.
 ;
-; If Ido is getting in your way, remember the fallback commands:
-;  C-f for files; C-b for buffers.
+;;If Ido is getting in your way, remember the fallback commands:
+;; C-f for files; C-b for buffers.
 
 
 ;;-------------------------------------------------------------------------
@@ -501,19 +522,32 @@
 ;(ac-config-default)
 ;;(require 'auto-complete-etags)
 
-; General Usage: Completion will start automatically after you type a
-; few letters. Use M-n and M-p to select, <return> to complete or <tab>
-; to complete the common part. Search through the completions with C-s,
-; C-r and C-o. Press M-(digit) to quickly complete with one of the
-; first 10 candidates. When the completion candidates are shown, press
-; <f1> to display the documentation for the selected candidate, or C-w
-; to see its source. Not all back-ends support this.
+;;General Usage: Completion will start automatically after you type a
+;;few letters. Use M-n and M-p to select, <return> to complete or <tab>
+;;to complete the common part. Search through the completions with C-s,
+;;C-r and C-o. Press M-(digit) to quickly complete with one of the
+;;first 10 candidates. When the completion candidates are shown, press
+;;<f1> to display the documentation for the selected candidate, or C-w
+;;to see its source. Not all back-ends support this.
 ;
-; The variable company-backends specifies a list of backends that
-; company-mode uses to retrieves completion candidates for you.
+;;The variable company-backends specifies a list of backends that
+;;company-mode uses to retrieves completion candidates for you.
 
 (use-package company
-  :config (global-company-mode))
+  :config
+  (global-company-mode)
+  ;; https://tuhdo.github.io/c-ide.html#orgheadline15
+  (setq company-backends (delete 'company-semantic company-backends))
+  (define-key c-mode-map  [(tab)] 'company-complete)
+  (define-key c++-mode-map  [(tab)] 'company-complete)
+  ;; https://tuhdo.github.io/c-ide.html#orgheadline15
+  (add-to-list 'company-backends 'company-c-headers)
+  )
+
+;; stop safety warnings when this var is given in .dir-locals.el
+;; see http://emacs.stackexchange.com/questions/18774/trust-dir-locals-el
+(put 'company-clang-arguments 'safe-local-variable #'listp)
+(put 'c4stl-dir 'safe-local-variable #'stringp)
 
 ;;-------------------------------------------------------------------------
 
@@ -525,57 +559,48 @@
         (expand-file-name "~/.emacs.d/auto-save-list"))
   )
 
-;;-------------------------------------------------------------------------
-
-; a minor mode that provides many features for manipulating
-; pairs. Pair can be simple as parentheses or brackets, or can be
-; programming tokens such as if … fi or if … end in many
-; languages. The most basic and essential feature is automatic closing
-; of a pair when user inserts an opening one.
-(use-package smartparens
-  :commands (smartparens-mode
-	     smartparens-strict-mode
-             sp-with-modes)
-  :bind (:map smartparens-strict-mode-map
-	      ("C-}" . sp-forward-slurp-sexp)
-	      ("M-s" . sp-backward-unwrap-sexp)
-	      ("C-c [" . sp-select-next-thing)
-	      ("C-c ]" . sp-select-next-thing-exchange))
-  :config
-  (require 'smartparens-config)
-  (show-smartparens-global-mode +1)
-  (smartparens-global-mode 1)
-  )
-
-(use-package highlight-symbol
-  :commands highlight-symbol-mode
-  :config
-  (setq highlight-symbol-idle-delay 0.2)
-  (add-hook 'highlight-symbol-mode-hook
-            (function
-             (lambda () (highlight-symbol-nav-mode +1)))))
-
-;(use-package smart-mode-line
-;  :init
-;  (setq-default sml/vc-mode-show-backend t
-;		sml/theme 'respectful)
-;  (sml/setup))
-
 ;;=========================================================================
 ;; CURSOR MOVEMENT
 
 ;;-------------------------------------------------------------------------
 ;; Smooth scrolling
-(require 'smooth-scrolling)
-(put 'narrow-to-region 'disabled nil)
-;(put 'upcase-region 'disabled nil)
-; FIXES FOR EMACS24: http://www.emacswiki.org/emacs/SmoothScrolling
-; Scroll just one line when hitting bottom of window
-(setq scroll-conservatively 10000)
+;; http://www.emacswiki.org/emacs/SmoothScrolling
+
+;; scroll one line at a time (less "jumpy" than defaults)
+(setq mouse-wheel-scroll-amount '(3 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-conservatively 10000) ;; scroll just one line when hitting bottom of window
+(setq auto-window-vscroll nil)
+
+;; scroll without moving the cursor
+(defun gcm-scroll-down ()
+  (interactive)
+  (scroll-up 1))
+(defun gcm-scroll-up ()
+  (interactive)
+  (scroll-down 1))
+(global-set-key (kbd "S-<down>") 'gcm-scroll-down)
+(global-set-key (kbd "S-<up>") 'gcm-scroll-up)
+
+;; Recentering:
+;; C-l
+;;     Scroll the selected window so the current line is the
+;;     center-most text line; on subsequent consecutive invocations,
+;;     make the current line the top line, the bottom line, and so on
+;;     in cyclic order. Possibly redisplay the screen too
+;;     (recenter-top-bottom).
+;; M-x recenter
+;;     Scroll the selected window so the current line is the
+;;     center-most text line. Possibly redisplay the screen too.
+;; C-M-l
+;;     Scroll heuristically to bring useful information onto the
+;;     screen (reposition-window).
 
 ;;-------------------------------------------------------------------------
-; Move to first non-whitespace or beginning of line
-; http://superuser.com/questions/331221/jump-to-first-non-whitespace-character-in-line-in-emacs
+;;Move to first non-whitespace or beginning of line
+;;http://superuser.com/questions/331221/jump-to-first-non-whitespace-character-in-line-in-emacs
 (defun smart-beginning-of-line ()
   "Move point to first non-whitespace character or beginning-of-line.
 If point was already at that position, move point to beginning of line."
@@ -589,9 +614,9 @@ If point was already at that position, move point to beginning of line."
 (global-set-key "\C-a" 'smart-beginning-of-line)
 
 ;;-------------------------------------------------------------------------
-; Windows navigation + splitting
+;;Windows navigation + splitting
 
-; we need to call this again in some hooks
+;;we need to call this again in some hooks
 (defun win-nav-rsz()
   "set shortcuts to resize the window"
   (interactive)
@@ -637,23 +662,24 @@ If point was already at that position, move point to beginning of line."
 )
 
 ;;------------------------------------------------------------------
-; easily show the kill-ring
+;;easily show the kill-ring
 
-; http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
+;;http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
 (use-package counsel
   :bind
   (("M-y" . counsel-yank-pop)
    :map ivy-minibuffer-map
+   ("S-M-y" . ivy-previous-line)
    ("M-y" . ivy-next-line)))
 
 ;;-------------------------------------------------------------------------
 ;; Undo tree
 
-; treats undo history as a branching tree of changes, similar to the
-; way Vim handles it. This makes it substantially easier to undo and
-; redo any change, while preserving the entire history of past
-; states. The undo-tree visualizer is particularly helpful in complex
-; cases.
+;;treats undo history as a branching tree of changes, similar to the
+;;way Vim handles it. This makes it substantially easier to undo and
+;;redo any change, while preserving the entire history of past
+;;states. The undo-tree visualizer is particularly helpful in complex
+;;cases.
 ;; C-_  C-/  (`undo-tree-undo')  Undo changes.
 ;; M-_  C-?  (`undo-tree-redo')  Redo changes.
 ;; `undo-tree-switch-branch'  Switch undo-tree branch.
@@ -689,14 +715,14 @@ If point was already at that position, move point to beginning of line."
   )
 
 ;;-------------------------------------------------------------------------
-; Insert a new line and jump to it, indenting
-; http://superuser.com/questions/331660/how-to-insert-a-new-line-and-jump-to-it-in-emacs
+;;Insert a new line and jump to it, indenting
+;;http://superuser.com/questions/331660/how-to-insert-a-new-line-and-jump-to-it-in-emacs
 (global-set-key (kbd "<S-return>") "\C-e\C-m")   ; create line after current and indent
 (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m") ; create line before current and indent
 
 ;;------------------------------------------------------------------
 ;; ===== Delete the previous word without adding it to the killring =====
-; see http://stackoverflow.com/questions/6133799/delete-a-word-without-adding-it-to-the-kill-ring-in-emacs?rq=1
+;;see http://stackoverflow.com/questions/6133799/delete-a-word-without-adding-it-to-the-kill-ring-in-emacs?rq=1
 
 (defun backward-delete-word (arg)
   "Delete characters backward until encountering the beginning of a word.
@@ -704,7 +730,7 @@ With argument ARG, do this that many times."
   (interactive "p")
   (delete-region (point) (progn (backward-word arg) (point))))
 
-; when in the minibuffer, don't yank deleted words to the killring
+;;when in the minibuffer, don't yank deleted words to the killring
 (define-key minibuffer-local-map [M-backspace] 'backward-delete-word)
 
 ;;------------------------------------------------------------------
@@ -758,7 +784,45 @@ With argument ARG, do this that many times."
 
 
 ;;-------------------------------------------------------------------------
-; SNIPPETS
+
+;;a minor mode that provides many features for manipulating
+;;pairs. Pair can be simple as parentheses or brackets, or can be
+;;programming tokens such as if … fi or if … end in many
+;;languages. The most basic and essential feature is automatic closing
+;;of a pair when user inserts an opening one.
+(use-package smartparens
+  :commands (smartparens-mode
+             smartparens-strict-mode
+             sp-with-modes)
+  :bind (:map smartparens-strict-mode-map
+              ("C-}" . sp-forward-slurp-sexp)
+              ("M-s" . sp-backward-unwrap-sexp)
+              ("C-c [" . sp-select-next-thing)
+              ("C-c ]" . sp-select-next-thing-exchange))
+  :config
+  (require 'smartparens-config)
+  (show-smartparens-global-mode +1)
+  (smartparens-global-mode 1)
+  )
+;; something else interacted with this. Manually enabling seems to fix it.
+(smartparens-global-mode 1)
+
+(use-package highlight-symbol
+  :commands highlight-symbol-mode
+  :config
+  (setq highlight-symbol-idle-delay 0.2)
+  (add-hook 'highlight-symbol-mode-hook
+            (function
+             (lambda () (highlight-symbol-nav-mode +1)(message "highlight porra")))))
+
+;(use-package smart-mode-line
+;; :init
+;; (setq-default sml/vc-mode-show-backend t
+;		sml/theme 'respectful)
+;; (sml/setup))
+
+;;-------------------------------------------------------------------------
+;;SNIPPETS
 
 (defun use-snips()
   (use-package yasnippet
@@ -788,16 +852,16 @@ With argument ARG, do this that many times."
 )
 
 ;;-------------------------------------------------------------------------
-; MODES
-; to enable a mode at runtime, type M-x the-mode-name
+;;MODES
+;;to enable a mode at runtime, type M-x the-mode-name
 
-; Turn off tab character
+;;Turn off tab character
 (setq-default indent-tabs-mode nil)
 
-; Indent size
+;;Indent size
 (setq standard-indent 4)
 
-; Auto-close bracket pairs
+;;Auto-close bracket pairs
 ;(electric-pair-mode 1)
 
 ;; show unnecessary whitespace that can mess up your diff
@@ -848,8 +912,8 @@ With argument ARG, do this that many times."
 
 
 ;;; Python
-; https://elpy.readthedocs.io/en/
-; https://github.com/jorgenschaefer/elpy
+;;https://elpy.readthedocs.io/en/
+;;https://github.com/jorgenschaefer/elpy
 (use-package python
   :defer t
   :mode ("\\.py" . python-mode)
@@ -857,11 +921,11 @@ With argument ARG, do this that many times."
   (use-package elpy
     :commands elpy-enable
     :config
-;    (setq elpy-rpc-python-command "python3"
-;          elpy-modules (dolist (elem '(elpy-module-highlight-indentation
-;                                      elpy-module-yasnippet))
-;                         (remove elem elpy-modules))
-;          )
+;;   (setq elpy-rpc-python-command "python3"
+;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
+;;                                     elpy-module-yasnippet))
+;;                        (remove elem elpy-modules))
+;;         )
     (elpy-use-ipython))
   (elpy-enable)
   (use-snips)(add-hook 'python-mode-hook #'hook-snips)
@@ -873,8 +937,8 @@ With argument ARG, do this that many times."
 
 
 ;;; GNU R
-;   instructions on ESS: http://ess.r-project.org/Manual/ess.html
-;   http://cran.r-project.org/doc/FAQ/R-FAQ.html#R-and-Emacs
+;;  instructions on ESS: http://ess.r-project.org/Manual/ess.html
+;;  http://cran.r-project.org/doc/FAQ/R-FAQ.html#R-and-Emacs
 (use-package ess-site
   :ensure ess
   :mode (("\\.R\\'" . R-mode)
@@ -887,7 +951,7 @@ With argument ARG, do this that many times."
 
 
 ;;; XML
-; http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
+;;http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
 (use-package nxml
   :init (setq nxml-slash-auto-complete-flag t)
   :mode (("\\.xml\\'" . nxml-mode)
@@ -932,7 +996,7 @@ With argument ARG, do this that many times."
 
 
 ;;; Octave/Matlab
-; see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
+;;see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
 (use-package octave-mode
   :init
   (abbrev-mode 1)
@@ -947,62 +1011,62 @@ With argument ARG, do this that many times."
 
 ;;; Lisp
 ;(use-package lisp-mode
-;  :config
-;  (use-package elisp-slime-nav
-;    :commands elisp-slime-nav-mode)
-;  (use-package macrostep
-;    :bind ("C-c e" . macrostep-expand))
-;  (use-package slime
-;    :commands (slime slime-lisp-mode-hook)
-;    :config
-;    (add-to-list 'slime-contribs 'slime-fancy)
-;    (slime-setup)
-;    (add-hook 'slime-repl-mode-hook #'smartparens-strict-mode))
+;; :config
+;; (use-package elisp-slime-nav
+;;   :commands elisp-slime-nav-mode)
+;; (use-package macrostep
+;;   :bind ("C-c e" . macrostep-expand))
+;; (use-package slime
+;;   :commands (slime slime-lisp-mode-hook)
+;;   :config
+;;   (add-to-list 'slime-contribs 'slime-fancy)
+;;   (slime-setup)
+;;   (add-hook 'slime-repl-mode-hook #'smartparens-strict-mode))
 ;
-;  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-;  (add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
-;  (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
-;  (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)
-;  (add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)
-;  (add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode)
+;; (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
+;; (add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
+;; (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
+;; (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)
+;; (add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)
+;; (add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode)
 ;
-;  (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
-;  (add-hook 'lisp-mode-hook #'slime-lisp-mode-hook)
+;; (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
+;; (add-hook 'lisp-mode-hook #'slime-lisp-mode-hook)
 ;
-;  (setq inferior-lisp-program "sbcl --dynamic-space-size 1024"))
+;; (setq inferior-lisp-program "sbcl --dynamic-space-size 1024"))
 
 ;;-------------------------------------------------------------------------
-; Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
+;;Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
 ;
-; M-x compile
-;     Run a compiler asynchronously under Emacs, with error messages going to the *compilation* buffer.
-; M-x recompile
-;     Invoke a compiler with the same command as in the last invocation of M-x compile.
-; M-x kill-compilation
-;     Kill the running compilation subprocess.
+;;M-x compile
+;;    Run a compiler asynchronously under Emacs, with error messages going to the *compilation* buffer.
+;;M-x recompile
+;;    Invoke a compiler with the same command as in the last invocation of M-x compile.
+;;M-x kill-compilation
+;;    Kill the running compilation subprocess.
 
-; Compilation mode commands: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode
+;;Compilation mode commands: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode
 ;
-; M-g M-n
-; M-g n
-; C-x `
-;     Visit the locus of the next error message or match (next-error).
-; M-g M-p
-; M-g p
-;     Visit the locus of the previous error message or match (previous-error).
-; M-n
-;     Move point to the next error message or match, without visiting its locus (compilation-next-error).
-; M-p
-;     Move point to the previous error message or match, without visiting its locus (compilation-previous-error).
-; M-}
-;     Move point to the next error message or match occurring in a different file (compilation-next-file).
-; M-{
-;     Move point to the previous error message or match occurring in a different file (compilation-previous-file).
-; C-c C-f
-;     Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
+;;M-g M-n
+;;M-g n
+;;C-x `
+;;    Visit the locus of the next error message or match (next-error).
+;;M-g M-p
+;;M-g p
+;;    Visit the locus of the previous error message or match (previous-error).
+;;M-n
+;;    Move point to the next error message or match, without visiting its locus (compilation-next-error).
+;;M-p
+;;    Move point to the previous error message or match, without visiting its locus (compilation-previous-error).
+;;M-}
+;;    Move point to the next error message or match occurring in a different file (compilation-next-file).
+;;M-{
+;;    Move point to the previous error message or match occurring in a different file (compilation-previous-file).
+;;C-c C-f
+;;    Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
 ;
 
-; see https://www.emacswiki.org/emacs/CompilationMode#toc4
+;;see https://www.emacswiki.org/emacs/CompilationMode#toc4
 (defun my-compile()
   "run compile"
   (interactive)
@@ -1037,13 +1101,20 @@ With argument ARG, do this that many times."
 ;;
 ;; If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
 ;;
-;; +--------------------------------+--------------------------------+
-;; |   GUD interaction buffer       |   Locals/Registers buffer      |
-;; |--------------------------------+--------------------------------+
-;; |   Primary Source buffer        |   I/O buffer for debugged pgm  |
-;; |--------------------------------+--------------------------------+
-;; |   Stack buffer                 |   Breakpoints/Threads buffer   |
-;; +--------------------------------+--------------------------------+
+;; +----------------------------------------------------------------------+
+;; |                               GDB Toolbar                            |
+;; +-----------------------------------+----------------------------------+
+;; | GUD buffer (I/O of GDB)           | Locals buffer                    |
+;; +-----------------------------------+----------------------------------+
+;; | Source buffer                     | I/O buffer (of debugged program) |
+;; |                                   | (comint-mode)                    |
+;; |                                   |                                  |
+;; +-----------------------------------+----------------------------------+
+;; | Stack buffer                      | Breakpoints buffer               |
+;; | RET      gdb-select-frame         | SPC    gdb-toggle-breakpoint     |
+;; |                                   | RET    gdb-goto-breakpoint       |
+;; |                                   | D      gdb-delete-breakpoint     |
+;; +-----------------------------------+----------------------------------+
 ;;
 ;; GUD provides commands for setting and clearing breakpoints,
 ;; selecting stack frames, and stepping through the program.
@@ -1176,19 +1247,19 @@ With argument ARG, do this that many times."
 
   (global-set-key [f5] 'my-gdb-run-program)
   (global-set-key [S-f5] 'my-gdb-kill-program)
-  (global-set-key [f7] 'gud-cont)      ; continue
-  (global-set-key [f9] 'gud-break)     ; add breakpoint
-  (global-set-key [C-f9] 'gud-remove)  ; remove breakpoint
-  (global-set-key [S-f9] 'gud-print)   ; print var under cursor or region
-  (global-set-key [C-S-f9] 'gud-watch) ; watch var under cursor or region
-  (global-set-key [f10] 'gud-next)     ; step over
-  (global-set-key [C-f10] 'gud-until)  ; execute until current line
-  (global-set-key [f11] 'gud-step)     ; step into
-  (global-set-key [S-f11] 'gud-finish) ; finish current function
+  (global-set-key [f7] 'gud-cont)      ;; continue
+  (global-set-key [f9] 'gud-break)     ;; add breakpoint
+  (global-set-key [C-f9] 'gud-remove)  ;; remove breakpoint
+  (global-set-key [S-f9] 'gud-print)   ;; print var under cursor or region
+  (global-set-key [C-S-f9] 'gud-watch) ;; watch var under cursor or region
+  (global-set-key [f10] 'gud-next)     ;; step over
+  (global-set-key [C-f10] 'gud-until)  ;; execute until current line
+  (global-set-key [f11] 'gud-step)     ;; step into
+  (global-set-key [S-f11] 'gud-finish) ;; finish current function
 
-  ; make the gdb prompt sticky to its window
-  ; this assumes that the gud window is focused
-  (sticky-buffer-mode 1)
+  ;; make the gdb prompt sticky to its window
+  ;; this assumes that the gud window is focused
+  ;(sticky-buffer-mode 1)
 
   ;; Problems with source files opening in different windows:
   ;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
@@ -1212,7 +1283,7 @@ With argument ARG, do this that many times."
   ;; Most of the trickiness in here comes from wanting to preserve the current
   ;; region-restriction if that's possible.  We use an explicit display-buffer
   ;; to get around the fact that this is called inside a save-excursion.
-  (defun gud-display-line (true-file line)
+  (defadvice gud-display-line (true-file line)
     (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
            (buffer
             (with-current-buffer gud-comint-buffer
@@ -1277,25 +1348,38 @@ With argument ARG, do this that many times."
   (run-command-in-new-frame "" "gdb"))
 
 ;;-------------------------------------------------------------------------
-; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
+;; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
 
-; M-x grep
-; M-x lgrep
-;     Run grep asynchronously under Emacs, listing matching lines in the buffer named *grep*.
-; M-x grep-find
-; M-x find-grep
-; M-x rgrep
-;     Run grep via find, and collect output in the *grep* buffer.
-; M-x zrgrep
-;     Run zgrep and collect output in the *grep* buffer.
-; M-x kill-grep
-;     Kill the running grep subprocess.
-;
+;; M-x grep
+;; M-x lgrep
+;;     Run grep asynchronously under Emacs, listing matching lines in the buffer named *grep*.
+;; M-x grep-find
+;; M-x find-grep
+;; M-x rgrep
+;;     Run grep via find, and collect output in the *grep* buffer.
+;; M-x zrgrep
+;;     Run zgrep and collect output in the *grep* buffer.
+;; M-x kill-grep
+;;     Kill the running grep subprocess.
+;;
 
-; Search and replace:
-; https://www.emacswiki.org/emacs/CategorySearchAndReplace
+;; Search and replace:
+;; https://www.emacswiki.org/emacs/CategorySearchAndReplace
 
 ;;-------------------------------------------------------------------------
+;; https://github.com/atilaneves/cmake-ide
+
+;;(use-package cmake-ide
+;;  :defer t
+;;  :init
+;;;;  :bind ("s-p" . projectile-command-map)
+;;  :commands (cmake-ide-setup the-package-cmd4)
+;;  :config
+;;  (cmake-ide-setup)
+;;  )
+;;
+;;-------------------------------------------------------------------------
+;; https://projectile.readthedocs.io/en/
 
 (use-package projectile
   :defer t
@@ -1303,24 +1387,69 @@ With argument ARG, do this that many times."
   :bind ("s-p" . projectile-command-map)
   :config
   (projectile-global-mode)
-;  (persp-mode)
-;  (use-package persp-projectile
-;    :commands persp-projectile
-;    :config
-;    (add-hook 'persp-activated-hook
-;              #'(lambda ()
-;                  (persp-add-buffer
-;                   (get-buffer-create "*Messages*")))))
-;  (require 'persp-projectile)
-;  (setq projectile-switch-project-action 'projectile-dired)
-;  (setq projectile-mode-line
-;        '(:eval (if (file-remote-p default-directory)
-;                    " Prj[*remote*]"
-;                  (format " Prj[%s]" (projectile-project-name)))))
+;; (persp-mode)
+;; (use-package persp-projectile
+;;   :commands persp-projectile
+;;   :config
+;;   (add-hook 'persp-activated-hook
+;;             #'(lambda ()
+;;                 (persp-add-buffer
+;;                  (get-buffer-create "*Messages*")))))
+;; (require 'persp-projectile)
+;; (setq projectile-switch-project-action 'projectile-dired)
+;; (setq projectile-mode-line
+;;       '(:eval (if (file-remote-p default-directory)
+;;                   " Prj[*remote*]"
+;;                 (format " Prj[%s]" (projectile-project-name)))))
   )
 
+;; C-c p f 	Display a list of all files in the project. With a prefix argument it will clear the cache first.
+;; C-c p F 	Display a list of all files in all known projects.
+;; C-c p g 	Display a list of all files at point in the project. With a prefix argument it will clear the cache first.
+;; C-c p 4 f 	Jump to a project's file using completion and show it in another window.
+;; C-c p 4 g 	Jump to a project's file based on context at point and show it in another window.
+;; C-c p d 	Display a list of all directories in the project. With a prefix argument it will clear the cache first.
+;; C-c p 4 d 	Switch to a project directory and show it in another window.
+;; C-c p 4 a 	Switch between files with the same name but different extensions in other window.
+;; C-c p T 	Display a list of all test files(specs, features, etc) in the project.
+;; C-c p l 	Display a list of all files in a directory (that's not necessarily a project)
+;; C-c p s g 	Run grep on the files in the project.
+;; M-- C-c p s g 	Run grep on projectile-grep-default-files in the project.
+;; C-c p v 	Run vc-dir on the root directory of the project.
+;; C-c p V 	Browse dirty version controlled projects.
+;; C-c p b 	Display a list of all project buffers currently open.
+;; C-c p 4 b 	Switch to a project buffer and show it in another window.
+;; C-c p 4 C-o 	Display a project buffer in another window without selecting it.
+;; C-c p a 	Switch between files with the same name but different extensions.
+;; C-c p o 	Runs multi-occur on all project buffers currently open.
+;; C-c p r 	Runs interactive query-replace on all files in the projects.
+;; C-c p i 	Invalidates the project cache (if existing).
+;; C-c p R 	Regenerates the projects TAGS file.
+;; C-c p j 	Find tag in project's TAGS file.
+;; C-c p k 	Kills all project buffers.
+;; C-c p D 	Opens the root of the project in dired.
+;; C-c p e 	Shows a list of recently visited project files.
+;; C-c p E 	Opens the .dirs-local.el file of the project.
+;; C-c p s s 	Runs ag on the project. Requires the presence of ag.el.
+;; C-c p ! 	Runs shell-command in the root directory of the project.
+;; C-c p & 	Runs async-shell-command in the root directory of the project.
+;; C-c p c 	Runs a standard compilation command for your type of project.
+;; C-c p P 	Runs a standard test command for your type of project.
+;; C-c p t 	Toggle between an implementation file and its test file.
+;; C-c p 4 t 	Jump to implementation or test file in other window.
+;; C-c p z 	Adds the currently visited file to the cache.
+;; C-c p p 	Display a list of known projects you can switch to.
+;; C-c p S 	Save all project buffers.
+;; C-c p m 	Run the commander (an interface to run commands with a single key).
+;; C-c p ESC 	Switch to the most recently selected Projectile buffer.
+;;
+;; If you ever forget any of Projectile's keybindings just do a:
+;;
+;; C-c p C-h
+;;
+
 ;;-------------------------------------------------------------------------
-; text modes
+;;text modes
 
 (defun my-text-hook ()
   (message "my-text-hook: entering")
@@ -1339,25 +1468,25 @@ With argument ARG, do this that many times."
 
 
 ;;; Restructured Text
-; see http://docutils.sourceforge.net/docs/user/emacs.html
+;;see http://docutils.sourceforge.net/docs/user/emacs.html
 ;
-; C-c C-a   Commands to adjust the section headers and work with the hierarchy they build.
-; C-c C-c   Commands to compile the current reStructuredText document to various output formats.
-; C-c C-l   Commands to work with lists of various kinds.
-; C-c C-r   Commands to manipulate the current region.
-; C-c C-t   Commands to create and manipulate a table of contents.
+;;C-c C-a   Commands to adjust the section headers and work with the hierarchy they build.
+;;C-c C-c   Commands to compile the current reStructuredText document to various output formats.
+;;C-c C-l   Commands to work with lists of various kinds.
+;;C-c C-r   Commands to manipulate the current region.
+;;C-c C-t   Commands to create and manipulate a table of contents.
 ;
-; At any stage of typing you may use C-h to get help on the
-; available key bindings. I.e. C-c C-h gives you help on all key
-; bindings while C-c C-r C-h gives you help on the commands for
-; regions. This is handy if you forgot a certain key binding.
+;;At any stage of typing you may use C-h to get help on the
+;;available key bindings. I.e. C-c C-h gives you help on all key
+;;bindings while C-c C-r C-h gives you help on the commands for
+;;regions. This is handy if you forgot a certain key binding.
 (use-package rst-mode
   :defer t
   :config
   (add-hook 'rst-mode-hook 'my-text-hook)
 )
 
-;;; Markdown
+;; Markdown
 (use-package markdown-mode
   :defer t
   :config
@@ -1365,21 +1494,21 @@ With argument ARG, do this that many times."
   )
 
 ;;-----------------------------------------------------------------------------
-; Step through historic versions of git controlled file
-; https://github.com/pidu/git-timemachine
+;;Step through historic versions of git controlled file
+;;https://github.com/pidu/git-timemachine
 
-; Visit a git-controlled file and issue M-x git-timemachine (or bind
-; it to a keybinding of your choice). If you just need to toggle the
-; time machine you can use M-x git-timemachine-toggle.
+;;Visit a git-controlled file and issue M-x git-timemachine (or bind
+;;it to a keybinding of your choice). If you just need to toggle the
+;;time machine you can use M-x git-timemachine-toggle.
 ;
-; Use the following keys to navigate historic version of the file
+;;Use the following keys to navigate historic version of the file
 ;
-;     p Visit previous historic version
-;     n Visit next historic version
-;     w Copy the abbreviated hash of the current historic version
-;     W Copy the full hash of the current historic version
-;     g Goto nth revision
-;     q Exit the time machine.
+;;    p Visit previous historic version
+;;    n Visit next historic version
+;;    w Copy the abbreviated hash of the current historic version
+;;    W Copy the full hash of the current historic version
+;;    g Goto nth revision
+;;    q Exit the time machine.
 ;
 (use-package git-timemachine
   :defer t
@@ -1406,12 +1535,15 @@ With argument ARG, do this that many times."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
- '(ecb-options-version "2.40"))
+ '(custom-safe-themes
+   (quote
+    ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
+ '(ecb-options-version "2.40")
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-; '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Consolas"))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))) t))
