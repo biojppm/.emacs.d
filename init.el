@@ -1,3 +1,4 @@
+;; see http://ergoemacs.org/emacs/elisp_basics.html
 ;; see http://ergoemacs.org/emacs/emacs_make_modern.html for lots of goodies
 ;; see http://stackoverflow.com/questions/5795451/how-to-detect-that-emacs-is-in-terminal-mode
 ;; Many of the use-package calls were taken from https://github.com/ljos/.emacs.d/blob/master/init.el
@@ -745,8 +746,11 @@ With argument ARG, do this that many times."
 ;;------------------------------------------------------------------
 ;; ===== Function to delete a line =====
 
+;; There's also the command kill-whole-line (C-S-backspace), which
+;; does the same without saving the column position.
+
 ;; First define a variable which will store the previous column position
-(defvar previous-column nil "Save the column position")
+(defvar nuke-line-previous-column nil "Save the column position")
 
 ;; Define the nuke-line function. The line is killed, then the newline
 ;; character is deleted. The column which the cursor was positioned at is then
@@ -758,7 +762,7 @@ With argument ARG, do this that many times."
 
   ;; Store the current column position, so it can later be restored for a more
   ;; natural feel to the deletion
-  (setq previous-column (current-column))
+  (setq nuke-line-previous-column (current-column))
 
   ;; Now move to the end of the current line
   (end-of-line)
@@ -777,11 +781,37 @@ With argument ARG, do this that many times."
       (beginning-of-line)
       (kill-line)
       (delete-char 1)
-      (move-to-column previous-column))))
+      (move-to-column nuke-line-previous-column))))
 
-;; Now bind the delete line function to F8
+;; Now bind the delete line function to Shift- delete
 (global-set-key [S-delete] 'nuke-line)
 
+;;------------------------------------------------------------------
+;; http://stackoverflow.com/a/4717026/5875572
+
+(defun duplicate-line-or-region (&optional n)
+  "Duplicate current line, or region if active.
+With argument N, make N copies.  With negative N, comment out
+original line and use the absolute value."
+  (interactive "*p")
+  (let ((use-region (use-region-p)))
+    (save-excursion
+      (let ((text (if use-region        ;Get region if active, otherwise line
+                      (buffer-substring (region-beginning) (region-end))
+                    (prog1 (thing-at-point 'line)
+                      (end-of-line)
+                      (if (< 0 (forward-line 1)) ;Go to beginning of next line, or make a new one
+                          (newline))))))
+        (dotimes (i (abs (or n 1)))     ;Insert N times, or once if not specified
+          (insert text))))
+    (if use-region nil                  ;Only if we're working with a line (not a region)
+      (let ((pos (- (point) (line-beginning-position)))) ;Save column
+        (if (> 0 n)                             ;Comment out original with negative arg
+            (comment-region (line-beginning-position) (line-end-position)))
+        (forward-line 1)
+        (forward-char pos)))))
+
+(global-set-key (kbd "C-d") 'duplicate-line-or-region)
 
 ;;-------------------------------------------------------------------------
 
@@ -914,6 +944,11 @@ With argument ARG, do this that many times."
 ;;; Python
 ;;https://elpy.readthedocs.io/en/
 ;;https://github.com/jorgenschaefer/elpy
+(defun my-python-hook ()
+  (win-nav-rsz)
+  (global-set-key [C-<up>] 'backward-paragraph)
+  (global-set-key [C-<down>] 'forward-paragraph)
+  )
 (use-package python
   :defer t
   :mode ("\\.py" . python-mode)
@@ -930,7 +965,7 @@ With argument ARG, do this that many times."
   (elpy-enable)
   (use-snips)(add-hook 'python-mode-hook #'hook-snips)
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
-  (add-hook 'python-mode-hook #'win-nav-rsz)
+  (add-hook 'python-mode-hook #'my-python-hook)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
@@ -1090,6 +1125,13 @@ With argument ARG, do this that many times."
 (global-set-key [f6] 'recompile)
 (global-set-key [f8] 'next-error)
 (global-set-key [S-f8] 'previous-error)
+
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 ;;-------------------------------------------------------------------------
 ;; Debugging https://www.gnu.org/software/emacs/manual/html_node/emacs/GDB-Graphical-Interface.html#GDB-Graphical-Interface
@@ -1369,15 +1411,70 @@ With argument ARG, do this that many times."
 ;;-------------------------------------------------------------------------
 ;; https://github.com/atilaneves/cmake-ide
 
-;;(use-package cmake-ide
-;;  :defer t
-;;  :init
-;;;;  :bind ("s-p" . projectile-command-map)
-;;  :commands (cmake-ide-setup the-package-cmd4)
-;;  :config
-;;  (cmake-ide-setup)
-;;  )
-;;
+(defun cmake-ide--get-default-build-dir ()
+  "get a default value for cmake-ide-build-dir"
+  (if (and (boundp 'cmake-ide-build-dir)
+           (not (string-equal 'cmake-ide-build-dir "")))
+      ;; if there's a current cmake-ide-build-dir, use it
+      (progn
+        ;;(message "cmake-ide-build-dir already defined")
+        cmake-ide-build-dir)
+      ;; otherwise...
+    (progn
+      ;; is there a result from a previous session?
+      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
+        (if (file-exists-p fn)
+          (progn
+            ;; load the file into a string
+            ;;(message "found a previous session at %s: %s" fn
+            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+          ;; otherwise, just use the current directory
+          (progn
+            ;;(message "cmake-ide-build-dir from current directory: %s"
+            ;;         (setq fonix (file-name-directory (buffer-file-name))))
+            (file-name-directory (buffer-file-name))
+            )
+          )
+        )
+      )
+    )
+  )
+
+(defun cmake-ide--set-build-dir (dir)
+  "set cmake-ide-build-dir, and store the value to a persistent file"
+  (if (and (boundp 'cmake-ide-build-dir)
+           (not (string-equal 'cmake-ide-build-dir "")))
+      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
+      (progn (message "cmake-ide-build-dir was empty"))
+    )
+  (setq cmake-ide-build-dir dir)
+  (message "cmake-ide-build-dir is now %s" dir)
+  ;; save this value to a file for use in future sessions
+  (write-region cmake-ide-build-dir nil
+                (concat user-emacs-directory "cmake-ide-build-dir.save"))
+  )
+
+(defun cmake-ide-set-build-dir (dir)
+  (interactive
+   (list (read-directory-name "Enter the cmake-ide build directory: "
+                              (cmake-ide--get-default-build-dir))))
+  (cmake-ide--set-build-dir dir)
+  )
+
+(defun my-cmake-ide-setup()
+  (interactive)
+  (require 'rtags)
+  (call-interactively 'cmake-ide-set-build-dir)
+  )
+
+(use-package cmake-ide
+  :defer t
+  :init
+;;  :bind ("s-p" . projectile-command-map)
+  :commands (cmake-ide-setup)
+  )
+
 ;;-------------------------------------------------------------------------
 ;; https://projectile.readthedocs.io/en/
 
@@ -1539,11 +1636,26 @@ With argument ARG, do this that many times."
    (quote
     ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
  '(ecb-options-version "2.40")
- )
+ '(safe-local-variable-values
+   (quote
+    ((eval load-file
+           (concat c4stl-dir ".project.el"))
+     (eval set
+           (make-local-variable
+            (quote c4stl-dir))
+           (file-name-directory
+            (let
+                ((d
+                  (dir-locals-find-file ".")))
+              (if
+                  (stringp d)
+                  d
+                (car d)))))))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
- '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))) t))
+ '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
+ '(highlight-indentation-face ((t (:background "gray24")))))
