@@ -1,30 +1,26 @@
 
-(defcustom cmany-proj-dir
-  nil
+(defcustom cmany-proj-dir nil
   "The directory where the project CMakeLists.txt is located."
   :group 'cmany
   :type 'directory
   :safe #'stringp
   )
 
-(defcustom cmany-build-dir
-  nil
+(defcustom cmany-build-dir nil
   "The directory of the current cmany build."
   :group 'cmany
   :type 'string
   :safe #'stringp
   )
 
-(defcustom cmany-args
-  "-E -c clang++ -t Debug"
+(defcustom cmany-args "-E -c clang++ -t Debug"
   "The arguments to use when running cmany"
   :group 'cmany
   :type 'string
   :safe #'stringp
   )
 
-(defcustom cmany-target
-  ""
+(defcustom cmany-target ""
   "The current active target"
   :group 'cmany
   :type 'string
@@ -103,14 +99,6 @@
   )
 
 ;;-----------------------------------------------------------------------------
-(defun cmany-prompt-proj-dir (dir)
-  (interactive
-   (list (read-directory-name "cmany proj dir: "
-                              (cmany--get-default-proj-dir))))
-  (setq cmany-proj-dir dir)
-  )
-
-;;-----------------------------------------------------------------------------
 (defun cmany--get-default-build-dir ()
   (let ((d default-directory))
     (if (not (cmany--has-proj-dir))
@@ -126,7 +114,17 @@
     )
   )
 
+;;-----------------------------------------------------------------------------
+(defun cmany-prompt-proj-dir (dir)
+  "interactively prompt for the project dir"
+  (interactive
+   (list (read-directory-name "cmany proj dir: "
+                              (cmany--get-default-proj-dir))))
+  (setq cmany-proj-dir dir)
+  )
+
 (defun cmany-prompt-build-dir (dir)
+  "interactively prompt for the build dir"
   (interactive
    (list (read-string "cmany build dir: " (cmany--get-default-build-dir))))
   (setq cmany-build-dir dir)
