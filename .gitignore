@@ -7,3 +7,7 @@ semanticdb/
 tramp
 __pycache__
 ido.last
+*.pyc
+projectile-bookmarks.eld
+cmake-ide-build-dir.save
+*~
