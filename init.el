@@ -320,8 +320,12 @@
   ; monokai-theme: https://github.com/oneKelvinSmith/monokai-emacs
   (interactive)
   (load-theme 'monokai t)
-  (set-face-background 'hl-line "#373737")
-  (set-face-background 'region "#666666")
+  (if window-system
+      (progn
+        (set-face-background 'hl-line "#373737")
+        (set-face-background 'region "#666666")
+        )
+    )
 )
 
 (defun my-set-theme-firebelly()
@@ -343,24 +347,6 @@
 
 (my-set-theme-monokai)
 ;(my-set-theme-tango-2)
-
-;(defun plist-to-alist (the-plist) ; emacs24 needs this
-;; (defun get-tuple-from-plist (the-plist)
-;;   (when the-plist
-;;     (cons (car the-plist) (cadr the-plist))))
-;; (let ((alist '()))
-;;   (while the-plist
-;;     (add-to-list 'alist (get-tuple-from-plist the-plist))
-;;     (setq the-plist (cddr the-plist)))
-;; alist))
-;(if window-system
-;; (progn
-;;   (require 'color-theme)
-;;   (add-to-list 'load-path "~/.emacs.d/color-theme-solarized-master")
-;;   (require 'color-theme-solarized)
-;;   (setq color-theme-is-global t)
-;;   (color-theme-solarized-dark)))
-;
 
 ;;-------------------------------------------
 ;; Show line numbers
@@ -538,12 +524,13 @@
   :config
   (global-company-mode)
   ;; https://tuhdo.github.io/c-ide.html#orgheadline15
-  (setq company-backends (delete 'company-semantic company-backends))
-  (define-key c-mode-map  [(tab)] 'company-complete)
-  (define-key c++-mode-map  [(tab)] 'company-complete)
-  ;; https://tuhdo.github.io/c-ide.html#orgheadline15
   (add-to-list 'company-backends 'company-c-headers)
+  (setq company-backends (delete 'company-semantic company-backends))
+  :bind
+  (:map c-mode-base-map ("(tab)" . company-complete)
+   :map c++-mode-base-map ("(tab)" . company-complete)
   )
+)
 
 ;; stop safety warnings when this var is given in .dir-locals.el
 ;; see http://emacs.stackexchange.com/questions/18774/trust-dir-locals-el
