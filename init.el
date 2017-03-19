@@ -989,6 +989,20 @@ original line and use the absolute value."
          ("\\.xsl\\'" . nxml-mode)
          ("\\.rng\\'" . nxml-mode)
          ("\\.dtllp\\'" . nxml-mode)))
+(defun unhtml (start end)
+  "escape html characters: &, <, >.
+  taken from: http://shallowsky.com/blog/linux/editors/emacs-escape-html.html"
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (replace-string "&" "&amp;")
+      (goto-char (point-min))
+      (replace-string "<" "&lt;")
+      (goto-char (point-min))
+      (replace-string ">" "&gt;")
+      )))
 
 
 ;;; YAML
