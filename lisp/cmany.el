@@ -127,7 +127,10 @@
   "interactively prompt for the build dir"
   (interactive
    (list (read-string "cmany build dir: " (cmany--get-default-build-dir))))
-  (setq cmany-build-dir dir)
+  (let ((dir-with-trailing-slash (file-name-as-directory dir)))
+    (message "cmany-build-dir is now %s" dir-with-trailing-slash)
+    (setq cmany-build-dir dir-with-trailing-slash)
+    )
   )
 
 ;;-----------------------------------------------------------------------------
@@ -159,11 +162,23 @@
   )
 
 ;;-----------------------------------------------------------------------------
+;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html
+
+(defun cmany-rtags-announce-build-dir ()
+  (interactive)
+  (if (not (boundp 'cmany--rtags-rdm))
+      (progn
+        (setq cmany--rtags-rdm (start-process "cmany-rtags-rdm" "*rtags-rdm*" "rdm"))))
+  (start-process "cmany-rtags-rc" "*rtags-rdm*" "rc" "-J" cmany-build-dir)
+  )
+
+;;-----------------------------------------------------------------------------
 (defun cmany-setup ()
   (interactive)
   (call-interactively 'cmany-prompt-proj-dir)
   (call-interactively 'cmany-prompt-args)
   (call-interactively 'cmany-prompt-build-dir)
+  (cmany-rtags-announce-build-dir)
   (call-interactively 'cmany-select-target)
   )
 
@@ -172,7 +187,7 @@
   (interactive
    (list
     (read-string
-     "cmany configure: "
+     "enter configure cmd: "
      (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
          (progn cmany--last-configure)
          (progn (format "cmany configure %s %s" cmany-args cmany-proj-dir))
@@ -191,10 +206,10 @@
   (interactive
    (list
     (read-string
-     "cmany build: "
+     "enter build cmd: "
      (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
          (progn cmany--last-build)
-         (progn (format "cmany build %s %s" cmany-args cmany-proj-dir))
+         (progn (format "cmany build %s %s" cmany-args cmany-proj-dir cmany-target))
          )
      )))
   (setq cmany--last-build cmd)

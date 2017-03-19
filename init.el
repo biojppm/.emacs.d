@@ -1403,95 +1403,28 @@ original line and use the absolute value."
 ;; https://www.emacswiki.org/emacs/CategorySearchAndReplace
 
 ;;-------------------------------------------------------------------------
-;; https://github.com/atilaneves/cmake-ide
-
-(defun cmake-ide--get-default-build-dir ()
-  "get a default value for cmake-ide-build-dir"
-  (if (and (boundp 'cmake-ide-build-dir)
-           (not (string-equal 'cmake-ide-build-dir "")))
-      ;; if there's a current cmake-ide-build-dir, use it
-      (progn
-        ;;(message "cmake-ide-build-dir already defined")
-        cmake-ide-build-dir)
-      ;; otherwise...
-    (progn
-      ;; is there a result from a previous session?
-      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
-        (if (file-exists-p fn)
-          (progn
-            ;; load the file into a string
-            ;;(message "found a previous session at %s: %s" fn
-            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-          ;; otherwise, just use the current directory
-          (progn
-            ;;(message "cmake-ide-build-dir from current directory: %s"
-            ;;         (setq fonix (file-name-directory (buffer-file-name))))
-            (file-name-directory (buffer-file-name))
-            )
-          )
-        )
-      )
-    )
-  )
-
-(defun cmake-ide--set-build-dir (dir)
-  "set cmake-ide-build-dir, and store the value to a persistent file"
-  (if (and (boundp 'cmake-ide-build-dir)
-           (not (string-equal 'cmake-ide-build-dir "")))
-      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
-      (progn (message "cmake-ide-build-dir was empty"))
-    )
-  (setq cmake-ide-build-dir dir)
-  (message "cmake-ide-build-dir is now %s" dir)
-  ;; save this value to a file for use in future sessions
-  (write-region cmake-ide-build-dir nil
-                (concat user-emacs-directory "cmake-ide-build-dir.save"))
-  )
-
-(defun cmake-ide-set-build-dir (dir)
-  (interactive
-   (list (read-directory-name "Enter the cmake-ide build directory: "
-                              (cmake-ide--get-default-build-dir))))
-  (cmake-ide--set-build-dir dir)
-  )
-
-(defun my-cmake-ide-setup()
-  (interactive)
-  (require 'rtags)
-  (call-interactively 'cmake-ide-set-build-dir)
-  )
-
-(use-package cmake-ide
-  :defer t
-  :init
-;;  :bind ("s-p" . projectile-command-map)
-  :commands (cmake-ide-setup)
-  )
-
-;;-------------------------------------------------------------------------
 ;; https://projectile.readthedocs.io/en/
 
 (use-package projectile
-  :defer t
+  ;;:defer t
   :init
-  :bind ("s-p" . projectile-command-map)
+  ;;:bind ("s-p" . projectile-command-map)
   :config
   (projectile-global-mode)
-;; (persp-mode)
-;; (use-package persp-projectile
-;;   :commands persp-projectile
-;;   :config
-;;   (add-hook 'persp-activated-hook
-;;             #'(lambda ()
-;;                 (persp-add-buffer
-;;                  (get-buffer-create "*Messages*")))))
-;; (require 'persp-projectile)
-;; (setq projectile-switch-project-action 'projectile-dired)
-;; (setq projectile-mode-line
-;;       '(:eval (if (file-remote-p default-directory)
-;;                   " Prj[*remote*]"
-;;                 (format " Prj[%s]" (projectile-project-name)))))
+  ;;(persp-mode)
+  ;;(use-package persp-projectile
+  ;;  :commands persp-projectile
+  ;;  :config
+  ;;  (add-hook 'persp-activated-hook
+  ;;            #'(lambda ()
+  ;;                (persp-add-buffer
+  ;;                 (get-buffer-create "*Messages*")))))
+  ;;(require 'persp-projectile)
+  (setq projectile-switch-project-action 'projectile-dired)
+  (setq projectile-mode-line
+        '(:eval (if (file-remote-p default-directory)
+                    " Prj[*remote*]"
+                  (format " Prj[%s]" (projectile-project-name)))))
   )
 
 ;; C-c p f 	Display a list of all files in the project. With a prefix argument it will clear the cache first.
@@ -1538,6 +1471,109 @@ original line and use the absolute value."
 ;;
 ;; C-c p C-h
 ;;
+
+;;-------------------------------------------------------------------------
+;; RTAGS
+
+(eval-after-load 'cc-mode
+  '(progn
+     (require 'rtags)
+     (mapc (lambda (x)
+             (define-key c-mode-base-map
+               (kbd (concat "C-c r " (car x))) (cdr x)))
+           '(("." . rtags-find-symbol-at-point)
+             ("," . rtags-find-references-at-point)
+             ("v" . rtags-find-virtuals-at-point)
+             ("V" . rtags-print-enum-value-at-point)
+             ("/" . rtags-find-all-references-at-point)
+             ("Y" . rtags-cycle-overlays-on-screen)
+             (">" . rtags-find-symbol)
+             ("<" . rtags-find-references)
+             ("-" . rtags-location-stack-back)
+             ("+" . rtags-location-stack-forward)
+             ("D" . rtags-diagnostics)
+             ("G" . rtags-guess-function-at-point)
+             ("p" . rtags-set-current-project)
+             ("P" . rtags-print-dependencies)
+             ("e" . rtags-reparse-file)
+             ("E" . rtags-preprocess-file)
+             ("R" . rtags-rename-symbol)
+             ("M" . rtags-symbol-info)
+             ("S" . rtags-display-summary)
+             ("O" . rtags-goto-offset)
+             (";" . rtags-find-file)
+             ("F" . rtags-fixit)
+             ("X" . rtags-fix-fixit-at-point)
+             ("B" . rtags-show-rtags-buffer)
+             ("I" . rtags-imenu)
+             ("T" . rtags-taglist)))))
+
+;;-------------------------------------------------------------------------
+;; https://github.com/atilaneves/cmake-ide
+
+;;(defun cmake-ide--get-default-build-dir ()
+;;  "get a default value for cmake-ide-build-dir"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      ;; if there's a current cmake-ide-build-dir, use it
+;;      (progn
+;;        ;;(message "cmake-ide-build-dir already defined")
+;;        cmake-ide-build-dir)
+;;      ;; otherwise...
+;;    (progn
+;;      ;; is there a result from a previous session?
+;;      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
+;;        (if (file-exists-p fn)
+;;          (progn
+;;            ;; load the file into a string
+;;            ;;(message "found a previous session at %s: %s" fn
+;;            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;          ;; otherwise, just use the current directory
+;;          (progn
+;;            ;;(message "cmake-ide-build-dir from current directory: %s"
+;;            ;;         (setq fonix (file-name-directory (buffer-file-name))))
+;;            (file-name-directory (buffer-file-name))
+;;            )
+;;          )
+;;        )
+;;      )
+;;    )
+;;  )
+;;
+;;(defun cmake-ide--set-build-dir (dir)
+;;  "set cmake-ide-build-dir, and store the value to a persistent file"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
+;;      (progn (message "cmake-ide-build-dir was empty"))
+;;    )
+;;  (setq cmake-ide-build-dir dir)
+;;  (message "cmake-ide-build-dir is now %s" dir)
+;;  ;; save this value to a file for use in future sessions
+;;  (write-region cmake-ide-build-dir nil
+;;                (concat user-emacs-directory "cmake-ide-build-dir.save"))
+;;  )
+;;
+;;(defun cmake-ide-set-build-dir (dir)
+;;  (interactive
+;;   (list (read-directory-name "Enter the cmake-ide build directory: "
+;;                              (cmake-ide--get-default-build-dir))))
+;;  (cmake-ide--set-build-dir dir)
+;;  )
+;;
+;;(defun my-cmake-ide-setup()
+;;  (interactive)
+;;  (require 'rtags)
+;;  (call-interactively 'cmake-ide-set-build-dir)
+;;  )
+;;
+;;(use-package cmake-ide
+;;  :defer t
+;;  :init
+;;;;  :bind ("s-p" . projectile-command-map)
+;;  :commands (cmake-ide-setup)
+;;  )
 
 ;;-------------------------------------------------------------------------
 ;;text modes
