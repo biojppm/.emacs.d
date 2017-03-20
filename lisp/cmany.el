@@ -1,30 +1,31 @@
+(defcustom cmany-rtags-enabled 1
+  "Whether cmany should announce the current build directory to rtags."
+  :group 'cmany
+  :type 'boolean
+  :safe #'booleanp
+  )
 
-(defcustom cmany-proj-dir nil
+(defcustom cmany-build-dir-prefix "build/"
+  ""
+  :group 'cmany
+  :type 'string
+  :safe #'stringp
+  )
+
+(defvar cmany-proj-dir nil
   "The directory where the project CMakeLists.txt is located."
-  :group 'cmany
-  :type 'directory
-  :safe #'stringp
   )
 
-(defcustom cmany-build-dir nil
+(defvar cmany-build-dir nil
   "The directory of the current cmany build."
-  :group 'cmany
-  :type 'string
-  :safe #'stringp
   )
 
-(defcustom cmany-args "-E -c clang++ -t Debug"
+(defvar cmany-cmd "cmany %s -E -c clang++ -t Debug %s"
   "The arguments to use when running cmany"
-  :group 'cmany
-  :type 'string
-  :safe #'stringp
   )
 
-(defcustom cmany-target ""
+(defvar cmany-target ""
   "The current active target"
-  :group 'cmany
-  :type 'string
-  :safe #'stringp
   )
 
 ;;;;-----------------------------------------------------------------------------
@@ -61,17 +62,58 @@
 ;;    )
 ;;  )
 
+;;-----------------------------------------------------------------------------
 (defun cmany--has-proj-dir ()
+  "is cmany-proj-dir already set"
   (and (boundp 'cmany-proj-dir) (not (string-equal 'cmany-proj-dir "")))
   )
 
 (defun cmany--has-build-dir ()
+  "is cmany-build-dir already set"
   (and (boundp 'cmany-build-dir) (not (string-equal 'cmany-build-dir "")))
   )
 
 ;;-----------------------------------------------------------------------------
+(defun cmany--get-cmd-output (workdir cmd)
+  "Run PROGRAM with ARGS and return the output in a string if it returns 0;
+  otherwise return an empty string."
+  (let ((d default-directory))
+     (message "cmany cmd exec: %s" cmd)
+     (cd workdir)
+     (with-temp-buffer
+       (message "cmany cmd exec at dir: %s (was at %s)" (pwd) d)
+       (let ((p (call-process-shell-command cmd nil (current-buffer))))
+         (message "cmany cmd return: %d" p)
+         (message "cmany cmd output: %s" (buffer-string))
+         (if (eq p 0)
+             (progn (setq -cmcs (buffer-string)))
+             (progn (setq -cmcs ""))
+           )
+         )
+       )
+     (cd d)
+     -cmcs
+     )
+  )
+
+(defun cmany--get-cmany-output (cmd &rest more-args)
+  (let* ((base-cmd (format cmany-cmd cmd cmany-proj-dir))
+         (full-cmd (concat base-cmd more-args))
+         )
+    (message "cmany cmd base: %s" base-cmd)
+    (message "cmany cmd full: %s" full-cmd)
+    (cmany--get-cmd-output cmany-proj-dir full-cmd)
+    )
+  )
+
+(defun cmany--get-cmany-lines (cmd &rest more-args)
+  (let ((out (apply 'cmany--get-cmany-output cmd more-args)))
+    (split-string out "\n")
+    )
+  )
+
+;;-----------------------------------------------------------------------------
 (defun cmany--get-default-proj-dir ()
-  "get a default value for cmany-proj-dir"
   ;; if there's a current cmany-proj-dir, use it
   (if (cmany--has-proj-dir)
       (progn
@@ -79,7 +121,7 @@
         cmany-proj-dir)
       ;; otherwise...
       (progn
-        ;; if projectile is available, get its project root
+        ;; if projectile is available, get the current project root
         (setq r "")
         (when (featurep 'projectile)
           (setq r (projectile-project-root)))
@@ -98,88 +140,86 @@
       )
   )
 
-;;-----------------------------------------------------------------------------
-(defun cmany--get-default-build-dir ()
-  (let ((d default-directory))
-    (if (not (cmany--has-proj-dir))
-        (progn (setq cmany-proj-dir (cmany--get-default-proj-dir))))
-    (cd cmany-proj-dir)
-    (setq cmd (format "cmany show_builds %s %s" cmany-args cmany-proj-dir))
-    (message "cmany cmd: %s" cmd)
-    (setq bd (shell-command-to-string cmd))
-    (setq bd (car (split-string bd "\n")))
-    (setq bd (concat cmany-proj-dir "build/" bd ))
-    (cd d)
-    bd
+(defun cmany--exec-prompt-build-dir ()
+  (interactive)
+  (let* ((pfx (concat cmany-proj-dir cmany-build-dir-prefix)) ;; the full path to the builds dir
+         (bds (cmany--get-cmany-lines "show_builds"))  ;; extract the list of current builds
+         (bd (car bds)) ;; pick the first
+         (bdr (ido-read-directory-name "cmany build dir: " pfx bd nil bd)))
+    (message "read directory: %s" bdr)
+    bdr
     )
   )
 
 ;;-----------------------------------------------------------------------------
-(defun cmany-prompt-proj-dir (dir)
-  "interactively prompt for the project dir"
+(defun cmany-set-proj-dir (&optional dir)
+  "set the project dir used by cmany"
   (interactive
-   (list (read-directory-name "cmany proj dir: "
-                              (cmany--get-default-proj-dir))))
+   (list (ido-read-directory-name
+          "cmany proj dir: " (cmany--get-default-proj-dir))))
+  (message "cmany set proj dir: %s" dir)
   (setq cmany-proj-dir dir)
   )
 
-(defun cmany-prompt-build-dir (dir)
-  "interactively prompt for the build dir"
+(defun cmany-set-build-dir (&optional dir)
+  "prompt for the build dir used by cmany"
   (interactive
-   (list (read-string "cmany build dir: " (cmany--get-default-build-dir))))
-  (let ((dir-with-trailing-slash (file-name-as-directory dir)))
-    (message "cmany-build-dir is now %s" dir-with-trailing-slash)
-    (setq cmany-build-dir dir-with-trailing-slash)
-    )
+   (list (file-name-as-directory
+           (call-interactively 'cmany--exec-prompt-build-dir))))
+  (message "cmany set build dir: %s" dir)
+  (setq cmany-build-dir dir)
   )
 
-;;-----------------------------------------------------------------------------
-(defun cmany-prompt-args (args)
+(defun cmany-set-cmd (&optional cmd)
+  "prompt for the build dir used by cmany"
   (interactive
-   (list (read-string "cmany arguments: " cmany-args)))
-  (setq cmany-args args)
+   (list (read-string "cmany command: " cmany-cmd)))
+  (message "cmany set command: %s" cmd)
+  (setq cmany-cmd cmd)
   )
 
-(defun cmany-select-target ()
-  (interactive)
-  (let ((d default-directory))
-    (cd cmany-proj-dir)
-    (pwd)
-    (setq cmd (format "cmany show_targets %s %s" cmany-args cmany-proj-dir))
-    (message "cmany cmd: %s" cmd)
-    (setq tgts (shell-command-to-string cmd))
-    (cd d)
-    (message "cmany output: %s" tgts)
-    (setq tgts (split-string tgts "\n"))
-    (when (featurep 'ido)
-      (let ((arg (ido-completing-read "Select default target: " tgts)))
-        (message "cmany selected target: %s" arg)
-        (setq cmany-target arg)
-        arg
-        )
-      )
-    )
+(defun cmany-set-target (&optional tgt)
+  "prompt for the build dir used by cmany"
+  (interactive
+   (list (ido-completing-read
+          "cmany current target: "
+          (cmany--get-cmany-lines "show_targets") nil nil cmany-target)))
+    (message "cmany set target: %s" tgt)
+    (setq cmany-target tgt)
   )
 
 ;;-----------------------------------------------------------------------------
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html
 
-(defun cmany-rtags-announce-build-dir ()
+(defun cmany-rtags-start ()
   (interactive)
-  (if (not (boundp 'cmany--rtags-rdm))
-      (progn
-        (setq cmany--rtags-rdm (start-process "cmany-rtags-rdm" "*rtags-rdm*" "rdm"))))
-  (start-process "cmany-rtags-rc" "*rtags-rdm*" "rc" "-J" cmany-build-dir)
+  (when (and cmany-rtags-enabled (featurep 'rtags))
+    ;;(if (not (boundp 'cmany--rtags-rdm))
+    ;;    (progn
+    ;;      (message "starting rdm")
+    ;;      (setq cmany--rtags-rdm (start-process "cmany-rtags-rdm" "*rdm*" "rdm")))
+    ;;  (progn (message "rdm is already running")))
+    ;;)
+    (rtags-start-process-unless-running)
+    )
+  )
+
+(defun cmany-rtags-announce-build-dir (&optional dir)
+  (interactive (list cmany-build-dir))
+  (when (and cmany-rtags-enabled (featurep 'rtags))
+    (cmany-rtags-start)
+    (start-process (concat "cmany-rtags-rc" " " dir) "*rdm*" "rc" "-J" dir)
+    )
   )
 
 ;;-----------------------------------------------------------------------------
 (defun cmany-setup ()
   (interactive)
-  (call-interactively 'cmany-prompt-proj-dir)
-  (call-interactively 'cmany-prompt-args)
-  (call-interactively 'cmany-prompt-build-dir)
-  (cmany-rtags-announce-build-dir)
-  (call-interactively 'cmany-select-target)
+  (call-interactively 'cmany-set-proj-dir)
+  (call-interactively 'cmany-set-cmd)
+  (call-interactively 'cmany-set-build-dir)
+  (cmany-rtags-announce-build-dir cmany-build-dir)
+  (call-interactively 'cmany-set-target)
   )
 
 ;;-----------------------------------------------------------------------------
@@ -190,7 +230,7 @@
      "enter configure cmd: "
      (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
          (progn cmany--last-configure)
-         (progn (format "cmany configure %s %s" cmany-args cmany-proj-dir))
+         (progn (format cmany-cmd "configure"))
          )
      )))
   (setq cmany--last-configure cmd)
@@ -209,7 +249,7 @@
      "enter build cmd: "
      (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
          (progn cmany--last-build)
-         (progn (format "cmany build %s %s" cmany-args cmany-proj-dir cmany-target))
+         (progn (concat (format cmany-cmd "build") " " cmany-target))
          )
      )))
   (setq cmany--last-build cmd)
@@ -218,4 +258,19 @@
     (compile cmd)
     (cd d)
     )
+  )
+
+;;-----------------------------------------------------------------------------
+(defun cmany-debug (cmd)
+  (interactive
+   (list
+    (read-string
+     "enter gdb cmd: "
+     (if (and (boundp 'cmany--last-debug) (not (string-equal 'cmany--last-debug "")))
+         (progn cmany--last-debug)
+         (progn (format "gdb -i=mi %s" (concat cmany-build-dir cmany-target)))
+         )
+     )))
+  (setq cmany--last-debug cmd)
+  (call-interactively (gdb cmd))
   )
