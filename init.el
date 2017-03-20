@@ -96,7 +96,7 @@
 ;; ; package until any them are used
 ;; :commands (the-package-cmd3 the-package-cmd4)
 ;
-;; ; bind a key to primary commands within the package. Note the following:
+;; ; bind a key to primary commands within the package. Defer loading also. Note the following:
 ;; ;   * Special keys like tab or F1-Fn can be written in square brackets,
 ;; ;     ie [tab] instead of "tab"
 ;; ;   * To bind a key within a local keymap that only exists after the
@@ -110,10 +110,47 @@
 ;
 ;; ; establish a deferred binding within the interpreter-mode-alist variable
 ;; :interpreter ("\\.py\\'" . python-mode)
+;;
+;; ; explicitly defer loading of the package
+;; :defer t
+;; ; ... or explicitly demant loading of the package
+;; :demand t
+;;
 ;; )
 
 
 ;;-------------------------------------------------------------------------------
+
+;; http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
+
+;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+;; super: left Windows key
+(setq w32-pass-lwindow-to-system nil)
+(setq w32-lwindow-modifier 'super) ; Left Windows key
+;; super: right Windows key
+(setq w32-pass-rwindow-to-system nil)
+(setq w32-rwindow-modifier 'super) ; Right Windows key
+;; make the menu/app key the hyper key
+(setq w32-pass-apps-to-system nil)
+(setq w32-apps-modifier 'hyper) ; Menu/App key
+
+;; Mac OS X
+;; set keys for Apple keyboard, for emacs in OS X
+(setq mac-command-modifier 'meta) ; make cmd key do Meta
+(setq mac-option-modifier 'super) ; make opt key do Super
+(setq mac-control-modifier 'control) ; make Control key do Control
+(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+
+
+;;-------------------------------------------------------------------------------
+;; Important keys:
+
+;; C Control
+;; M Meta (Alt)
+;; S shift
+;; s super
+;; H hyper
+
 ;; Important shortcuts:
 
 ;; C-h k
@@ -151,8 +188,11 @@
 
 ;; C-x z
 ;;    repeat previous command. After this, pressing z will repeat again
+;; C-x ESC ESC
+;;    repeat previous complex command (a command which used the minibuffer)
 
-(global-set-key [f2] 'repeat)  ; does the same as C-x z
+(global-set-key [f2] 'repeat-complex-command)  ; does the same as C-x ESC ESC
+(global-set-key [M-f2] 'repeat)  ; does the same as C-x z
 
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
@@ -499,7 +539,6 @@
 ;;If Ido is getting in your way, remember the fallback commands:
 ;; C-f for files; C-b for buffers.
 
-
 ;;-------------------------------------------------------------------------
 ;; Auto complete
 
@@ -526,16 +565,13 @@
   ;; https://tuhdo.github.io/c-ide.html#orgheadline15
   (add-to-list 'company-backends 'company-c-headers)
   (setq company-backends (delete 'company-semantic company-backends))
+  (setq company-minimum-prefix-length 3)
+  (setq company-auto-complete 1)
   :bind
-  (:map c-mode-base-map ("(tab)" . company-complete)
-   :map c++-mode-base-map ("(tab)" . company-complete)
-  )
+  (("C-<tab>" . company-complete)
+   :map company-active-map
+   ("ESC" . company-abort))
 )
-
-;; stop safety warnings when this var is given in .dir-locals.el
-;; see http://emacs.stackexchange.com/questions/18774/trust-dir-locals-el
-(put 'company-clang-arguments 'safe-local-variable #'listp)
-(put 'c4stl-dir 'safe-local-variable #'stringp)
 
 ;;-------------------------------------------------------------------------
 
@@ -837,7 +873,12 @@ original line and use the absolute value."
   (setq highlight-symbol-idle-delay 0.2)
   (add-hook 'highlight-symbol-mode-hook
             (function
-             (lambda () (highlight-symbol-nav-mode +1)(message "highlight porra")))))
+             (lambda ()
+               (highlight-symbol-nav-mode +1)
+               (message "highlight porra"))
+             )
+            )
+  )
 
 ;(use-package smart-mode-line
 ;; :init
@@ -856,16 +897,17 @@ original line and use the absolute value."
 
 (defun hook-snips()
   (message "enabling YASnippet...")
-  ; insert our dir at the front of the default snippets
+  ;; insert our dir at the front of the default snippets
   ;(setq sdir (concat emacs-dir "snippets"))
   ;(message (format "sdir=%s" sdir))
   ;(message (format "snippet_dirs=%s" yas-snippet-dirs))
   ;(setq yas-snippet-dirs (add-to-list 'yas-snippet-dirs sdir))
-  (message (format "yas-snippet-dirs=%s" yas-snippet-dirs))
+  (message "yas-snippet-dirs=%s" yas-snippet-dirs)
   (yas-reload-all)
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map [C-tab] 'yas-expand)
+  ;; bind yas-expand to C-S-tab
+  (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)
   (yas-minor-mode-on)
   (message "enabling YASnippet: done")
 )
@@ -904,19 +946,69 @@ original line and use the absolute value."
 
 
 ;;; C/C++
-(load "my-cppsetup")
+(load "my-cppsetup") ; needs cleanup
+(load-file (concat user-emacs-directory "lisp/cmany.el"))
+(defun my-rtags-hook ()
+  (interactive)
+  (rtags-start-process-unless-running)
+  )
 (use-package clang-format
   :defer t
   :bind ("C-c C-M-f" . clang-format-region))
 (use-package c-mode
   :defer t
   :config
-  (use-snips)(add-hook 'c-mode-common-hook #'my-c-hook))
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-rtags-hook))
 (use-package cc-mode
   :defer t
   :config
-  (use-snips)(add-hook 'c-mode-common-hook #'my-c-hook))
-
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-rtags-hook))
+;; RTAGS
+;; http://diobla.info/doc/rtags
+;; https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
+(use-package rtags
+  :init
+  (setq rtags-completions-enabled t)
+  (setq rtags-autostart-diagnostics t)
+  :config
+  (require 'company-rtags)
+  (add-to-list 'company-backends 'company-rtags)
+  :bind
+  (:map c-mode-base-map
+        ("M-<left>" . rtags-location-stack-back)
+        ("M-<right>" . rtags-location-stack-forward)
+        ("C-c r ." . rtags-find-symbol-at-point)
+        ("C-c r ," . rtags-find-references-at-point)
+        ("C-c r v" . rtags-find-virtuals-at-point)
+        ("C-c r V" . rtags-print-enum-value-at-point)
+        ("C-c r /" . rtags-find-all-references-at-point)
+        ("C-c r Y" . rtags-cycle-overlays-on-screen)
+        ("C-c r >" . rtags-find-symbol)
+        ("C-c r <" . rtags-find-references)
+        ("C-c r -" . rtags-location-stack-back)
+        ("C-c r +" . rtags-location-stack-forward)
+        ("C-c r D" . rtags-diagnostics)
+        ("C-c r G" . rtags-guess-function-at-point)
+        ("C-c r p" . rtags-set-current-project)
+        ("C-c r P" . rtags-print-dependencies)
+        ("C-c r e" . rtags-reparse-file)
+        ("C-c r E" . rtags-preprocess-file)
+        ("C-c r R" . rtags-rename-symbol)
+        ("C-c r M" . rtags-symbol-info)
+        ("C-c r S" . rtags-display-summary)
+        ("C-c r O" . rtags-goto-offset)
+        ("C-c r ;" . rtags-find-file)
+        ("C-c r F" . rtags-fixit)
+        ("C-c r X" . rtags-fix-fixit-at-point)
+        ("C-c r B" . rtags-show-rtags-buffer)
+        ("C-c r I" . rtags-imenu)
+        ("C-c r T" . rtags-taglist)
+        )
+  )
 
 
 ;;; PHP
@@ -1422,6 +1514,7 @@ original line and use the absolute value."
 (use-package projectile
   ;;:defer t
   :init
+  (setq projectile-enable-caching t)
   ;;:bind ("s-p" . projectile-command-map)
   :config
   (projectile-global-mode)
@@ -1485,42 +1578,6 @@ original line and use the absolute value."
 ;;
 ;; C-c p C-h
 ;;
-
-;;-------------------------------------------------------------------------
-;; RTAGS
-
-(eval-after-load 'cc-mode
-  '(progn
-     (require 'rtags)
-     (mapc (lambda (x)
-             (define-key c-mode-base-map
-               (kbd (concat "C-c r " (car x))) (cdr x)))
-           '(("." . rtags-find-symbol-at-point)
-             ("," . rtags-find-references-at-point)
-             ("v" . rtags-find-virtuals-at-point)
-             ("V" . rtags-print-enum-value-at-point)
-             ("/" . rtags-find-all-references-at-point)
-             ("Y" . rtags-cycle-overlays-on-screen)
-             (">" . rtags-find-symbol)
-             ("<" . rtags-find-references)
-             ("-" . rtags-location-stack-back)
-             ("+" . rtags-location-stack-forward)
-             ("D" . rtags-diagnostics)
-             ("G" . rtags-guess-function-at-point)
-             ("p" . rtags-set-current-project)
-             ("P" . rtags-print-dependencies)
-             ("e" . rtags-reparse-file)
-             ("E" . rtags-preprocess-file)
-             ("R" . rtags-rename-symbol)
-             ("M" . rtags-symbol-info)
-             ("S" . rtags-display-summary)
-             ("O" . rtags-goto-offset)
-             (";" . rtags-find-file)
-             ("F" . rtags-fixit)
-             ("X" . rtags-fix-fixit-at-point)
-             ("B" . rtags-show-rtags-buffer)
-             ("I" . rtags-imenu)
-             ("T" . rtags-taglist)))))
 
 ;;-------------------------------------------------------------------------
 ;; https://github.com/atilaneves/cmake-ide
