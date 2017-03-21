@@ -975,6 +975,7 @@ original line and use the absolute value."
 (defun my-rtags-hook ()
   (interactive)
   (rtags-start-process-unless-running)
+  (add-to-list 'company-backends 'company-rtags)
   )
 (use-package clang-format
   :defer t
@@ -998,9 +999,11 @@ original line and use the absolute value."
   :init
   (setq rtags-completions-enabled t)
   (setq rtags-autostart-diagnostics t)
+  (setq rtags-rc-log-enabled t)
   :config
   (require 'company-rtags)
   (add-to-list 'company-backends 'company-rtags)
+  (rtags-diagnostics)
   :bind
   (:map c-mode-base-map
         ("M-<left>" . rtags-location-stack-back)
