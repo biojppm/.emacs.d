@@ -444,15 +444,22 @@
 ;; IDO mode: (Interactively DO things)
 ;; https://www.masteringemacs.org/article/introduction-to-ido-mode
 
+(require 'ido)
 (require 'flx-ido) ; https://github.com/lewang/flx
-(setq ido-everywhere t) ; enable basic IDO support for files and buffers
-(setq ido-enable-flex-matching t)
+(require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
+(require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
 (ido-mode 1)
 (flx-ido-mode)
+(ido-everywhere 1) ; enable basic IDO support for files and buffers
+(setq ido-everywhere t)
+(setq ido-use-faces t)
+(ido-vertical-mode 1)
+(ido-ubiquitous-mode 1)
+(setq ido-enable-flex-matching t)
+(setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 
 ;; disable ido faces to see flx highlights.
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
+;(setq ido-use-faces nil)
 
 ;; set garbage-collection threshold to 10MB to speed up flx-ido:
 ;; see https://github.com/lewang/flx
@@ -540,6 +547,23 @@
 ;; C-f for files; C-b for buffers.
 
 ;;-------------------------------------------------------------------------
+;; smex
+;; https://github.com/nonsequitur/smex
+;; use IDO for completion of commands in M-x with enhancements
+;; like putting your most-used commands at the front of the list
+
+(use-package smex
+  :config
+  (smex-initialize)
+  :commands (smex smex-major-mode-commands)
+  :bind (
+         ("M-x" . smex)
+         ("M-X" . smex-major-mode-commands)
+         ("C-M-x" . execute-extended-command)
+         )
+  )
+
+;;-------------------------------------------------------------------------
 ;; Auto complete
 
 ;(require 'auto-complete-config)
@@ -563,8 +587,8 @@
   :config
   (global-company-mode)
   ;; https://tuhdo.github.io/c-ide.html#orgheadline15
-  (add-to-list 'company-backends 'company-c-headers)
-  (setq company-backends (delete 'company-semantic company-backends))
+  ;(add-to-list 'company-backends 'company-c-headers)
+  ;(setq company-backends (delete 'company-semantic company-backends))
   (setq company-minimum-prefix-length 3)
   (setq company-auto-complete 1)
   :bind
@@ -1724,7 +1748,6 @@ original line and use the absolute value."
     (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata")))))
   )
 )
-;
 
 
 
@@ -1760,3 +1783,8 @@ original line and use the absolute value."
  '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
  '(highlight-indentation-face ((t (:background "gray24")))))
+
+
+(set-face-attribute 'ido-vertical-first-match-face nil :background "#777777" :foreground "orange")
+(set-face-attribute 'ido-vertical-only-match-face nil :background nil :foreground nil)
+(set-face-attribute 'ido-vertical-match-face nil :foreground nil)
