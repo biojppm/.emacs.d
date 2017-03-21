@@ -1,3 +1,22 @@
+
+(defgroup cmany nil
+  "cmany customizations")
+
+(defcustom cmany-build-dir-prefix "build/"
+  "the path (relative to the project dir) under which the build
+directories should be placed"
+  :group 'cmany
+  :type 'string
+  :safe #'stringp
+  )
+
+(defcustom cmany-build-before-debug 1
+  "Whether cmany should do a build before starting a debug."
+  :group 'cmany
+  :type 'boolean
+  :safe #'booleanp
+  )
+
 (defcustom cmany-rtags-enabled 1
   "Whether cmany should announce the current build directory to rtags."
   :group 'cmany
@@ -5,13 +24,7 @@
   :safe #'booleanp
   )
 
-(defcustom cmany-build-dir-prefix "build/"
-  ""
-  :group 'cmany
-  :type 'string
-  :safe #'stringp
-  )
-
+;;-----------------------------------------------------------------------------
 (defvar cmany-proj-dir nil
   "The directory where the project CMakeLists.txt is located."
   )
@@ -230,7 +243,7 @@
      "enter configure cmd: "
      (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
          (progn cmany--last-configure)
-         (progn (format cmany-cmd "configure"))
+         (progn (format cmany-cmd "configure" cmany-proj-dir))
          )
      )))
   (setq cmany--last-configure cmd)
@@ -242,6 +255,10 @@
   )
 
 ;;-----------------------------------------------------------------------------
+(defun cmany--default-build-command ()
+   (concat (format cmany-cmd "build" cmany-proj-dir) " " cmany-target)
+  )
+
 (defun cmany-build (cmd)
   (interactive
    (list
@@ -249,7 +266,7 @@
      "enter build cmd: "
      (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
          (progn cmany--last-build)
-         (progn (concat (format cmany-cmd "build") " " cmany-target))
+         (progn (cmany--default-build-command))
          )
      )))
   (setq cmany--last-build cmd)
@@ -272,5 +289,8 @@
          )
      )))
   (setq cmany--last-debug cmd)
+  (when cmany-build-before-debug
+    (cmany-build (cmany--default-build-command))
+    )
   (call-interactively (gdb cmd))
   )

@@ -1006,8 +1006,10 @@ original line and use the absolute value."
   (rtags-diagnostics)
   :bind
   (:map c-mode-base-map
-        ("M-<left>" . rtags-location-stack-back)
+        ("M-<left>"  . rtags-location-stack-back)
         ("M-<right>" . rtags-location-stack-forward)
+        ("M-."       . rtags-find-symbol-at-point)
+        ("M-,"       . rtags-find-references-at-point)
         ("C-c r ." . rtags-find-symbol-at-point)
         ("C-c r ," . rtags-find-references-at-point)
         ("C-c r v" . rtags-find-virtuals-at-point)
