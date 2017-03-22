@@ -12,3 +12,5 @@ projectile-bookmarks.eld
 cmake-ide-build-dir.save
 *~
 smex-items
+projectile.cache
+

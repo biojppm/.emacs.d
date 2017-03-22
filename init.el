@@ -54,8 +54,9 @@
       (command-execute command))))
 
 ;-------------------------------------------------------------------------------
-;;MELPA - package installer
-;;http://melpa.milkbox.net/#/getting-started
+;; MELPA - package installer
+;; http://melpa.milkbox.net/#/getting-started
+;; http://ergoemacs.org/emacs/emacs_package_system.html
 
 (require 'package)
 (add-to-list 'package-archives
@@ -178,7 +179,8 @@
 ;;    execute selected elisp buffer
 ;; C-x e
 ;;    execute elisp code region or buffer
-
+;; C-x C-e
+;;    Evaluate sexp before point; print value in the echo area.
 ;; F3
 ;; C-x (
 ;;    start recording macro
@@ -191,8 +193,118 @@
 ;; C-x ESC ESC
 ;;    repeat previous complex command (a command which used the minibuffer)
 
-(global-set-key [f2] 'repeat-complex-command)  ; does the same as C-x ESC ESC
-(global-set-key [M-f2] 'repeat)  ; does the same as C-x z
+(global-set-key [f2] 'repeat)  ; does the same as C-x z
+(global-set-key [M-f2] 'repeat-complex-command)  ; does the same as C-x ESC ESC
+
+;; M-! cmd RET
+;;     Run the shell command line cmd and display the
+;;     output (shell-command).
+;; M-| cmd RET
+;;     Run the shell command line cmd with region contents as input;
+;;     optionally replace the region with the output
+;;     (shell-command-on-region).
+;; M-x shell
+;;     Run a subshell with input and output through an Emacs
+;;     buffer. You can then give commands interactively.
+;; M-x term
+;;     Run a subshell with input and output through an Emacs
+;;     buffer. You can then give commands interactively. Full terminal
+;;     emulation is available.
+;; M-x eshell
+;;     Start the Emacs shell.
+;;
+;; C-c C-j
+;;     Switch to line mode (term-line-mode). Do nothing if already in
+;;     line mode.
+;; C-c C-k
+;;     Switch to char mode (term-char-mode). Do nothing if already in
+;;     char mode.
+
+;; The following commands are only available in char mode:
+;; C-c C-c
+;;     Send a literal C-c to the sub-shell.
+;; C-c char
+;;     This is equivalent to C-x char in normal Emacs. For example,
+;;     C-c o invokes the global binding of C-x o, which is normally
+;;     ‘other-window’.
+
+;; Term mode has a page-at-a-time feature. When enabled, it makes
+;; output pause at the end of each screenful:
+;;
+;; C-c C-q
+;;     Toggle the page-at-a-time feature. This command works in both
+;;     line and char modes. When the feature is enabled, the mode-line
+;;     displays the word ‘page’, and each time Term receives more than
+;;     a screenful of output, it pauses and displays ‘**MORE**’ in the
+;;     mode-line. Type SPC to display the next screenful of output, or
+;;     ? to see your other options. The interface is similar to the
+;;     more program.
+
+
+;; Debugging, Tracing, and Profiling (taken from http://stackoverflow.com/a/19896143/5875572)
+
+;;(toggle-debug-on-error)
+;;(toggle-debug-on-quit)
+
+;; Debugging: https://www.emacswiki.org/emacs/SourceLevelDebugger
+;; C-u C-M-x
+
+;; M-: (info "(elisp) Debugging") RET
+
+;; Standard debugger:
+;; M-x debug-on-entry FUNCTION
+;; M-x cancel-debug-on-entry &optional FUNCTION
+;; debug &rest DEBUGGER-ARGS
+;; M-x toggle-debug-on-error
+;; M-x toggle-debug-on-quit
+;; setq debug-on-signal
+;; setq debug-on-next-call
+;; setq debug-on-event
+;; setq debug-on-message REGEXP
+
+;; Edebug -- a source-level debugger for Emacs Lisp
+;; M-x edebug-defun (C-u C-M-x) Cancel with eval-defun (C-M-x)
+;; M-x edebug-all-defs -- Toggle edebugging of all definitions
+;; M-x edebug-all-forms -- Toggle edebugging of all forms
+;; M-x edebug-eval-top-level-form
+
+;; Tracing:
+;; M-x trace-function FUNCTION &optional BUFFER
+;; M-x untrace-function FUNCTION
+;; M-x untrace-all
+
+;; Timing and benchmarking:
+;; (benchmark-run &optional REPETITIONS &rest FORMS)
+
+;; Emacs Lisp Profiler (ELP)
+;; M-x elp-instrument-package
+;; M-x elp-instrument-list
+;; M-x elp-instrument-function
+;; M-x elp-reset-*
+;; M-x elp-results
+;; M-x elp-restore-all
+;;
+;; "There's a built-in profiler called ELP. You can try something like
+;; M-x elp-instrument-package, enter "vc", and then try finding a file
+;; Afterwards, M-x elp-results will show you a profile report.
+;; (Note that if the time is instead being spent in non-vc-related
+;; functions, this technique will not show it, but you can instrument
+;; further packages if you like.)" http://stackoverflow.com/a/6732810/324105
+
+;; CPU & Memory Profiler ('Native Profiler')
+;; M-x profiler-start
+;; M-x profiler-report
+;; M-x profiler-reset
+;; M-x profiler-stop
+;; M-x profiler-*
+
+;; Dope ("DOtemacs ProfilEr. A per-sexp-evaltime profiler.")
+;; https://raw.github.com/emacsmirror/dope/master/dope.el
+;; M-x dope-quick-start will show a little introduction tutorial.
+
+;; Spinning:
+;; Set debug-on-quit to t
+;; When the problem happens, hit C-g for a backtrace.
 
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
@@ -446,17 +558,19 @@
 
 (require 'ido)
 (require 'flx-ido) ; https://github.com/lewang/flx
-(require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
 (require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
+(require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
 (ido-mode 1)
 (flx-ido-mode)
 (ido-everywhere 1) ; enable basic IDO support for files and buffers
 (setq ido-everywhere t)
 (setq ido-use-faces t)
+(setq ido-vertical-show-count t)
 (ido-vertical-mode 1)
 (ido-ubiquitous-mode 1)
 (setq ido-enable-flex-matching t)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+
 
 ;; disable ido faces to see flx highlights.
 ;(setq ido-use-faces nil)
@@ -556,11 +670,17 @@
   :config
   (smex-initialize)
   :commands (smex smex-major-mode-commands)
-  :bind (
-         ("M-x" . smex)
-         ("M-X" . smex-major-mode-commands)
-         ("C-M-x" . execute-extended-command)
-         )
+  :bind
+  (("M-x"   . smex)
+   ("M-X"   . smex-major-mode-commands)
+   ("C-M-x" . execute-extended-command)
+   ;;:map ido-completion-map
+   ;;("<tab>" . minibuffer-complete)
+   ;;("C-h f" . smex-describe-function) ;; fails with missing symbol ido-require-match
+   ;;("C-h w" . smex-where-is)
+   ;;("M-."   . smex-find-function)
+   ;;("C-a"   . move-beginning-of-line)
+   )
   )
 
 ;;-------------------------------------------------------------------------
@@ -1546,7 +1666,7 @@ original line and use the absolute value."
   (setq projectile-enable-caching t)
   ;;:bind ("s-p" . projectile-command-map)
   :config
-  (projectile-global-mode)
+  (projectile-mode)
   ;;(persp-mode)
   ;;(use-package persp-projectile
   ;;  :commands persp-projectile
