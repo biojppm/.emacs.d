@@ -818,12 +818,51 @@ If point was already at that position, move point to beginning of line."
 ;;=========================================================================
 ;; EDITING
 
+;;------------------------------------------------------------------
+(require 'iedit)
+;; iedit. https://github.com/victorhge/iedit
+;;
+;;   * Highlight certain contents - by press C-; All occurrences of a symbol,
+;;     string or a region in the buffer may be highlighted corresponding to
+;;     current mark, point and prefix argument. Refer to the document of
+;;     ‘iedit-mode’ for details.
+;;   * Edit one of the occurrences The change is applied to other occurrences
+;;     simultaneously.
+;;   * Finish - by pressing C-; again
+;;
+;; This package also provides rectangle support with visible
+;; rectangle highlighting, which is similar with cua mode rectangle
+;; support. But it’s lighter weight and uses Iedit mechanisms.
+;;
+;; You can also use Iedit mode as a quick way to temporarily show
+;; only the buffer lines that match the current text being
+;; edited. This gives you the effect of a temporary ‘keep-lines’ or
+;; ‘occur’. To get this effect, hit C-’ when in Iedit mode - it
+;; toggles hiding non-matching lines.
+;;
+;; Renaming refactoring is convenient in Iedit mode:
+;;
+;;   * The symbol under point is selected as occurrence by default and only
+;;     complete symbols are matched
+;;   * With digit prefix argument 0, only symbols in current function are
+;;     matched
+;;   * Restricting symbols in current region can be done by pressing C-;
+;;     again
+;;   * Last renaming refactoring is remembered and can be applied to other
+;;     buffers later
+;;
+;; There are also some other facilities you may never think about. Refer to
+;; the document of function ‘iedit-mode’ (C-h f iedit-mode RET) for more
+;; details.
+
+;;------------------------------------------------------------------
 ;; https://github.com/k-talo/volatile-highlights.el
 ;; brings visual feedback to some operations by highlighting portions
 ;; relating to the operations.
-(require 'volatile-highlights)
-(volatile-highlights-mode t)
+;;(require 'volatile-highlights)
+;;(volatile-highlights-mode t)
 
+;;------------------------------------------------------------------
 ;; https://github.com/jscheid/dtrt-indent
 ;; A minor mode that guesses the indentation offset originally used
 ;; for creating source code files and transparently adjusts the
