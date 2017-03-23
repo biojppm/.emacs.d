@@ -179,12 +179,6 @@ directories should be placed"
     )
   )
 
-(defun cmany--default-build-command ()
-  "get the cmany build command for the current proj/build/target "
-  (cmany--format-cmd "build" cmany-target)
-  )
-
-
 ;;-----------------------------------------------------------------------------
 (defun cmany--get-cmany-output (cmd &rest more-args)
   (let* ((base-cmd (cmany--format-cmd cmd))
@@ -286,28 +280,34 @@ directories should be placed"
 ;;-----------------------------------------------------------------------------
 
 (defun cmany--load-configs ()
-  (when (or (not (boundp 'cmany--configs))
-            (equal cmany--configs nil))
-    (let ((fn (concat user-emacs-directory "cmany.save")))
-      (if (file-exists-p fn)
+  "loads configs"
+  (let ((fn (concat user-emacs-directory "cmany.save")))
+    (if (file-exists-p fn)
+        (progn
           (cmany--read-from-file fn 'cmany--configs)
-        (setq cmany--configs
-              `((,(cmany--guess-proj-dir)
-                 '(("cmany-build-dir" . "")
-                   ("cmany-target" . "")
-                   ("cmany-cmd" . ""))
-                 ))
-              )
-        )
+          (message "cmany loaded configs: %s" cmany--configs)
+          )
+      (setq cmany--configs
+            `((,(cmany--guess-proj-dir)
+               '(("cmany-build-dir" . "")
+                 ("cmany-target" . "")
+                 ("cmany-cmd" . ""))
+               ))
+            )
       )
     )
   )
 
-(defun cmany--save-configs ()
-  (if (or (not (boundp 'cmany--configs))
-          (equal cmany--configs nil))
-      (setq cmany--configs ())
+(defun cmany--load-configs-if-none ()
+  "loads configs if they are not yet available"
+  (when (or (not (boundp 'cmany--configs))
+            (equal cmany--configs nil))
+    (cmany--load-configs)
     )
+  )
+
+(defun cmany--save-configs ()
+  (cmany--load-configs-if-none)
   (cmany--log "configs before: %s" cmany--configs)
   (let ((pc
          `(("cmany-build-dir" ,cmany-build-dir)
@@ -315,8 +315,14 @@ directories should be placed"
            ("cmany-cmd" ,cmany-cmd))
          )
         )
-    (format "%s" pc)
-    (setq cmany--configs `((,cmany-proj-dir ,pc)))
+    ;; http://emacs.stackexchange.com/questions/9328/looking-for-a-simple-way-to-update-an-alist-without-introducing-degeneracies
+    ;; to update (key,val) from an alist...
+    ;; ... remove (key,val)
+    (setq cmany--configs (assq-delete-all cmany-proj-dir cmany--configs))
+    (cmany--log "configs before: %s" cmany--configs)
+    ;; ... and set it with the new value
+    (add-to-list 'cmany--configs (cons cmany-proj-dir pc))
+    ;;(setq cmany--configs `((,cmany-proj-dir ,pc)))
     )
   (cmany--log "configs after: %s" cmany--configs)
   (cmany--write-to-file
@@ -338,7 +344,7 @@ directories should be placed"
   (interactive
    (list (ido-read-directory-name
           "cmany proj dir: " (cmany--get-default-proj-dir))))
-  (cmany--load-configs)
+  (cmany--load-configs-if-none)
   (cmany--log "cmany set proj dir: %s" dir)
   (setq cmany-proj-dir dir)
   (cmany--clear-last)
@@ -351,7 +357,7 @@ directories should be placed"
   (interactive
    (list (file-name-as-directory
            (call-interactively 'cmany--exec-prompt-build-dir))))
-  (cmany--load-configs)
+  (cmany--load-configs-if-none)
   (cmany--log "cmany set build dir: %s" dir)
   (setq cmany-build-dir dir)
   (cmany--clear-last)
@@ -364,7 +370,7 @@ directories should be placed"
   "set the cmany command form"
   (interactive
    (list (read-string "cmany command: " cmany-cmd)))
-  (cmany--load-configs)
+  (cmany--load-configs-if-none)
   (cmany--log "cmany set command: %s" cmd)
   (setq cmany-cmd cmd)
   (cmany--clear-last)
@@ -378,7 +384,7 @@ directories should be placed"
    (list (ido-completing-read
           "cmany current target: "
           (cmany--get-cmany-lines "show_targets") nil nil cmany-target)))
-  (cmany--load-configs)
+  (cmany--load-configs-if-none)
   (cmany--log "cmany set target: %s" tgt)
   (setq cmany-target tgt)
   (cmany--clear-last)
@@ -407,7 +413,11 @@ directories should be placed"
 
 ;;;###autoload
 (defun cmany-configure-again()
-  (cmany-configure cmany--last-configure)
+  (interactive)
+  (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
+      (cmany-configure cmany--last-configure)
+    (error "cmany-configure was not yet run")
+    )
   )
 
 ;;-----------------------------------------------------------------------------
@@ -420,7 +430,7 @@ directories should be placed"
      "enter build cmd: "
      (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
          (progn cmany--last-build)
-         (progn (cmany--default-build-command))
+         (progn (cmany--format-cmd "build" cmany-target))
          )
      )))
   (setq cmany--last-build cmd)
@@ -433,7 +443,11 @@ directories should be placed"
 
 ;;;###autoload
 (defun cmany-build-again()
-  (cmany-build cmany--last-build)
+  (interactive)
+  (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
+      (cmany-build cmany--last-build)
+    (error "cmany-build was not yet run")
+    )
   )
 
 ;;-----------------------------------------------------------------------------
@@ -451,14 +465,18 @@ directories should be placed"
      )))
   (setq cmany--last-debug cmd)
   (when cmany-build-before-debug
-    (cmany-build (cmany--default-build-command))
+    (cmany-build (cmany--format-cmd "build" cmany-target))
     )
   (call-interactively (gdb cmd))
   )
 
 ;;;###autoload
 (defun cmany-debug-again()
-  (cmany-debug cmany--last-debug)
+  (interactive)
+  (if (and (boundp 'cmany--last-debug) (not (string-equal 'cmany--last-debug "")))
+      (cmany-debug cmany--last-debug)
+    (error "cmany-debug was not yet run")
+    )
   )
 
 ;;-----------------------------------------------------------------------------
@@ -493,7 +511,7 @@ directories should be placed"
 
 
 (defun cmany-hook ()
-  (cmany--load-configs)
+  (cmany--load-configs-if-none)
   )
 
 ;;-----------------------------------------------------------------------------
