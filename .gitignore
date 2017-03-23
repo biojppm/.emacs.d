@@ -10,6 +10,7 @@ ido.last
 *.pyc
 projectile-bookmarks.eld
 cmake-ide-build-dir.save
+cmany.save
 *~
 smex-items
 projectile.cache
