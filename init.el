@@ -1237,8 +1237,6 @@ original line and use the absolute value."
 ;;https://github.com/jorgenschaefer/elpy
 (defun my-python-hook ()
   (win-nav-rsz)
-  (global-set-key [C-<up>] 'backward-paragraph)
-  (global-set-key [C-<down>] 'forward-paragraph)
   )
 (use-package python
   :defer t
@@ -1252,11 +1250,19 @@ original line and use the absolute value."
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
 ;;         )
-    (elpy-use-ipython))
+    (elpy-use-ipython)
+    (add-hook 'python-mode-hook #'my-python-hook)
+    :bind (:map elpy-mode-map
+                ("C-<up>" . backward-paragraph)
+                ("C-<down>" . forward-paragraph)
+                ("M-<up>" . drag-stuff-up)
+                ("M-<down>" . drag-stuff-down)
+                )
+    )
   (elpy-enable)
-  (use-snips)(add-hook 'python-mode-hook #'hook-snips)
+  (use-snips)
+  (add-hook 'python-mode-hook #'hook-snips)
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
-  (add-hook 'python-mode-hook #'my-python-hook)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
