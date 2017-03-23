@@ -1173,7 +1173,7 @@ original line and use the absolute value."
         ("C-c r T" . rtags-taglist)
         )
   )
-(load-file (concat user-emacs-directory "lisp/cmany.el"))
+(load "cmany")
 (add-hook 'c-mode-common-hook 'cmany-mode)
 
 
