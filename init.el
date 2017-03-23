@@ -1107,7 +1107,6 @@ original line and use the absolute value."
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
-(load-file (concat user-emacs-directory "lisp/cmany.el"))
 (defun my-rtags-hook ()
   (interactive)
   (rtags-start-process-unless-running)
@@ -1174,6 +1173,8 @@ original line and use the absolute value."
         ("C-c r T" . rtags-taglist)
         )
   )
+(load-file (concat user-emacs-directory "lisp/cmany.el"))
+(add-hook 'c-mode-common-hook 'cmany-mode)
 
 
 ;;; PHP

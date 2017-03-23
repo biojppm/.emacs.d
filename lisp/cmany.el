@@ -123,11 +123,12 @@ directories should be placed"
 
 (defun cmany--read-from-file (file symbol)
   "http://stackoverflow.com/a/36196312/5875572"
-  (when (boundp symbol)
-    (with-temp-buffer
-      (insert-file-contents file)
-      (goto-char (point-min))
-      (set symbol (read (current-buffer)))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (let ((v (read (current-buffer))))
+      (cmany--log "symbol: %s: %s" symbol v)
+      (set symbol v)
       )
     )
   )
@@ -292,42 +293,50 @@ directories should be placed"
 
 ;;-----------------------------------------------------------------------------
 
-(defun cmany--load-configs ()
+;;;###autoload
+(defun cmany-load-configs ()
   "loads configs"
+  (interactive)
+  (cmany--log "xaqui 2")
   (let ((fn (concat user-emacs-directory "cmany.save")))
-    (if (file-exists-p fn)
-        (progn
+    (when (file-exists-p fn)
+          (cmany--log "xaqui 3")
+          (cmany--log "loading configs from %s" fn)
           (cmany--read-from-file fn 'cmany--configs)
+          (cmany--log "xaqui 4")
           (message "cmany loaded configs: %s" cmany--configs)
+          (cmany--log "xaqui 4.1")
           )
-      (setq cmany--configs
-            `((,(cmany--guess-proj-dir)
-               '(("cmany-build-dir" . "")
-                 ("cmany-target" . "")
-                 ("cmany-cmd" . ""))
-               ))
-            )
-      )
     )
   )
 
-(defun cmany--load-configs-if-none ()
+;;;###autoload
+(defun cmany-load-configs-if-none ()
   "loads configs if they are not yet available"
+  (interactive)
+  (cmany--log "xaqui 0")
   (when (or (not (boundp 'cmany--configs))
             (equal cmany--configs nil))
-    (cmany--load-configs)
+    (cmany--log "xaqui 1")
+    (cmany-load-configs)
+    (cmany--log "xaqui 7")
     )
   )
 
-(defun cmany--save-configs ()
-  (cmany--load-configs-if-none)
+;;;###autoload
+(defun cmany-save-configs ()
+  (interactive)
+  (cmany-load-configs-if-none)
   ;;(cmany--log "configs before: %s" cmany--configs)
   (let ((pc
-         `(("cmany-build-dir" ,cmany-build-dir)
-           ("cmany-target" ,cmany-target)
-           ("cmany-cmd" ,cmany-cmd))
+         `(("cmany-build-dir" . ,cmany-build-dir)
+           ("cmany-target" . ,cmany-target)
+           ("cmany-cmd" . ,cmany-cmd))
          )
         )
+    (when (not (boundp 'cmany--configs))
+        (setq cmany--configs ())
+      )
     ;; http://emacs.stackexchange.com/questions/9328/looking-for-a-simple-way-to-update-an-alist-without-introducing-degeneracies
     ;; to update (key,val) from an alist...
     ;; ... remove (key,val)
@@ -343,8 +352,45 @@ directories should be placed"
    cmany--configs)
   )
 
+;;;###autoload
+(defun cmany-restore-config (dir)
+  (interactive
+   (list
+    (file-name-as-directory
+     (ido-read-directory-name "cmake proj dir to restore: " (cmany--guess-proj-dir)))))
+  (cmany--log "restoringzzzz....... 0")
+  (if (boundp 'cmany--configs)
+      (progn
+        (cmany--log "restoringzzzz....... 0 %s" (cdr (assoc dir cmany--configs)))
+        (let ((c (cdr (assoc dir cmany--configs))))
+          (cmany--log "restoringzzz....... 1 %s\n%s\n%s\n" cmany--configs dir c (assoc "cmany-build-dir" c))
+          (if c
+              (progn
+                (cmany--log "restoring....... 2 %s" (assoc "cmany-build-dir" c))
+                (cmany-set-proj-dir dir t)
+                (cmany--log "restoring....... 2.1")
+                (cmany-set-build-dir (cdr (assoc "cmany-build-dir" c)) t)
+                (cmany--log "restoring....... 2.2")
+                (cmany-set-target (cdr (assoc "cmany-target" c)) t)
+                (cmany--log "restoring....... 2.3")
+                (cmany-set-cmd (cdr (assoc "cmany-cmd" c)) t)
+                (cmany--log "restoring....... 2.4")
+                t ;; return true to signal loaded config
+                )
+            (cmany--log "restoring....... 3")
+            nil ;; no config was found for this dir
+            )
+          )
+        )
+    (progn
+      (cmany--log "restoring....... 4")
+      nil ;; no configs are available
+      )
+    )
+  )
+
 (defun cmany--clear-last-commands ()
-  "this clears the last stored commands"
+  "clears the last stored commands. call whenever a build param changes."
   (setq cmany--last-build "")
   (setq cmany--last-configure "")
   (setq cmany--last-debug "")
@@ -352,56 +398,60 @@ directories should be placed"
 
 ;;-----------------------------------------------------------------------------
 ;;;###autoload
-(defun cmany-set-proj-dir (&optional dir)
+(defun cmany-set-proj-dir (&optional dir no-save)
   "set the project dir used by cmany"
   (interactive
    (list (ido-read-directory-name
-          "cmany proj dir: " (cmany--get-default-proj-dir))))
-  (cmany--load-configs-if-none)
+          "cmany proj dir: " (cmany--get-default-proj-dir))
+         nil))
+  (cmany-load-configs-if-none)
   (cmany--log "set proj dir: %s" dir)
   (setq cmany-proj-dir dir)
-  (cmany--clear-last)
-  (cmany--save-configs)
+  (cmany--clear-last-commands)
+  (when (not no-save) (cmany-save-configs))
   )
 
 ;;;###autoload
-(defun cmany-set-build-dir (&optional dir)
+(defun cmany-set-build-dir (&optional dir no-save)
   "set the build dir used by cmany"
   (interactive
    (list (file-name-as-directory
-           (call-interactively 'cmany--exec-prompt-build-dir))))
-  (cmany--load-configs-if-none)
+          (call-interactively 'cmany--exec-prompt-build-dir))
+         nil))
+  (cmany-load-configs-if-none)
   (cmany--log "set build dir: %s" dir)
   (setq cmany-build-dir dir)
-  (cmany--clear-last)
-  (cmany--save-configs)
+  (cmany--clear-last-commands)
+  (when (not no-save) (cmany-save-configs))
   (cmany-rtags-announce-build-dir cmany-build-dir)
   )
 
 ;;;###autoload
-(defun cmany-set-cmd (&optional cmd)
+(defun cmany-set-cmd (&optional cmd no-save)
   "set the cmany command form"
   (interactive
-   (list (read-string "cmany command: " cmany-cmd)))
-  (cmany--load-configs-if-none)
+   (list (read-string "cmany command: " cmany-cmd)
+         nil))
+  (cmany-load-configs-if-none)
   (cmany--log "set command: %s" cmd)
   (setq cmany-cmd cmd)
-  (cmany--clear-last)
-  (cmany--save-configs)
+  (cmany--clear-last-commands)
+  (when (not no-save) (cmany-save-configs))
   )
 
 ;;;###autoload
-(defun cmany-set-target (&optional tgt)
+(defun cmany-set-target (&optional tgt no-save)
   "set the current active target for building and debugging"
   (interactive
    (list (ido-completing-read
           "cmany current target: "
-          (cmany--get-cmany-lines "show_targets") nil nil cmany-target)))
-  (cmany--load-configs-if-none)
+          (cmany--get-cmany-lines "show_targets") nil nil cmany-target)
+         nil))
+  (cmany-load-configs-if-none)
   (cmany--log "set target: %s" tgt)
   (setq cmany-target tgt)
-  (cmany--clear-last)
-  (cmany--save-configs)
+  (cmany--clear-last-commands)
+  (when (not no-save) (cmany-save-configs))
   )
 
 ;;-----------------------------------------------------------------------------
@@ -416,6 +466,7 @@ directories should be placed"
          (progn (cmany--format-cmd "configure"))
          )
      )))
+  (cmany-save-configs)
   (setq cmany--last-configure cmd)
   (let ((d default-directory))
     (cd cmany-proj-dir)
@@ -446,6 +497,7 @@ directories should be placed"
          (progn (cmany--format-cmd "build" cmany-target))
          )
      )))
+  (cmany-save-configs)
   (setq cmany--last-build cmd)
   (let ((d default-directory))
     (cd cmany-proj-dir)
@@ -477,8 +529,9 @@ directories should be placed"
          )
      )))
   (setq cmany--last-debug cmd)
-  (when cmany-build-before-debug
-    (cmany-build (cmany--format-cmd "build" cmany-target))
+  (if cmany-build-before-debug
+      (cmany-build (cmany--format-cmd "build" cmany-target))
+    (cmany-save-configs)
     )
   (call-interactively (gdb cmd))
   )
@@ -499,6 +552,7 @@ directories should be placed"
   directory using either ccmake or cmake-gui"
   (interactive)
   (let ((d default-directory))
+    (cmany-save-configs)
     (cd cmany-build-dir)
     (if (executable-find "ccmake")
         (progn
@@ -525,7 +579,7 @@ directories should be placed"
   (cmany--log "  cmany-proj-dir: %s" cmany-proj-dir)
   (cmany--log "  cmany-build-dir: %s" cmany-build-dir)
   (cmany--log "  cmany-cmd: %s" cmany-cmd)
-  (cmany--log "  cmany-target: '%s'" cmany-target)
+  (cmany--log "  cmany-target: %s" cmany-target)
   (cmany--log "----------------------------")
   )
 
@@ -543,15 +597,26 @@ form, build dir and active target"
   )
 
 ;;;###autoload
-(defun cmany-guess ()
+(defun cmany-restore-or-guess ()
+  "make automatic guesses of the cmany params"
   (interactive)
   (cmany--log "guessing configuration...")
-  (cmany-set-proj-dir (cmany--guess-proj-dir))
-  (cmany-set-cmd cmany-cmd-default)
-  (cmany-set-build-dir (cmany--guess-build-dir))
-  (cmany-set-target "")
-
-  (cmany--show-configuration "guessed configuration")
+  (cmany-load-configs-if-none)
+  (cmany--log "configs loaded!")
+  (setq dir (cmany--guess-proj-dir))
+  (if (cmany-restore-config dir)
+      (progn
+        (cmany--show-configuration "restored configuration")
+        )
+    (progn
+      (cmany--log "really need to guess")
+      (cmany-set-proj-dir dir t)
+      (cmany-set-cmd cmany-cmd-default t)
+      (cmany-set-build-dir (cmany--guess-build-dir) t)
+      (cmany-set-target "" t)
+      (cmany--show-configuration "guessed configuration")
+      )
+    )
   )
 
 ;;-----------------------------------------------------------------------------
@@ -562,7 +627,7 @@ form, build dir and active target"
   :lighter " cmany"
   :keymap (let ((map (make-sparse-keymap)))
 
-            (define-key map (kbd "C-c m !") 'cmany-guess)
+            (define-key map (kbd "C-c m !") 'cmany-restore-or-guess)
             (define-key map (kbd "C-c m ?") 'cmany-wizard)
             (define-key map (kbd "C-c m P") 'cmany-set-proj-dir)
             (define-key map (kbd "C-c m D") 'cmany-set-build-dir)
@@ -580,6 +645,7 @@ form, build dir and active target"
 
             (define-key map (kbd "C-c m e") 'cmany-edit-cache)
             map)
+  :after-hook (cmany-restore-or-guess)
   )
 
 (provide 'cmany-mode)
