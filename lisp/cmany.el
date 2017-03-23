@@ -556,7 +556,7 @@ directories should be placed"
 
 ;;-----------------------------------------------------------------------------
 ;;;###autoload
-(defun cmany-shell ()
+(defun cmany-shell-at-proj ()
   "open a shell in the current project dir"
   (interactive)
   (assert (file-exists-p cmany-proj-dir))
@@ -666,7 +666,7 @@ form, build dir and active target"
             (define-key map (kbd "C-c m g") 'cmany-debug-again)
 
             (define-key map (kbd "C-c m e") 'cmany-edit-cache)
-            (define-key map (kbd "C-c m s") 'cmany-shell)
+            (define-key map (kbd "C-c m s") 'cmany-shell-at-proj)
             (define-key map (kbd "C-c m .") 'cmany-shell-at-build)
 
             map)
