@@ -155,14 +155,14 @@ directories should be placed"
   "is cmany-proj-dir already set"
   (and (boundp 'cmany-proj-dir)
        (not (equal cmany-proj-dir nil))
-       (not (string-equal 'cmany-proj-dir "")))
+       (not (string-equal cmany-proj-dir "")))
   )
 
 (defun cmany--has-build-dir ()
   "is cmany-build-dir already set"
   (and (boundp 'cmany-build-dir)
        (not (equal cmany-build-dir nil))
-       (not (string-equal 'cmany-build-dir "")))
+       (not (string-equal cmany-build-dir "")))
   )
 
 ;;-----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ directories should be placed"
     ;; if projectile is available, get the current project root
     (when (featurep 'projectile)
       (setq r (projectile-expand-root ".")))
-    (if (not (string-equal 'r ""))
+    (if (not (string-equal r ""))
         (progn
           ;; yep, got project root through projectile
           (cmany--log "proj dir from projectile: %s" r)
@@ -210,7 +210,7 @@ directories should be placed"
       (progn
         ;; no deal; go up in the fs tree to find CMakeLists.txt
         (setq r (locate-dominating-file (buffer-file-name) "CMakeLists.txt"))
-        (if (not (string-equal 'r ""))
+        (if (not (string-equal r ""))
             (progn
               ;; yep, got project root through locate-dominating-file
               (cmany--log "proj dir from locate-dominating-file: %s" r)
@@ -398,7 +398,7 @@ directories should be placed"
    (list
     (read-string
      "enter configure cmd: "
-     (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
+     (if (and (boundp 'cmany--last-configure) (not (string-equal cmany--last-configure "")))
          (progn cmany--last-configure)
          (progn (cmany--format-cmd "configure"))
          )
@@ -414,7 +414,7 @@ directories should be placed"
 ;;;###autoload
 (defun cmany-configure-again()
   (interactive)
-  (if (and (boundp 'cmany--last-configure) (not (string-equal 'cmany--last-configure "")))
+  (if (and (boundp 'cmany--last-configure) (not (string-equal cmany--last-configure "")))
       (cmany-configure cmany--last-configure)
     (error "cmany-configure was not yet run")
     )
@@ -428,7 +428,7 @@ directories should be placed"
    (list
     (read-string
      "enter build cmd: "
-     (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
+     (if (and (boundp 'cmany--last-build) (not (string-equal cmany--last-build "")))
          (progn cmany--last-build)
          (progn (cmany--format-cmd "build" cmany-target))
          )
@@ -444,7 +444,7 @@ directories should be placed"
 ;;;###autoload
 (defun cmany-build-again()
   (interactive)
-  (if (and (boundp 'cmany--last-build) (not (string-equal 'cmany--last-build "")))
+  (if (and (boundp 'cmany--last-build) (not (string-equal cmany--last-build "")))
       (cmany-build cmany--last-build)
     (error "cmany-build was not yet run")
     )
@@ -458,7 +458,7 @@ directories should be placed"
    (list
     (read-string
      "enter gdb cmd: "
-     (if (and (boundp 'cmany--last-debug) (not (string-equal 'cmany--last-debug "")))
+     (if (and (boundp 'cmany--last-debug) (not (string-equal cmany--last-debug "")))
          (progn cmany--last-debug)
          (progn (format "gdb -i=mi %s" (concat cmany-build-dir cmany-target)))
          )
@@ -473,7 +473,7 @@ directories should be placed"
 ;;;###autoload
 (defun cmany-debug-again()
   (interactive)
-  (if (and (boundp 'cmany--last-debug) (not (string-equal 'cmany--last-debug "")))
+  (if (and (boundp 'cmany--last-debug) (not (string-equal cmany--last-debug "")))
       (cmany-debug cmany--last-debug)
     (error "cmany-debug was not yet run")
     )
@@ -502,16 +502,6 @@ directories should be placed"
       )
     (cd d)
     )
-  )
-
-;;-----------------------------------------------------------------------------
-(defun cmany-install-keybindings ()
-  (interactive)
-  )
-
-
-(defun cmany-hook ()
-  (cmany--load-configs-if-none)
   )
 
 ;;-----------------------------------------------------------------------------
