@@ -555,6 +555,34 @@ directories should be placed"
   )
 
 ;;-----------------------------------------------------------------------------
+;;;###autoload
+(defun cmany-shell ()
+  "open a shell in the current project dir"
+  (interactive)
+  (assert (file-exists-p cmany-proj-dir))
+  (let ((d default-directory))
+    (cmany-save-configs)
+    (cd cmany-proj-dir)
+    (shell)
+    (cd d)
+    )
+  )
+
+;;;###autoload
+(defun cmany-shell-at-build ()
+  "open a shell in the current build dir"
+  (interactive)
+  (assert (file-exists-p cmany-build-dir))
+  (if (not))
+  (let ((d default-directory))
+    (cmany-save-configs)
+    (cd cmany-build-dir)
+    (shell)
+    (cd d)
+    )
+  )
+
+;;-----------------------------------------------------------------------------
 
 (defun cmany--show-configuration (&optional msg full)
   (if full
@@ -638,6 +666,9 @@ form, build dir and active target"
             (define-key map (kbd "C-c m g") 'cmany-debug-again)
 
             (define-key map (kbd "C-c m e") 'cmany-edit-cache)
+            (define-key map (kbd "C-c m s") 'cmany-shell)
+            (define-key map (kbd "C-c m .") 'cmany-shell-at-build)
+
             map)
   :after-hook (cmany-restore-or-guess)
   )
