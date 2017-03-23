@@ -818,6 +818,22 @@ If point was already at that position, move point to beginning of line."
 ;;=========================================================================
 ;; EDITING
 
+;; https://github.com/k-talo/volatile-highlights.el
+;; brings visual feedback to some operations by highlighting portions
+;; relating to the operations.
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
+
+;; https://github.com/jscheid/dtrt-indent
+;; A minor mode that guesses the indentation offset originally used
+;; for creating source code files and transparently adjusts the
+;; corresponding settings in Emacs, making it more convenient to edit
+;; foreign files.
+(use-package dtrt-indent
+  :config (message "loading dtrt-indent")
+  :commands (dtrt-indent-mode)
+  )
+
 ;;------------------------------------------------------------------
 ;; drag line/selection up or down
 ;; http://emacs.stackexchange.com/questions/13941/move-selected-lines-up-and-down

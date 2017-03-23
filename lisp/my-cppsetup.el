@@ -6,43 +6,90 @@
 ; http://tuhdo.github.io/c-ide.html
 ; https://github.com/Golevka/emacs-clang-complete-async
 
-; some useful C-mode shortcuts (see https://www.gnu.org/software/emacs/manual/html_node/emacs/C-Modes.html):
-;
-; C-c C-<DEL> or C-c <DEL> Delete the entire block of whitespace preceding point (c-hungry-delete-backwards).
-; C-c C-d or C-c C-<DELETE> or C-c <DELETE> Delete the entire block of whitespace after point (c-hungry-delete-forward).
-;
-; C-M-a move point to beginning of the current function or top-level definition
-; C-M-e move point to end of the current function or top-level definition
-;
-; C-c C-p Move point back over a preprocessor conditional, leaving the mark behind. A prefix argument acts as a repeat count. With a negative argument, move forward.
-; C-c C-n Move point forward across a preprocessor conditional, leaving the mark behind. A prefix argument acts as a repeat count. With a negative argument, move backward.
-;
-; M-a Move point to the beginning of the innermost C statement (c-beginning-of-statement). If point is already at the beginning of a statement, move to the beginning of the preceding statement. With prefix argument n, move back n − 1 statements. In comments or in strings which span more than one line, this command moves by sentences instead of statements.
-; M-e  Move point to the end of the innermost C statement or sentence; like M-a except that it moves in the other direction (c-end-of-statement).
-;
-; C-c C-l Toggle electric action (c-toggle-electric-state). With a positive prefix argument, this command enables electric action, with a negative one it disables it.
-; C-c C-a Toggle the auto-newline feature (c-toggle-auto-newline). With a prefix argument, this command turns the auto-newline feature on if the argument is positive, and off if it is negative.
-;
-; C-c C-w or M-x subword-mode Enable (or disable) subword mode.
-;
-; C-M-h Put mark at the end of a function definition, and put point at the beginning (c-mark-function).
-;
-; M-x c-context-line-break This command inserts a line break and indents the new line in a manner appropriate to the context.
-;
-; M-q Fill a paragraph, handling C and C++ comments (c-fill-paragraph)
-;
-; C-c C-e Run the C preprocessor on the text in the region
-;
-; C-c C-\ Insert or align ‘\’ characters at the ends of the lines of the region (c-backslash-region)
-;
-; M-x cpp-highlight-buffer Highlight parts of the text according to its preprocessor conditionals.
-;
-; C-c C-s Display the syntactic information about the current source line (c-show-syntactic-information). This information directs how the line is indented.
-;
-; M-x ff-find-related-file Find a file “related” in a special way to the file visited by the current buffer. Typically this will be the header file corresponding to a C/C++ source file, or vice versa. The variable ff-related-file-alist specifies how to compute related file names.
+;; some useful C-mode shortcuts (see https://www.gnu.org/software/emacs/manual/html_node/emacs/C-Modes.html):
+;;
+;; C-c C-<DEL> or C-c <DEL>
+;;    Delete the entire block of whitespace preceding point
+;;    (c-hungry-delete-backwards).
+;; C-c C-d or C-c C-<DELETE> or C-c <DELETE>
+;;    Delete the entire block of whitespace after point
+;;    (c-hungry-delete-forward).
+;;
+;; C-M-a
+;;    move point to beginning of the current function or top-level
+;;    definition
+;; C-M-e
+;;    move point to end of the current function or top-level
+;;    definition
+;;
+;; C-c C-p
+;;    Move point back over a preprocessor conditional, leaving the
+;;    mark behind. A prefix argument acts as a repeat count. With a
+;;
+;; C-c C-n
+;;    Move point forward across a preprocessor conditional, leaving
+;;    the mark behind. A prefix argument acts as a repeat count. With
+;;
+;; M-a
+;;    Move point to the beginning of the innermost C statement
+;;    (c-beginning-of-statement). If point is already at the beginning
+;;    statement. With prefix argument n, move back n − 1
+;;    statements. In comments or in strings which span more than one
+;;    line, this command moves by sentences instead of statements.
+;;
+;; M-e
+;;    Move point to the end of the innermost C statement or sentence;
+;;    like M-a except that it moves in the other direction
+;;
+;;
+;; C-c C-l
+;;    Toggle electric action (c-toggle-electric-state). With a
+;;    positive prefix argument, this command enables electric action,
+;;
+;; C-c C-a
+;;    Toggle the auto-newline feature (c-toggle-auto-newline). With a
+;;    prefix argument, this command turns the auto-newline feature on
+;;
+;;
+;; C-c C-w or M-x
+;;    subword-mode Enable (or disable) subword mode.
+;;
+;; C-M-h
+;;    Put mark at the end of a function definition, and put point at
+;;    the beginning (c-mark-function).
+;;
+;; M-x c-context-line-break
+;;    This command inserts a line break and indents the new line in a
+;;    manner appropriate to the context.
+;;
+;; M-q
+;;    Fill a paragraph, handling C and C++ comments (c-fill-paragraph)
+;;
+;; C-c C-e
+;;    Run the C preprocessor on the text in the region
+;;
+;; C-c C-\
+;;    Insert or align ‘\’ characters at the ends of the lines of the
+;;    region (c-backslash-region)
+;;
+;; M-x
+;;    cpp-highlight-buffer Highlight parts of the text according to
+;;    its preprocessor conditionals.
+;;
+;; C-c C-s
+;;    Display the syntactic information about the current source line
+;;    (c-show-syntactic-information). This information directs how the
+;;
+;; M-x ff-find-related-file
+;;    Find a file “related” in a special way to the file visited by
+;;    the current buffer. Typically this will be the header file
+;;    variable ff-related-file-alist specifies how to compute related
+;;    file names.
+;;
 
-; non-CEDET setup (fast boot, doesn't require CEDET)
-; this setup is available for all
+;;
+;; non-CEDET setup (fast boot, doesn't require CEDET)
+;; this setup is available for all
 (defun my-c-hook()
   (interactive)
 
@@ -57,24 +104,25 @@
   ; Turn off tab character
   (setq-default indent-tabs-mode nil)
 
-  ; Indent size
-  (setq standard-indent 4)
-
-  ; fuck electric mode
+  ;; fuck electric mode
   (c-toggle-electric-state -1)
+  ;(electric-indent-mode -1)
 
-  ; enable subword-mode
+  ;; enable subword-mode
   (subword-mode 1)
 
-  ; shadow ifdef'ed-out code
+  ;; shadow ifdef'ed-out code
   (setq hide-ifdef-shadow t)
   (hide-ifdef-mode 1)
 
-  ; Tabs, alignment, etc
+  ;; Tabs, alignment, etc
   ;; taken from http://stackoverflow.com/questions/663588/emacs-c-mode-incorrect-indentation
+  ;; Indent size
+  (setq c-default-style "linux")
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'innamespace [0])
   (setq c++-tab-always-indent t)
+  (setq standard-indent 4)
   (setq c-basic-offset 4)                  ;; Default is 2
   (setq c-indent-level 4)                  ;; Default is 2
   (setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80))
@@ -96,7 +144,7 @@
   (setq-default ff-other-file-alist 'my-cpp-other-file-alist)
 ; (setq ff-always-in-other-window 1) ; this doesnt work as it makes emacs open a
                                      ; new window every time instead of reusing an existing one
-  (setq ff-always-in-other-frame 1) ; will this work?
+;  (setq ff-always-in-other-frame 1) ; will this work?
 
   ;; smart-parens
   ;; when pressing RET, the curly braces automatically
@@ -112,7 +160,7 @@
 
 (defun load-ide-demo()
   (interactive)
-  (add-to-list 'load-path (concat emacs-dir "emacs-c-ide-demo/custom"))
+  (add-to-list 'load-path (concat user-emacs-directory "emacs-c-ide-demo/custom"))
 
   (message "load-c-ide-demo: starting")
 
