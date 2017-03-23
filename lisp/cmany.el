@@ -5,7 +5,7 @@
 ;; Author:      Joao Paulo Magalhaes <dev@jpmag.me>
 ;; Created:     2017-03-20
 ;; Version:     0.1
-;; Keywords:    cmany, cmake, rtags
+;; Keywords:    cmany, Cmake, IDE, Languages, Tools, rtags
 ;; URL:         http://github.com/biojppm/cmany.el.git
 
 ;; This file is not part of GNU Emacs.
@@ -33,7 +33,6 @@
 ;; cmany.el uses facilities from projectile and rtags, if they are
 ;; available (via featurep). These are NOT hard dependencies.
 ;; cmany.el has the following hard dependencies:
-(require 'term-run)
 
 ;;; Install:
 
@@ -50,9 +49,11 @@
 ;; batch-build tool for cmake-based projects.
 
 ;;; Code:
+(require 'term-run)
 
 (defgroup cmany nil
-  "cmany customizations")
+  "cmany customizations"
+  :prefix "cmany-")
 
 (defcustom cmany-build-dir-prefix "build/"
   "the path (relative to the project dir) under which the build
@@ -94,6 +95,71 @@ directories should be placed"
   )
 (defvar cmany-cmd cmany-cmd-default
   "The command form to use when calling cmany."
+  )
+
+;;-----------------------------------------------------------------------------
+(defvar cmany-mode-map
+   (let ((map (make-sparse-keymap)))
+
+            (define-key map (kbd "C-c m ?") 'cmany-wizard)
+            (define-key map (kbd "C-c m !") 'cmany-restore-or-guess)
+            (define-key map (kbd "C-c m P") 'cmany-set-proj-dir)
+            (define-key map (kbd "C-c m D") 'cmany-set-build-dir)
+            (define-key map (kbd "C-c m T") 'cmany-set-target)
+            (define-key map (kbd "C-c m K") 'cmany-set-cmd)
+
+            (define-key map (kbd "C-c m A") 'cmany-rtags-announce-build-dir)
+
+            (define-key map (kbd "C-c m C") 'cmany-configure)
+            (define-key map (kbd "C-c m c") 'cmany-configure-again)
+            (define-key map (kbd "C-c m B") 'cmany-build)
+            (define-key map (kbd "C-c m b") 'cmany-build-again)
+            (define-key map (kbd "C-c m G") 'cmany-debug)
+            (define-key map (kbd "C-c m g") 'cmany-debug-again)
+
+            (define-key map (kbd "C-c m e") 'cmany-edit-cache)
+            (define-key map (kbd "C-c m s") 'cmany-shell-at-proj)
+            (define-key map (kbd "C-c m .") 'cmany-shell-at-build)
+
+            map)
+   "Key map for the Emacs Lisp cmany environment."
+   )
+
+(easy-menu-define cmany-menu cmany-mode-map
+  "cmany Mode Menu"
+  '("cmany"
+    ;;["Documentation" cmany-doc :help "Get documentation for symbol at point"]
+    ;;["Run Tests" cmany-test :help "Run test at point, or all tests in the project"]
+    ["Configure" cmany-configure :keys "C-c m C" :help "call cmany configure using the current project params"]
+    ["Configure again" cmany-configure-again :keys "C-c m c" :help "call cmany configure using the current project params"]
+    ["Build" cmany-build :keys "C-c m B" :help "call cmany build using the current project params"]
+    ["Build again" cmany-build-again :keys "C-c m b" :help "call cmany build using the current project params"]
+    ["Debug" cmany-debug :keys "C-c m G" :help "open a gdb session with the current target"]
+    ["Debug-again" cmany-debug-again :keys "C-c m g" :help "open a gdb session with the current target"]
+    ["Edit cache" cmany-edit-cache :keys "C-c m e" :help "edit the cmake cache using the current project params"]
+    ["Open shell: proj dir" cmany-shell-at-proj :keys "C-c m s" :help "open a shell session at the current project directory"]
+    ["Open shell: build dir" cmany-shell-at-build :keys "C-c m ." :help "open a shell session at the current build directory"]
+    "---"
+    ("Project params"
+    ;;["Documentation" cmany-doc :help "Get documentation for symbol at point"]
+    ;;["Run Tests" cmany-test :help "Run test at point, or all tests in the project"]
+    ["Wizard" cmany-wizard :keys "C-c m ?" :help "Run an interactive wizard to configure the project params"]
+    ["Restore or guess" cmany-test :keys "C-c m !" :help "Restore project parameters from a previous session, or guess if no session exists"]
+    ["Set project directory" cmany-set-proj-dir :keys "C-c m P" :help "Set the current project directory"]
+    ["Set build directory" cmany-set-build-dir :keys "C-c m D" :help "Set the current build directory"]
+    ["Set target" cmany-set-target :keys "C-c m T" :help "Set the current target"]
+    ["Set command" cmany-set-target :keys "C-c m K" :help "Set the current cmany command"]
+    ["rtags: announce directory" cmany-rtags-announce-build-dir :keys "C-c m A" :help "Announce a build directory to the rtags daemon"])
+    )
+  )
+
+;;;###autoload
+(define-minor-mode cmany-mode
+  "cmany.el: simple and batched cmake integration"
+  :group cmany
+  :lighter " cmany"
+  :keymap cmany-mode-map
+  :after-hook (cmany-restore-or-guess)
   )
 
 ;;-----------------------------------------------------------------------------
@@ -639,38 +705,6 @@ form, build dir and active target"
       )
     )
   (cmany--show-configuration)
-  )
-
-;;-----------------------------------------------------------------------------
-;;;###autoload
-(define-minor-mode cmany-mode
-  "cmany.el: simple and batched cmake integration"
-  :group cmany
-  :lighter " cmany"
-  :keymap (let ((map (make-sparse-keymap)))
-
-            (define-key map (kbd "C-c m !") 'cmany-restore-or-guess)
-            (define-key map (kbd "C-c m ?") 'cmany-wizard)
-            (define-key map (kbd "C-c m P") 'cmany-set-proj-dir)
-            (define-key map (kbd "C-c m D") 'cmany-set-build-dir)
-            (define-key map (kbd "C-c m T") 'cmany-set-target)
-            (define-key map (kbd "C-c m K") 'cmany-set-cmd)
-
-            (define-key map (kbd "C-c m A") 'cmany-rtags-announce-build-dir)
-
-            (define-key map (kbd "C-c m C") 'cmany-configure)
-            (define-key map (kbd "C-c m c") 'cmany-configure-again)
-            (define-key map (kbd "C-c m B") 'cmany-build)
-            (define-key map (kbd "C-c m b") 'cmany-build-again)
-            (define-key map (kbd "C-c m G") 'cmany-debug)
-            (define-key map (kbd "C-c m g") 'cmany-debug-again)
-
-            (define-key map (kbd "C-c m e") 'cmany-edit-cache)
-            (define-key map (kbd "C-c m s") 'cmany-shell-at-proj)
-            (define-key map (kbd "C-c m .") 'cmany-shell-at-build)
-
-            map)
-  :after-hook (cmany-restore-or-guess)
   )
 
 (provide 'cmany-mode)
