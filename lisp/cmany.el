@@ -89,7 +89,10 @@ directories should be placed"
   "The current active target"
   )
 
-(defvar cmany-cmd "cmany {cmd} -E -c clang++ -t Debug {projdir} {target}"
+(defconst cmany-cmd-default "cmany {cmd} -E -c clang++ -t Debug {projdir} {target}"
+  "The default value for cmany-cmd"
+  )
+(defvar cmany-cmd cmany-cmd-default
   "The command form to use when calling cmany."
   )
 
@@ -97,7 +100,7 @@ directories should be placed"
 ;; utility functions
 
 (defun cmany--log (fmt &rest args)
-  (apply 'message fmt args)
+  (apply 'message (concat "cmany: " fmt) args)
   )
 
 (defun cmany--visit-buffer (name)
@@ -133,13 +136,13 @@ directories should be placed"
   "Run PROGRAM with ARGS and return the output in a string if it returns 0;
   otherwise return an empty string."
   (let ((d default-directory))
-     (cmany--log "cmany cmd exec: %s" cmd)
+     (cmany--log "cmd exec: %s" cmd)
      (cd workdir)
      (with-temp-buffer
-       (cmany--log "cmany cmd exec at dir: %s (was at %s)" (pwd) d)
+       (cmany--log "cmd exec at dir: %s (was at %s)" (pwd) d)
        (let ((p (call-process-shell-command cmd nil (current-buffer))))
-         (cmany--log "cmany cmd return: %d" p)
-         (cmany--log "cmany cmd output: %s" (buffer-string))
+         (cmany--log "cmd return: %d" p)
+         (cmany--log "cmd output: %s" (buffer-string))
          (if (eq p 0)
              (progn (setq -cmcs (buffer-string)))
              (progn (setq -cmcs ""))
@@ -184,8 +187,8 @@ directories should be placed"
   (let* ((base-cmd (cmany--format-cmd cmd))
          (full-cmd (concat base-cmd more-args))
          )
-    (cmany--log "cmany cmd base: %s" base-cmd)
-    (cmany--log "cmany cmd full: %s" full-cmd)
+    (cmany--log "cmd base: %s" base-cmd)
+    (cmany--log "cmd full: %s" full-cmd)
     (cmany--get-cmd-output cmany-proj-dir full-cmd)
     )
   )
@@ -206,15 +209,15 @@ directories should be placed"
         (progn
           ;; yep, got project root through projectile
           (cmany--log "proj dir from projectile: %s" r)
-          r)
+          (file-name-as-directory r))
       (progn
         ;; no deal; go up in the fs tree to find CMakeLists.txt
         (setq r (locate-dominating-file (buffer-file-name) "CMakeLists.txt"))
-        (if (not (string-equal r ""))
+        (if (and r (not (string-equal r "")))
             (progn
               ;; yep, got project root through locate-dominating-file
               (cmany--log "proj dir from locate-dominating-file: %s" r)
-              r)
+              (file-name-as-directory r))
           ;; otherwise, just use the current directory
           (cmany--log "proj dir from current directory: %s"
                       (file-name-directory (buffer-file-name)))
@@ -235,13 +238,23 @@ directories should be placed"
     )
   )
 
-(defun cmany--exec-prompt-build-dir ()
+(defun cmany--guess-build-dir ()
   (interactive)
   (let* ((pfx (concat cmany-proj-dir cmany-build-dir-prefix)) ;; the full path to the builds dir
          (bds (cmany--get-cmany-lines "show_builds"))  ;; extract the list of current builds
-         (bd (car bds)) ;; pick the first
+         (bdf (car bds)) ;; pick the first
+         (bd (concat pfx bdf)))
+    (cmany--log "build directory guess: %s" bd)
+    (file-name-as-directory bd)
+    )
+  )
+
+(defun cmany--exec-prompt-build-dir ()
+  (interactive)
+  (let* ((bd (cmany--guess-build-dir))
+         (pfx (file-name-directory bd))
          (bdr (ido-read-directory-name "cmany build dir: " pfx bd nil bd)))
-    (cmany--log "read directory: %s" bdr)
+    (cmany--log "build directory input: %s" bdr)
     bdr
     )
   )
@@ -308,7 +321,7 @@ directories should be placed"
 
 (defun cmany--save-configs ()
   (cmany--load-configs-if-none)
-  (cmany--log "configs before: %s" cmany--configs)
+  ;;(cmany--log "configs before: %s" cmany--configs)
   (let ((pc
          `(("cmany-build-dir" ,cmany-build-dir)
            ("cmany-target" ,cmany-target)
@@ -319,12 +332,12 @@ directories should be placed"
     ;; to update (key,val) from an alist...
     ;; ... remove (key,val)
     (setq cmany--configs (assq-delete-all cmany-proj-dir cmany--configs))
-    (cmany--log "configs before: %s" cmany--configs)
+    ;;(cmany--log "configs before: %s" cmany--configs)
     ;; ... and set it with the new value
     (add-to-list 'cmany--configs (cons cmany-proj-dir pc))
     ;;(setq cmany--configs `((,cmany-proj-dir ,pc)))
     )
-  (cmany--log "configs after: %s" cmany--configs)
+  ;;(cmany--log "configs after: %s" cmany--configs)
   (cmany--write-to-file
    (concat user-emacs-directory "cmany.save")
    cmany--configs)
@@ -345,7 +358,7 @@ directories should be placed"
    (list (ido-read-directory-name
           "cmany proj dir: " (cmany--get-default-proj-dir))))
   (cmany--load-configs-if-none)
-  (cmany--log "cmany set proj dir: %s" dir)
+  (cmany--log "set proj dir: %s" dir)
   (setq cmany-proj-dir dir)
   (cmany--clear-last)
   (cmany--save-configs)
@@ -358,7 +371,7 @@ directories should be placed"
    (list (file-name-as-directory
            (call-interactively 'cmany--exec-prompt-build-dir))))
   (cmany--load-configs-if-none)
-  (cmany--log "cmany set build dir: %s" dir)
+  (cmany--log "set build dir: %s" dir)
   (setq cmany-build-dir dir)
   (cmany--clear-last)
   (cmany--save-configs)
@@ -371,7 +384,7 @@ directories should be placed"
   (interactive
    (list (read-string "cmany command: " cmany-cmd)))
   (cmany--load-configs-if-none)
-  (cmany--log "cmany set command: %s" cmd)
+  (cmany--log "set command: %s" cmd)
   (setq cmany-cmd cmd)
   (cmany--clear-last)
   (cmany--save-configs)
@@ -385,7 +398,7 @@ directories should be placed"
           "cmany current target: "
           (cmany--get-cmany-lines "show_targets") nil nil cmany-target)))
   (cmany--load-configs-if-none)
-  (cmany--log "cmany set target: %s" tgt)
+  (cmany--log "set target: %s" tgt)
   (setq cmany-target tgt)
   (cmany--clear-last)
   (cmany--save-configs)
@@ -416,7 +429,7 @@ directories should be placed"
   (interactive)
   (if (and (boundp 'cmany--last-configure) (not (string-equal cmany--last-configure "")))
       (cmany-configure cmany--last-configure)
-    (error "cmany-configure was not yet run")
+    (error "cmany-configure was not run yet")
     )
   )
 
@@ -446,7 +459,7 @@ directories should be placed"
   (interactive)
   (if (and (boundp 'cmany--last-build) (not (string-equal cmany--last-build "")))
       (cmany-build cmany--last-build)
-    (error "cmany-build was not yet run")
+    (error "cmany-build was not run yet")
     )
   )
 
@@ -475,7 +488,7 @@ directories should be placed"
   (interactive)
   (if (and (boundp 'cmany--last-debug) (not (string-equal cmany--last-debug "")))
       (cmany-debug cmany--last-debug)
-    (error "cmany-debug was not yet run")
+    (error "cmany-debug was not run yet")
     )
   )
 
@@ -489,14 +502,14 @@ directories should be placed"
     (cd cmany-build-dir)
     (if (executable-find "ccmake")
         (progn
-          (cmany--log "cmany: editing cache via ccmake at %s" cmany-build-dir)
+          (cmany--log "editing cache via ccmake at %s" cmany-build-dir)
           (term-run "ccmake" (cmany--visit-buffer "*ccmake*") ".")
           )
       (progn
         (if (executable-find "cmake-gui")
-            (progn (cmany--log "cmany: editing cache via cmake-gui at %s" cmany-build-dir)
+            (progn (cmany--log "editing cache via cmake-gui at %s" cmany-build-dir)
                    (start-process "cmake-gui" nil "cmake-gui" "."))
-            (progn (cmany--log "ERROR: cmany: could not find ccmake or cmake-gui in the exec-path: %s" exec-path))
+            (progn (cmany--log "ERROR: could not find ccmake or cmake-gui in the exec-path: %s" exec-path))
           )
         )
       )
@@ -505,6 +518,17 @@ directories should be placed"
   )
 
 ;;-----------------------------------------------------------------------------
+
+(defun cmany--show-configuration (&optional msg)
+  (cmany--log "----------------------------")
+  (when (not (string-equal msg nil)) (cmany--log "%s:" msg))
+  (cmany--log "  cmany-proj-dir: %s" cmany-proj-dir)
+  (cmany--log "  cmany-build-dir: %s" cmany-build-dir)
+  (cmany--log "  cmany-cmd: %s" cmany-cmd)
+  (cmany--log "  cmany-target: '%s'" cmany-target)
+  (cmany--log "----------------------------")
+  )
+
 ;;;###autoload
 (defun cmany-wizard ()
   "interactively configure the cmany params: project dir, cmd
@@ -514,6 +538,20 @@ form, build dir and active target"
   (call-interactively 'cmany-set-cmd)
   (call-interactively 'cmany-set-build-dir)
   (call-interactively 'cmany-set-target)
+
+  (cmany--show-configuration "configuration from wizard")
+  )
+
+;;;###autoload
+(defun cmany-guess ()
+  (interactive)
+  (cmany--log "guessing configuration...")
+  (cmany-set-proj-dir (cmany--guess-proj-dir))
+  (cmany-set-cmd cmany-cmd-default)
+  (cmany-set-build-dir (cmany--guess-build-dir))
+  (cmany-set-target "")
+
+  (cmany--show-configuration "guessed configuration")
   )
 
 ;;-----------------------------------------------------------------------------
@@ -523,7 +561,9 @@ form, build dir and active target"
   :group cmany
   :lighter " cmany"
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "C-c m W") 'cmany-wizard)
+
+            (define-key map (kbd "C-c m !") 'cmany-guess)
+            (define-key map (kbd "C-c m ?") 'cmany-wizard)
             (define-key map (kbd "C-c m P") 'cmany-set-proj-dir)
             (define-key map (kbd "C-c m D") 'cmany-set-build-dir)
             (define-key map (kbd "C-c m T") 'cmany-set-target)
