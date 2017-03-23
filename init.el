@@ -1880,6 +1880,39 @@ original line and use the absolute value."
   )
 
 ;;-----------------------------------------------------------------------------
+;; MAGIT https://magit.vc/manual/magit/Getting-Started.html#Getting-Started
+;;
+;;     C-x g ('magit-status) to see git status, and in the status buffer:
+;;
+;;     C-TAB to toggle section visibility
+;;     TAB to toggle item visibility
+;;     RET to open items
+;;     n go to next
+;;     p go to prev
+;;     g refresh status buffer
+;;     s to stage hunk/file/selection
+;;     u to unstage hunk/file/selection
+;;     ? open the dispatch popup
+;;     h open the dispatch popup
+;;
+;;     c to commit (type c, type the message then C-c C-c to actually commit)
+;;     b b to switch to another branch
+;;
+;; Other handy keys:
+;;
+;;     P u to do a git push
+;;     F u to do a git pull
+
+(use-package magit
+  :init
+  (setq magit-refresh-status-buffer nil)
+  :commands (magit-status)
+  :bind
+  (("C-x g" . magit-status)
+   ("C-x M-g" . magit-dispatch-popup))
+  )
+
+;;-----------------------------------------------------------------------------
 (if this-is-windows
   (progn
     ;;if in Windows run this block
