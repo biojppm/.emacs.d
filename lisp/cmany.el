@@ -297,15 +297,11 @@ directories should be placed"
 (defun cmany-load-configs ()
   "loads configs"
   (interactive)
-  (cmany--log "xaqui 2")
   (let ((fn (concat user-emacs-directory "cmany.save")))
     (when (file-exists-p fn)
-          (cmany--log "xaqui 3")
           (cmany--log "loading configs from %s" fn)
           (cmany--read-from-file fn 'cmany--configs)
-          (cmany--log "xaqui 4")
-          (message "cmany loaded configs: %s" cmany--configs)
-          (cmany--log "xaqui 4.1")
+          ;(message "cmany loaded configs: %s" cmany--configs)
           )
     )
   )
@@ -314,12 +310,9 @@ directories should be placed"
 (defun cmany-load-configs-if-none ()
   "loads configs if they are not yet available"
   (interactive)
-  (cmany--log "xaqui 0")
   (when (or (not (boundp 'cmany--configs))
             (equal cmany--configs nil))
-    (cmany--log "xaqui 1")
     (cmany-load-configs)
-    (cmany--log "xaqui 7")
     )
   )
 
@@ -358,32 +351,22 @@ directories should be placed"
    (list
     (file-name-as-directory
      (ido-read-directory-name "cmake proj dir to restore: " (cmany--guess-proj-dir)))))
-  (cmany--log "restoringzzzz....... 0")
   (if (boundp 'cmany--configs)
       (progn
-        (cmany--log "restoringzzzz....... 0 %s" (cdr (assoc dir cmany--configs)))
         (let ((c (cdr (assoc dir cmany--configs))))
-          (cmany--log "restoringzzz....... 1 %s\n%s\n%s\n" cmany--configs dir c (assoc "cmany-build-dir" c))
           (if c
               (progn
-                (cmany--log "restoring....... 2 %s" (assoc "cmany-build-dir" c))
                 (cmany-set-proj-dir dir t)
-                (cmany--log "restoring....... 2.1")
                 (cmany-set-build-dir (cdr (assoc "cmany-build-dir" c)) t)
-                (cmany--log "restoring....... 2.2")
                 (cmany-set-target (cdr (assoc "cmany-target" c)) t)
-                (cmany--log "restoring....... 2.3")
                 (cmany-set-cmd (cdr (assoc "cmany-cmd" c)) t)
-                (cmany--log "restoring....... 2.4")
                 t ;; return true to signal loaded config
                 )
-            (cmany--log "restoring....... 3")
             nil ;; no config was found for this dir
             )
           )
         )
     (progn
-      (cmany--log "restoring....... 4")
       nil ;; no configs are available
       )
     )
@@ -573,14 +556,24 @@ directories should be placed"
 
 ;;-----------------------------------------------------------------------------
 
-(defun cmany--show-configuration (&optional msg)
-  (cmany--log "----------------------------")
-  (when (not (string-equal msg nil)) (cmany--log "%s:" msg))
-  (cmany--log "  cmany-proj-dir: %s" cmany-proj-dir)
-  (cmany--log "  cmany-build-dir: %s" cmany-build-dir)
-  (cmany--log "  cmany-cmd: %s" cmany-cmd)
-  (cmany--log "  cmany-target: %s" cmany-target)
-  (cmany--log "----------------------------")
+(defun cmany--show-configuration (&optional msg full)
+  (if full
+      (progn
+        (cmany--log "----------------------------")
+        (when (not (equal msg nil)) (cmany--log "%s:" msg))
+        (cmany--log "  cmany-proj-dir: %s" cmany-proj-dir)
+        (cmany--log "  cmany-build-dir: %s" cmany-build-dir)
+        (cmany--log "  cmany-cmd: %s" cmany-cmd)
+        (cmany--log "  cmany-target: %s" cmany-target)
+        (cmany--log "----------------------------")
+        )
+    (progn
+      (cmany--log "%scurrent config: %s%s"
+                  (if (equal msg nil) "" (format "%s: " msg))
+                  cmany-build-dir
+                  (if (string-equal cmany-target "") "" (format " [%s]" cmany-target)))
+      )
+    )
   )
 
 ;;;###autoload
@@ -606,7 +599,7 @@ form, build dir and active target"
   (setq dir (cmany--guess-proj-dir))
   (if (cmany-restore-config dir)
       (progn
-        (cmany--show-configuration "restored configuration")
+        (cmany--show-configuration "restored configuration" t)
         )
     (progn
       (cmany--log "really need to guess")
@@ -614,9 +607,10 @@ form, build dir and active target"
       (cmany-set-cmd cmany-cmd-default t)
       (cmany-set-build-dir (cmany--guess-build-dir) t)
       (cmany-set-target "" t)
-      (cmany--show-configuration "guessed configuration")
+      (cmany--show-configuration "guessed configuration" t)
       )
     )
+  (cmany--show-configuration)
   )
 
 ;;-----------------------------------------------------------------------------
