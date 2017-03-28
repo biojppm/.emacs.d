@@ -1174,13 +1174,17 @@ original line and use the absolute value."
   :config
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-rtags-hook))
+  (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  (add-to-list 'company-backends 'company-c-headers)
+  )
 (use-package cc-mode
   :defer t
   :config
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-rtags-hook))
+  (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  (add-to-list 'company-backends 'company-c-headers)
+  )
 ;; RTAGS
 ;; http://diobla.info/doc/rtags
 ;; https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
