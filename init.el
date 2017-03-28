@@ -1284,7 +1284,6 @@ original line and use the absolute value."
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
 
-
 ;;; GNU R
 ;;  instructions on ESS: http://ess.r-project.org/Manual/ess.html
 ;;  http://cran.r-project.org/doc/FAQ/R-FAQ.html#R-and-Emacs
@@ -1978,11 +1977,13 @@ original line and use the absolute value."
 (if this-is-windows
   (progn
     ;;if in Windows run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Consolas")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
+                                              :family "Consolas")))))
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
+                                              :family "Consolas")))));;"Inconsolata")))))
   )
 )
 
@@ -2017,7 +2018,7 @@ original line and use the absolute value."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
+ ;;'(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
  '(highlight-indentation-face ((t (:background "gray24")))))
 
