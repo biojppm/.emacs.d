@@ -711,19 +711,26 @@
 ;;The variable company-backends specifies a list of backends that
 ;;company-mode uses to retrieves completion candidates for you.
 
+(defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
+(defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
+(defun company--my-insert-char(char)
+  (interactive)(company-abort)(insert-char char))
 (use-package company
   :config
   (global-company-mode)
-  ;; https://tuhdo.github.io/c-ide.html#orgheadline15
-  ;(add-to-list 'company-backends 'company-c-headers)
-  ;(setq company-backends (delete 'company-semantic company-backends))
   (setq company-minimum-prefix-length 3)
-  (setq company-auto-complete 1)
+  (setq company-auto-complete t)
+  (setq company-show-numbers t)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
-   ("ESC" . company-abort))
-)
+   ("ESC" . company-abort)
+   ;; prevent company from completing on its own when we type regular characters
+   ("SPC" . company--my-insert-spc)
+   ("."   . company--my-insert-dot)
+   )
+  )
+
 
 ;;-------------------------------------------------------------------------
 
@@ -1253,11 +1260,13 @@ original line and use the absolute value."
   (use-package elpy
     :commands elpy-enable
     :config
-;;   (setq elpy-rpc-python-command "python3"
+    ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
+    ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
+   (setq elpy-rpc-python-command "python3"
 ;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
-;;         )
+         )
     (elpy-use-ipython)
     (add-hook 'python-mode-hook #'my-python-hook)
     :bind (:map elpy-mode-map
