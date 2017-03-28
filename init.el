@@ -713,8 +713,6 @@
 
 (defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
 (defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
-(defun company--my-insert-char(char)
-  (interactive)(company-abort)(insert-char char))
 (use-package company
   :config
   (global-company-mode)
@@ -724,10 +722,11 @@
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
-   ("ESC" . company-abort)
    ;; prevent company from completing on its own when we type regular characters
    ("SPC" . company--my-insert-spc)
    ("."   . company--my-insert-dot)
+   ;;("ESC" . company-abort) ;; for some reason this disables the M-digit shortcuts
+                             ;; see http://emacs.stackexchange.com/questions/31760/company-m-digit-shortcuts-not-working
    )
   )
 
