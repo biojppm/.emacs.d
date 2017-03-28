@@ -152,6 +152,7 @@
 ;; s super
 ;; H hyper
 
+;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
 
 ;; C-h k
@@ -169,6 +170,11 @@
 ;; C-h ?
 ;;    get help on getting help
 
+;; C-h M-k
+;;    describe-keymap
+(use-package help-fns+) ;; provides describe-keymap http://stackoverflow.com/a/7135736/5875572
+
+
 ;; M-x
 ;;    Run an interactive command ('execute-extended-command)
 ;; M-:
@@ -181,6 +187,7 @@
 ;;    execute elisp code region or buffer
 ;; C-x C-e
 ;;    Evaluate sexp before point; print value in the echo area.
+
 ;; F3
 ;; C-x (
 ;;    start recording macro
@@ -190,11 +197,12 @@
 
 ;; C-x z
 ;;    repeat previous command. After this, pressing z will repeat again
+(global-set-key [f2] 'repeat)  ; does the same as C-x z
+
 ;; C-x ESC ESC
 ;;    repeat previous complex command (a command which used the minibuffer)
-
-(global-set-key [f2] 'repeat)  ; does the same as C-x z
 (global-set-key [M-f2] 'repeat-complex-command)  ; does the same as C-x ESC ESC
+
 
 ;; M-! cmd RET
 ;;     Run the shell command line cmd and display the
