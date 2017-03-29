@@ -722,11 +722,14 @@
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
+   ;; for some reason this disables the M-digit shortcuts
+   ;; see http://emacs.stackexchange.com/questions/31760/company-m-digit-shortcuts-not-working
+   ;;("ESC" . company-abort)
+   ;; ... but this doesn't!!!
+   ("<escape>" . company-abort)
    ;; prevent company from completing on its own when we type regular characters
    ("SPC" . company--my-insert-spc)
    ("."   . company--my-insert-dot)
-   ;;("ESC" . company-abort) ;; for some reason this disables the M-digit shortcuts
-                             ;; see http://emacs.stackexchange.com/questions/31760/company-m-digit-shortcuts-not-working
    )
   )
 
