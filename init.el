@@ -54,8 +54,9 @@
       (command-execute command))))
 
 ;-------------------------------------------------------------------------------
-;;MELPA - package installer
-;;http://melpa.milkbox.net/#/getting-started
+;; MELPA - package installer
+;; http://melpa.milkbox.net/#/getting-started
+;; http://ergoemacs.org/emacs/emacs_package_system.html
 
 (require 'package)
 (add-to-list 'package-archives
@@ -96,7 +97,7 @@
 ;; ; package until any them are used
 ;; :commands (the-package-cmd3 the-package-cmd4)
 ;
-;; ; bind a key to primary commands within the package. Note the following:
+;; ; bind a key to primary commands within the package. Defer loading also. Note the following:
 ;; ;   * Special keys like tab or F1-Fn can be written in square brackets,
 ;; ;     ie [tab] instead of "tab"
 ;; ;   * To bind a key within a local keymap that only exists after the
@@ -110,8 +111,46 @@
 ;
 ;; ; establish a deferred binding within the interpreter-mode-alist variable
 ;; :interpreter ("\\.py\\'" . python-mode)
+;;
+;; ; explicitly defer loading of the package
+;; :defer t
+;; ; ... or explicitly demant loading of the package
+;; :demand t
+;;
 ;; )
 
+
+;;-------------------------------------------------------------------------------
+
+;; http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
+
+;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+;; super: left Windows key
+(setq w32-pass-lwindow-to-system nil)
+(setq w32-lwindow-modifier 'super) ; Left Windows key
+;; super: right Windows key
+(setq w32-pass-rwindow-to-system nil)
+(setq w32-rwindow-modifier 'super) ; Right Windows key
+;; make the menu/app key the hyper key
+(setq w32-pass-apps-to-system nil)
+(setq w32-apps-modifier 'hyper) ; Menu/App key
+
+;; Mac OS X
+;; set keys for Apple keyboard, for emacs in OS X
+(setq mac-command-modifier 'meta) ; make cmd key do Meta
+(setq mac-option-modifier 'super) ; make opt key do Super
+(setq mac-control-modifier 'control) ; make Control key do Control
+(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+
+
+;;-------------------------------------------------------------------------------
+;; Important keys:
+
+;; C Control
+;; M Meta (Alt)
+;; S shift
+;; s super
+;; H hyper
 
 ;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
@@ -131,6 +170,11 @@
 ;; C-h ?
 ;;    get help on getting help
 
+;; C-h M-k
+;;    describe-keymap
+(use-package help-fns+) ;; provides describe-keymap http://stackoverflow.com/a/7135736/5875572
+
+
 ;; M-x
 ;;    Run an interactive command ('execute-extended-command)
 ;; M-:
@@ -141,6 +185,8 @@
 ;;    execute selected elisp buffer
 ;; C-x e
 ;;    execute elisp code region or buffer
+;; C-x C-e
+;;    Evaluate sexp before point; print value in the echo area.
 
 ;; F3
 ;; C-x (
@@ -151,8 +197,122 @@
 
 ;; C-x z
 ;;    repeat previous command. After this, pressing z will repeat again
-
 (global-set-key [f2] 'repeat)  ; does the same as C-x z
+
+;; C-x ESC ESC
+;;    repeat previous complex command (a command which used the minibuffer)
+(global-set-key [M-f2] 'repeat-complex-command)  ; does the same as C-x ESC ESC
+
+
+;; M-! cmd RET
+;;     Run the shell command line cmd and display the
+;;     output (shell-command).
+;; M-| cmd RET
+;;     Run the shell command line cmd with region contents as input;
+;;     optionally replace the region with the output
+;;     (shell-command-on-region).
+;; M-x shell
+;;     Run a subshell with input and output through an Emacs
+;;     buffer. You can then give commands interactively.
+;; M-x term
+;;     Run a subshell with input and output through an Emacs
+;;     buffer. You can then give commands interactively. Full terminal
+;;     emulation is available.
+;; M-x eshell
+;;     Start the Emacs shell.
+;;
+;; C-c C-j
+;;     Switch to line mode (term-line-mode). Do nothing if already in
+;;     line mode.
+;; C-c C-k
+;;     Switch to char mode (term-char-mode). Do nothing if already in
+;;     char mode.
+
+;; The following commands are only available in char mode:
+;; C-c C-c
+;;     Send a literal C-c to the sub-shell.
+;; C-c char
+;;     This is equivalent to C-x char in normal Emacs. For example,
+;;     C-c o invokes the global binding of C-x o, which is normally
+;;     ‘other-window’.
+
+;; Term mode has a page-at-a-time feature. When enabled, it makes
+;; output pause at the end of each screenful:
+;;
+;; C-c C-q
+;;     Toggle the page-at-a-time feature. This command works in both
+;;     line and char modes. When the feature is enabled, the mode-line
+;;     displays the word ‘page’, and each time Term receives more than
+;;     a screenful of output, it pauses and displays ‘**MORE**’ in the
+;;     mode-line. Type SPC to display the next screenful of output, or
+;;     ? to see your other options. The interface is similar to the
+;;     more program.
+
+
+;; Debugging, Tracing, and Profiling (taken from http://stackoverflow.com/a/19896143/5875572)
+
+;;(toggle-debug-on-error)
+;;(toggle-debug-on-quit)
+
+;; Debugging: https://www.emacswiki.org/emacs/SourceLevelDebugger
+;; C-u C-M-x
+
+;; M-: (info "(elisp) Debugging") RET
+
+;; Standard debugger:
+;; M-x debug-on-entry FUNCTION
+;; M-x cancel-debug-on-entry &optional FUNCTION
+;; debug &rest DEBUGGER-ARGS
+;; M-x toggle-debug-on-error
+;; M-x toggle-debug-on-quit
+;; setq debug-on-signal
+;; setq debug-on-next-call
+;; setq debug-on-event
+;; setq debug-on-message REGEXP
+
+;; Edebug -- a source-level debugger for Emacs Lisp
+;; M-x edebug-defun (C-u C-M-x) Cancel with eval-defun (C-M-x)
+;; M-x edebug-all-defs -- Toggle edebugging of all definitions
+;; M-x edebug-all-forms -- Toggle edebugging of all forms
+;; M-x edebug-eval-top-level-form
+
+;; Tracing:
+;; M-x trace-function FUNCTION &optional BUFFER
+;; M-x untrace-function FUNCTION
+;; M-x untrace-all
+
+;; Timing and benchmarking:
+;; (benchmark-run &optional REPETITIONS &rest FORMS)
+
+;; Emacs Lisp Profiler (ELP)
+;; M-x elp-instrument-package
+;; M-x elp-instrument-list
+;; M-x elp-instrument-function
+;; M-x elp-reset-*
+;; M-x elp-results
+;; M-x elp-restore-all
+;;
+;; "There's a built-in profiler called ELP. You can try something like
+;; M-x elp-instrument-package, enter "vc", and then try finding a file
+;; Afterwards, M-x elp-results will show you a profile report.
+;; (Note that if the time is instead being spent in non-vc-related
+;; functions, this technique will not show it, but you can instrument
+;; further packages if you like.)" http://stackoverflow.com/a/6732810/324105
+
+;; CPU & Memory Profiler ('Native Profiler')
+;; M-x profiler-start
+;; M-x profiler-report
+;; M-x profiler-reset
+;; M-x profiler-stop
+;; M-x profiler-*
+
+;; Dope ("DOtemacs ProfilEr. A per-sexp-evaltime profiler.")
+;; https://raw.github.com/emacsmirror/dope/master/dope.el
+;; M-x dope-quick-start will show a little introduction tutorial.
+
+;; Spinning:
+;; Set debug-on-quit to t
+;; When the problem happens, hit C-g for a backtrace.
 
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
@@ -404,15 +564,24 @@
 ;; IDO mode: (Interactively DO things)
 ;; https://www.masteringemacs.org/article/introduction-to-ido-mode
 
+(require 'ido)
 (require 'flx-ido) ; https://github.com/lewang/flx
-(setq ido-everywhere t) ; enable basic IDO support for files and buffers
-(setq ido-enable-flex-matching t)
+(require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
+(require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
 (ido-mode 1)
 (flx-ido-mode)
+(ido-everywhere 1) ; enable basic IDO support for files and buffers
+(setq ido-everywhere t)
+(setq ido-use-faces t)
+(setq ido-vertical-show-count t)
+(ido-vertical-mode 1)
+(ido-ubiquitous-mode 1)
+(setq ido-enable-flex-matching t)
+(setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+
 
 ;; disable ido faces to see flx highlights.
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
+;(setq ido-use-faces nil)
 
 ;; set garbage-collection threshold to 10MB to speed up flx-ido:
 ;; see https://github.com/lewang/flx
@@ -499,6 +668,28 @@
 ;;If Ido is getting in your way, remember the fallback commands:
 ;; C-f for files; C-b for buffers.
 
+;;-------------------------------------------------------------------------
+;; smex
+;; https://github.com/nonsequitur/smex
+;; use IDO for completion of commands in M-x with enhancements
+;; like putting your most-used commands at the front of the list
+
+(use-package smex
+  :config
+  (smex-initialize)
+  :commands (smex smex-major-mode-commands)
+  :bind
+  (("M-x"   . smex)
+   ("M-X"   . smex-major-mode-commands)
+   ("C-M-x" . execute-extended-command)
+   ;;:map ido-completion-map
+   ;;("<tab>" . minibuffer-complete)
+   ;;("C-h f" . smex-describe-function) ;; fails with missing symbol ido-require-match
+   ;;("C-h w" . smex-where-is)
+   ;;("M-."   . smex-find-function)
+   ;;("C-a"   . move-beginning-of-line)
+   )
+  )
 
 ;;-------------------------------------------------------------------------
 ;; Auto complete
@@ -520,22 +711,28 @@
 ;;The variable company-backends specifies a list of backends that
 ;;company-mode uses to retrieves completion candidates for you.
 
+(defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
+(defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
 (use-package company
   :config
   (global-company-mode)
-  ;; https://tuhdo.github.io/c-ide.html#orgheadline15
-  (add-to-list 'company-backends 'company-c-headers)
-  (setq company-backends (delete 'company-semantic company-backends))
+  (setq company-minimum-prefix-length 3)
+  (setq company-auto-complete t)
+  (setq company-show-numbers t)
   :bind
-  (:map c-mode-base-map ("(tab)" . company-complete)
-   :map c++-mode-base-map ("(tab)" . company-complete)
+  (("C-<tab>" . company-complete)
+   :map company-active-map
+   ;; for some reason this disables the M-digit shortcuts
+   ;; see http://emacs.stackexchange.com/questions/31760/company-m-digit-shortcuts-not-working
+   ;;("ESC" . company-abort)
+   ;; ... but this doesn't!!!
+   ("<escape>" . company-abort)
+   ;; prevent company from completing on its own when we type regular characters
+   ("SPC" . company--my-insert-spc)
+   ("."   . company--my-insert-dot)
+   )
   )
-)
 
-;; stop safety warnings when this var is given in .dir-locals.el
-;; see http://emacs.stackexchange.com/questions/18774/trust-dir-locals-el
-(put 'company-clang-arguments 'safe-local-variable #'listp)
-(put 'c4stl-dir 'safe-local-variable #'stringp)
 
 ;;-------------------------------------------------------------------------
 
@@ -637,6 +834,61 @@ If point was already at that position, move point to beginning of line."
 
 ;;=========================================================================
 ;; EDITING
+
+;;------------------------------------------------------------------
+(require 'iedit)
+;; iedit. https://github.com/victorhge/iedit
+;;
+;;   * Highlight certain contents - by press C-; All occurrences of a symbol,
+;;     string or a region in the buffer may be highlighted corresponding to
+;;     current mark, point and prefix argument. Refer to the document of
+;;     ‘iedit-mode’ for details.
+;;   * Edit one of the occurrences The change is applied to other occurrences
+;;     simultaneously.
+;;   * Finish - by pressing C-; again
+;;
+;; This package also provides rectangle support with visible
+;; rectangle highlighting, which is similar with cua mode rectangle
+;; support. But it’s lighter weight and uses Iedit mechanisms.
+;;
+;; You can also use Iedit mode as a quick way to temporarily show
+;; only the buffer lines that match the current text being
+;; edited. This gives you the effect of a temporary ‘keep-lines’ or
+;; ‘occur’. To get this effect, hit C-’ when in Iedit mode - it
+;; toggles hiding non-matching lines.
+;;
+;; Renaming refactoring is convenient in Iedit mode:
+;;
+;;   * The symbol under point is selected as occurrence by default and only
+;;     complete symbols are matched
+;;   * With digit prefix argument 0, only symbols in current function are
+;;     matched
+;;   * Restricting symbols in current region can be done by pressing C-;
+;;     again
+;;   * Last renaming refactoring is remembered and can be applied to other
+;;     buffers later
+;;
+;; There are also some other facilities you may never think about. Refer to
+;; the document of function ‘iedit-mode’ (C-h f iedit-mode RET) for more
+;; details.
+
+;;------------------------------------------------------------------
+;; https://github.com/k-talo/volatile-highlights.el
+;; brings visual feedback to some operations by highlighting portions
+;; relating to the operations.
+;;(require 'volatile-highlights)
+;;(volatile-highlights-mode t)
+
+;;------------------------------------------------------------------
+;; https://github.com/jscheid/dtrt-indent
+;; A minor mode that guesses the indentation offset originally used
+;; for creating source code files and transparently adjusts the
+;; corresponding settings in Emacs, making it more convenient to edit
+;; foreign files.
+(use-package dtrt-indent
+  :config (message "loading dtrt-indent")
+  :commands (dtrt-indent-mode)
+  )
 
 ;;------------------------------------------------------------------
 ;; drag line/selection up or down
@@ -837,7 +1089,12 @@ original line and use the absolute value."
   (setq highlight-symbol-idle-delay 0.2)
   (add-hook 'highlight-symbol-mode-hook
             (function
-             (lambda () (highlight-symbol-nav-mode +1)(message "highlight porra")))))
+             (lambda ()
+               (highlight-symbol-nav-mode +1)
+               (message "highlight porra"))
+             )
+            )
+  )
 
 ;(use-package smart-mode-line
 ;; :init
@@ -856,16 +1113,17 @@ original line and use the absolute value."
 
 (defun hook-snips()
   (message "enabling YASnippet...")
-  ; insert our dir at the front of the default snippets
+  ;; insert our dir at the front of the default snippets
   ;(setq sdir (concat emacs-dir "snippets"))
   ;(message (format "sdir=%s" sdir))
   ;(message (format "snippet_dirs=%s" yas-snippet-dirs))
   ;(setq yas-snippet-dirs (add-to-list 'yas-snippet-dirs sdir))
-  (message (format "yas-snippet-dirs=%s" yas-snippet-dirs))
+  (message "yas-snippet-dirs=%s" yas-snippet-dirs)
   (yas-reload-all)
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map [C-tab] 'yas-expand)
+  ;; bind yas-expand to C-S-tab
+  (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)
   (yas-minor-mode-on)
   (message "enabling YASnippet: done")
 )
@@ -904,19 +1162,79 @@ original line and use the absolute value."
 
 
 ;;; C/C++
-(load "my-cppsetup")
+(load "my-cppsetup") ; needs cleanup
+(defun my-rtags-hook ()
+  (interactive)
+  (rtags-start-process-unless-running)
+  (add-to-list 'company-backends 'company-rtags)
+  )
 (use-package clang-format
   :defer t
   :bind ("C-c C-M-f" . clang-format-region))
 (use-package c-mode
   :defer t
   :config
-  (use-snips)(add-hook 'c-mode-common-hook #'my-c-hook))
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  (add-to-list 'company-backends 'company-c-headers)
+  )
 (use-package cc-mode
   :defer t
   :config
-  (use-snips)(add-hook 'c-mode-common-hook #'my-c-hook))
-
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  (add-to-list 'company-backends 'company-c-headers)
+  )
+;; RTAGS
+;; http://diobla.info/doc/rtags
+;; https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
+(use-package rtags
+  :init
+  (setq rtags-completions-enabled t)
+  (setq rtags-autostart-diagnostics t)
+  (setq rtags-rc-log-enabled t)
+  :config
+  (require 'company-rtags)
+  (add-to-list 'company-backends 'company-rtags)
+  (rtags-diagnostics)
+  :bind
+  (:map c-mode-base-map
+        ("M-<left>"  . rtags-location-stack-back)
+        ("M-<right>" . rtags-location-stack-forward)
+        ("M-."       . rtags-find-symbol-at-point)
+        ("M-,"       . rtags-find-references-at-point)
+        ("C-c r ." . rtags-find-symbol-at-point)
+        ("C-c r ," . rtags-find-references-at-point)
+        ("C-c r v" . rtags-find-virtuals-at-point)
+        ("C-c r V" . rtags-print-enum-value-at-point)
+        ("C-c r /" . rtags-find-all-references-at-point)
+        ("C-c r Y" . rtags-cycle-overlays-on-screen)
+        ("C-c r >" . rtags-find-symbol)
+        ("C-c r <" . rtags-find-references)
+        ("C-c r -" . rtags-location-stack-back)
+        ("C-c r +" . rtags-location-stack-forward)
+        ("C-c r D" . rtags-diagnostics)
+        ("C-c r G" . rtags-guess-function-at-point)
+        ("C-c r p" . rtags-set-current-project)
+        ("C-c r P" . rtags-print-dependencies)
+        ("C-c r e" . rtags-reparse-file)
+        ("C-c r E" . rtags-preprocess-file)
+        ("C-c r R" . rtags-rename-symbol)
+        ("C-c r M" . rtags-symbol-info)
+        ("C-c r S" . rtags-display-summary)
+        ("C-c r O" . rtags-goto-offset)
+        ("C-c r ;" . rtags-find-file)
+        ("C-c r F" . rtags-fixit)
+        ("C-c r X" . rtags-fix-fixit-at-point)
+        ("C-c r B" . rtags-show-rtags-buffer)
+        ("C-c r I" . rtags-imenu)
+        ("C-c r T" . rtags-taglist)
+        )
+  )
+(load "cmany")
+(add-hook 'c-mode-common-hook 'cmany-mode)
 
 
 ;;; PHP
@@ -940,8 +1258,6 @@ original line and use the absolute value."
 ;;https://github.com/jorgenschaefer/elpy
 (defun my-python-hook ()
   (win-nav-rsz)
-  (global-set-key [C-<up>] 'backward-paragraph)
-  (global-set-key [C-<down>] 'forward-paragraph)
   )
 (use-package python
   :defer t
@@ -950,20 +1266,29 @@ original line and use the absolute value."
   (use-package elpy
     :commands elpy-enable
     :config
-;;   (setq elpy-rpc-python-command "python3"
+    ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
+    ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
+   (setq elpy-rpc-python-command "python3"
 ;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
-;;         )
-    (elpy-use-ipython))
+         )
+    (elpy-use-ipython)
+    (add-hook 'python-mode-hook #'my-python-hook)
+    :bind (:map elpy-mode-map
+                ("C-<up>" . backward-paragraph)
+                ("C-<down>" . forward-paragraph)
+                ("M-<up>" . drag-stuff-up)
+                ("M-<down>" . drag-stuff-down)
+                )
+    )
   (elpy-enable)
-  (use-snips)(add-hook 'python-mode-hook #'hook-snips)
+  (use-snips)
+  (add-hook 'python-mode-hook #'hook-snips)
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
-  (add-hook 'python-mode-hook #'my-python-hook)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
-
 
 ;;; GNU R
 ;;  instructions on ESS: http://ess.r-project.org/Manual/ess.html
@@ -1419,95 +1744,29 @@ original line and use the absolute value."
 ;; https://www.emacswiki.org/emacs/CategorySearchAndReplace
 
 ;;-------------------------------------------------------------------------
-;; https://github.com/atilaneves/cmake-ide
-
-(defun cmake-ide--get-default-build-dir ()
-  "get a default value for cmake-ide-build-dir"
-  (if (and (boundp 'cmake-ide-build-dir)
-           (not (string-equal 'cmake-ide-build-dir "")))
-      ;; if there's a current cmake-ide-build-dir, use it
-      (progn
-        ;;(message "cmake-ide-build-dir already defined")
-        cmake-ide-build-dir)
-      ;; otherwise...
-    (progn
-      ;; is there a result from a previous session?
-      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
-        (if (file-exists-p fn)
-          (progn
-            ;; load the file into a string
-            ;;(message "found a previous session at %s: %s" fn
-            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-          ;; otherwise, just use the current directory
-          (progn
-            ;;(message "cmake-ide-build-dir from current directory: %s"
-            ;;         (setq fonix (file-name-directory (buffer-file-name))))
-            (file-name-directory (buffer-file-name))
-            )
-          )
-        )
-      )
-    )
-  )
-
-(defun cmake-ide--set-build-dir (dir)
-  "set cmake-ide-build-dir, and store the value to a persistent file"
-  (if (and (boundp 'cmake-ide-build-dir)
-           (not (string-equal 'cmake-ide-build-dir "")))
-      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
-      (progn (message "cmake-ide-build-dir was empty"))
-    )
-  (setq cmake-ide-build-dir dir)
-  (message "cmake-ide-build-dir is now %s" dir)
-  ;; save this value to a file for use in future sessions
-  (write-region cmake-ide-build-dir nil
-                (concat user-emacs-directory "cmake-ide-build-dir.save"))
-  )
-
-(defun cmake-ide-set-build-dir (dir)
-  (interactive
-   (list (read-directory-name "Enter the cmake-ide build directory: "
-                              (cmake-ide--get-default-build-dir))))
-  (cmake-ide--set-build-dir dir)
-  )
-
-(defun my-cmake-ide-setup()
-  (interactive)
-  (require 'rtags)
-  (call-interactively 'cmake-ide-set-build-dir)
-  )
-
-(use-package cmake-ide
-  :defer t
-  :init
-;;  :bind ("s-p" . projectile-command-map)
-  :commands (cmake-ide-setup)
-  )
-
-;;-------------------------------------------------------------------------
 ;; https://projectile.readthedocs.io/en/
 
 (use-package projectile
-  :defer t
+  ;;:defer t
   :init
-  :bind ("s-p" . projectile-command-map)
+  (setq projectile-enable-caching t)
+  ;;:bind ("s-p" . projectile-command-map)
   :config
-  (projectile-global-mode)
-;; (persp-mode)
-;; (use-package persp-projectile
-;;   :commands persp-projectile
-;;   :config
-;;   (add-hook 'persp-activated-hook
-;;             #'(lambda ()
-;;                 (persp-add-buffer
-;;                  (get-buffer-create "*Messages*")))))
-;; (require 'persp-projectile)
-;; (setq projectile-switch-project-action 'projectile-dired)
-;; (setq projectile-mode-line
-;;       '(:eval (if (file-remote-p default-directory)
-;;                   " Prj[*remote*]"
-;;                 (format " Prj[%s]" (projectile-project-name)))))
+  (projectile-mode)
+  ;;(persp-mode)
+  ;;(use-package persp-projectile
+  ;;  :commands persp-projectile
+  ;;  :config
+  ;;  (add-hook 'persp-activated-hook
+  ;;            #'(lambda ()
+  ;;                (persp-add-buffer
+  ;;                 (get-buffer-create "*Messages*")))))
+  ;;(require 'persp-projectile)
+  (setq projectile-switch-project-action 'projectile-dired)
+  (setq projectile-mode-line
+        '(:eval (if (file-remote-p default-directory)
+                    " Prj[*remote*]"
+                  (format " Prj[%s]" (projectile-project-name)))))
   )
 
 ;; C-c p f 	Display a list of all files in the project. With a prefix argument it will clear the cache first.
@@ -1554,6 +1813,73 @@ original line and use the absolute value."
 ;;
 ;; C-c p C-h
 ;;
+
+;;-------------------------------------------------------------------------
+;; https://github.com/atilaneves/cmake-ide
+
+;;(defun cmake-ide--get-default-build-dir ()
+;;  "get a default value for cmake-ide-build-dir"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      ;; if there's a current cmake-ide-build-dir, use it
+;;      (progn
+;;        ;;(message "cmake-ide-build-dir already defined")
+;;        cmake-ide-build-dir)
+;;      ;; otherwise...
+;;    (progn
+;;      ;; is there a result from a previous session?
+;;      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
+;;        (if (file-exists-p fn)
+;;          (progn
+;;            ;; load the file into a string
+;;            ;;(message "found a previous session at %s: %s" fn
+;;            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;          ;; otherwise, just use the current directory
+;;          (progn
+;;            ;;(message "cmake-ide-build-dir from current directory: %s"
+;;            ;;         (setq fonix (file-name-directory (buffer-file-name))))
+;;            (file-name-directory (buffer-file-name))
+;;            )
+;;          )
+;;        )
+;;      )
+;;    )
+;;  )
+;;
+;;(defun cmake-ide--set-build-dir (dir)
+;;  "set cmake-ide-build-dir, and store the value to a persistent file"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
+;;      (progn (message "cmake-ide-build-dir was empty"))
+;;    )
+;;  (setq cmake-ide-build-dir dir)
+;;  (message "cmake-ide-build-dir is now %s" dir)
+;;  ;; save this value to a file for use in future sessions
+;;  (write-region cmake-ide-build-dir nil
+;;                (concat user-emacs-directory "cmake-ide-build-dir.save"))
+;;  )
+;;
+;;(defun cmake-ide-set-build-dir (dir)
+;;  (interactive
+;;   (list (read-directory-name "Enter the cmake-ide build directory: "
+;;                              (cmake-ide--get-default-build-dir))))
+;;  (cmake-ide--set-build-dir dir)
+;;  )
+;;
+;;(defun my-cmake-ide-setup()
+;;  (interactive)
+;;  (require 'rtags)
+;;  (call-interactively 'cmake-ide-set-build-dir)
+;;  )
+;;
+;;(use-package cmake-ide
+;;  :defer t
+;;  :init
+;;;;  :bind ("s-p" . projectile-command-map)
+;;  :commands (cmake-ide-setup)
+;;  )
 
 ;;-------------------------------------------------------------------------
 ;;text modes
@@ -1623,17 +1949,51 @@ original line and use the absolute value."
   )
 
 ;;-----------------------------------------------------------------------------
+;; MAGIT https://magit.vc/manual/magit/Getting-Started.html#Getting-Started
+;;
+;;     C-x g ('magit-status) to see git status, and in the status buffer:
+;;
+;;     C-TAB to toggle section visibility
+;;     TAB to toggle item visibility
+;;     RET to open items
+;;     n go to next
+;;     p go to prev
+;;     g refresh status buffer
+;;     s to stage hunk/file/selection
+;;     u to unstage hunk/file/selection
+;;     ? open the dispatch popup
+;;     h open the dispatch popup
+;;
+;;     c to commit (type c, type the message then C-c C-c to actually commit)
+;;     b b to switch to another branch
+;;
+;; Other handy keys:
+;;
+;;     P u to do a git push
+;;     F u to do a git pull
+
+(use-package magit
+  :init
+  (setq magit-refresh-status-buffer nil)
+  :commands (magit-status)
+  :bind
+  (("C-x g" . magit-status)
+   ("C-x M-g" . magit-dispatch-popup))
+  )
+
+;;-----------------------------------------------------------------------------
 (if this-is-windows
   (progn
     ;;if in Windows run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown" :family "Consolas")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
+                                              :family "Consolas")))))
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
+                                              :family "Consolas")))));;"Inconsolata")))))
   )
 )
-;
 
 
 
@@ -1666,6 +2026,11 @@ original line and use the absolute value."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
+ ;;'(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
  '(highlight-indentation-face ((t (:background "gray24")))))
+
+
+(set-face-attribute 'ido-vertical-first-match-face nil :background "#777777" :foreground "orange")
+(set-face-attribute 'ido-vertical-only-match-face nil :background nil :foreground nil)
+(set-face-attribute 'ido-vertical-match-face nil :foreground nil)
