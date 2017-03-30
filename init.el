@@ -749,11 +749,45 @@
 ;;-------------------------------------------------------------------------
 
 (use-package tramp
-  :defer t
   :config
-  (setq tramp-default-method "ssh"
-	tramp-auto-save-directory
-        (expand-file-name "~/.emacs.d/auto-save-list"))
+  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html
+  (setenv "ESHELL" "bash")
+  (setq tramp-default-method "ssh")
+  ;;(setq tramp-auto-save-directory (expand-file-name "~/.emacs.d/auto-save-list"))
+
+  ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
+  ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
+  (setq tramp-shell-prompt-pattern
+        "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
+  )
+
+;; prevent TRAMP from connecting to hosts on startup
+(defun ido-remove-tramp-from-cache nil
+  "Taken from https://www.emacswiki.org/emacs/TrampMode
+    Remove any TRAMP entries from `ido-dir-file-cache'.
+    This stops tramp from trying to connect to remote hosts on emacs startup,
+    which can be very annoying."
+  (interactive)
+  (setq ido-dir-file-cache
+        (cl-remove-if
+         (lambda (x)
+           (string-match "/\\(rsh\\|ssh\\|telnet\\|su\\|sudo\\|sshx\\|krlogin\\|ksu\\|rcp\\|scp\\|rsync\\|scpx\\|fcp\\|nc\\|ftp\\|smb\\|adb\\):" (car x)))
+         ido-dir-file-cache)))
+;; redefine `ido-kill-emacs-hook' so that cache is cleaned before being saved
+(defun ido-kill-emacs-hook ()
+  (ido-remove-tramp-from-cache)
+  (ido-save-history))
+
+
+(defun my-tramp-open (user host port file)
+  "interactively open a file on another host"
+  (interactive (list
+                (read-string "user: ")
+                (read-string "host: ")
+                (read-string "port: " "22")
+                (read-string "file: " "~")))
+  (setq fn (concat "/" tramp-default-method ":" user "@" host "#" port ":" file))
+  (find-file fn)
   )
 
 ;;=========================================================================
