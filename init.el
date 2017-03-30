@@ -53,7 +53,19 @@
     (let ((prefix-arg prefixarg))
       (command-execute command))))
 
-;-------------------------------------------------------------------------------
+;;-------------------------------------------------------------------------------
+;; re-builder: regular expression builder
+;; see https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+(setq reb-re-syntax "string")
+
+;; C-c TAB --- switch re-builder syntax mode.
+;; You can enter the sub-expression mode with C-c C-e to only highlight capturing groups
+;; you can toggle the case sensitivity with C-c C-i
+;; and you can move between matches with C-c C-s and C-c C-r.
+;; The re-builder keybind C-c C-w bears mention as well: it will copy
+;; (and convert, where applicable) the expression to a string format suitable for use in elisp.
+
+;;------------------------------------------------------------------------------
 ;; MELPA - package installer
 ;; http://melpa.milkbox.net/#/getting-started
 ;; http://ergoemacs.org/emacs/emacs_package_system.html
