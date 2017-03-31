@@ -1365,7 +1365,7 @@ original line and use the absolute value."
          ("\\.rng\\'" . nxml-mode)
          ("\\.dtllp\\'" . nxml-mode)))
 (defun unhtml (start end)
-  "escape html characters: &, <, >.
+  "escape html characters: &, <, >, \".
   taken from: http://shallowsky.com/blog/linux/editors/emacs-escape-html.html"
   (interactive "r")
   (save-excursion
@@ -1377,6 +1377,8 @@ original line and use the absolute value."
       (replace-string "<" "&lt;")
       (goto-char (point-min))
       (replace-string ">" "&gt;")
+      (goto-char (point-min))
+      (replace-string "\"" "&quot;")
       )))
 
 
