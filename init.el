@@ -56,14 +56,17 @@
 ;;-------------------------------------------------------------------------------
 ;; re-builder: regular expression builder
 ;; see https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
-(setq reb-re-syntax "string")
+(setq reb-re-syntax 'string)
 
-;; C-c TAB --- switch re-builder syntax mode.
-;; You can enter the sub-expression mode with C-c C-e to only highlight capturing groups
-;; you can toggle the case sensitivity with C-c C-i
-;; and you can move between matches with C-c C-s and C-c C-r.
-;; The re-builder keybind C-c C-w bears mention as well: it will copy
-;; (and convert, where applicable) the expression to a string format suitable for use in elisp.
+;; C-c TAB     switch re-builder syntax mode.
+;; C-c C-u     Show Error
+;; C-c C-e     enter the sub-expression mode to only highlight capturing groups
+;; C-c C-i     toggle the case sensitivity
+;; C-c C-s     next match
+;; C-c C-r     prev match
+;; C-c C-b     Change Target Buffer
+;; C-c C-w     Copy Regular Expression (and convert where applicable) the expression to a string format suitable for use in elisp
+;; C-c C-q     Quit re-builder
 
 ;;------------------------------------------------------------------------------
 ;; MELPA - package installer
