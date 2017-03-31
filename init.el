@@ -1279,6 +1279,7 @@ original line and use the absolute value."
         ("C-c r T" . rtags-taglist)
         )
   )
+(add-to-list 'load-path (concat emacs-dir "cmany.el"))
 (load "cmany")
 (add-hook 'c-mode-common-hook 'cmany-mode)
 
