@@ -2051,8 +2051,8 @@ original line and use the absolute value."
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
-                                              :family "Consolas")))));;"Inconsolata")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown"
+                                              :family "Inconsolata")))));;"Inconsolata")))))
   )
 )
 
