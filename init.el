@@ -12,6 +12,14 @@
 ;;http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
 
+;; a shortcut for opening this file
+(defun my-open-init-el ()
+  "edit ~/.emacs.d/init.el"
+  (interactive)
+  (find-file (concat user-emacs-directory "init.el"))
+  )
+(global-set-key (kbd "C-c u e") 'my-open-init-el)
+
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
 ;(require 'backup-dir)
