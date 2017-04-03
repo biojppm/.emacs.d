@@ -1682,21 +1682,22 @@ original line and use the absolute value."
   (gud-def my-gdb-run-program "run" "" "(re)start the program")
   (gud-def my-gdb-kill-program "kill" "" "kill the program")
 
-  (global-set-key [f5] 'my-gdb-run-program)
-  (global-set-key [S-f5] 'my-gdb-kill-program)
-  (global-set-key [f7] 'gud-cont)      ;; continue
-  (global-set-key [f9] 'gud-break)     ;; add breakpoint
-  (global-set-key [C-f9] 'gud-remove)  ;; remove breakpoint
-  (global-set-key [S-f9] 'gud-print)   ;; print var under cursor or region
-  (global-set-key [C-S-f9] 'gud-watch) ;; watch var under cursor or region
-  (global-set-key [f10] 'gud-next)     ;; step over
-  (global-set-key [C-f10] 'gud-until)  ;; execute until current line
-  (global-set-key [f11] 'gud-step)     ;; step into
-  (global-set-key [S-f11] 'gud-finish) ;; finish current function
+  (global-set-key [f5]     'my-gdb-run-program)
+  (global-set-key [S-f5]   'my-gdb-kill-program)
+  (global-set-key [f7]     'gud-cont)   ;; continue
+  (global-set-key [f9]     'gud-break)  ;; add breakpoint
+  (global-set-key [C-f9]   'gud-remove) ;; remove breakpoint
+  (global-set-key [S-f9]   'gud-print)  ;; print var under cursor or region
+  (global-set-key [C-S-f9] 'gud-watch)  ;; watch var under cursor or region
+  (global-set-key [f10]    'gud-next)   ;; step over
+  (global-set-key [C-f10]  'gud-until)  ;; execute until current line
+  (global-set-key [f11]    'gud-step)   ;; step into
+  (global-set-key [S-f11]  'gud-finish) ;; finish current function
 
   ;; make the gdb prompt sticky to its window
   ;; this assumes that the gud window is focused
-  ;(sticky-buffer-mode 1)
+  ;;(sticky-buffer-mode 1)
+  ()
 
   ;; Problems with source files opening in different windows:
   ;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
