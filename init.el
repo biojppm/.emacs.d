@@ -1223,7 +1223,11 @@ original line and use the absolute value."
 (defun my-rtags-hook ()
   (interactive)
   (rtags-start-process-unless-running)
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
   (add-to-list 'company-backends 'company-rtags)
+  (add-to-list 'company-backends 'company-c-headers)
   )
 (use-package clang-format
   :defer t
@@ -1234,7 +1238,6 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  (add-to-list 'company-backends 'company-c-headers)
   )
 (use-package cc-mode
   :defer t
@@ -1242,7 +1245,6 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  (add-to-list 'company-backends 'company-c-headers)
   )
 ;; RTAGS
 ;; http://diobla.info/doc/rtags
