@@ -1227,6 +1227,8 @@ original line and use the absolute value."
     )
   (add-to-list 'company-backends 'company-rtags)
   (add-to-list 'company-backends 'company-c-headers)
+  ;; this shortcut needs to be set again
+  (global-set-key (kbd "C-d") 'duplicate-line-or-region)
   )
 (use-package clang-format
   :defer t
@@ -1315,8 +1317,24 @@ original line and use the absolute value."
 ;;; Python
 ;;https://elpy.readthedocs.io/en/
 ;;https://github.com/jorgenschaefer/elpy
+(defun my-pdb-send-cmd (cmd)
+  (interactive (list (read-string "command to send to pdb: " "")))
+  (let ((b (current-buffer)))
+    (message "pdb: sending command %s" cmd)
+    (switch-to-buffer (get-buffer "*gud-main.py*"))
+    (end-of-buffer)
+    (insert cmd)
+    (execute-kbd-macro "\C-m")
+    (switch-to-buffer b)
+    )
+  )
+
+
 (defun my-python-hook ()
   (win-nav-rsz)
+  (require 'gud)
+  (require 'gdb-mi)
+  (require 'tooltip)
   )
 (use-package python
   :defer t
@@ -1334,6 +1352,7 @@ original line and use the absolute value."
          )
     (elpy-use-ipython)
     (add-hook 'python-mode-hook #'my-python-hook)
+    (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
                 ("C-<up>" . backward-paragraph)
                 ("C-<down>" . forward-paragraph)
@@ -1344,6 +1363,7 @@ original line and use the absolute value."
   (elpy-enable)
   (use-snips)
   (add-hook 'python-mode-hook #'hook-snips)
+  (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
   )
 (use-package cython-mode
@@ -1677,7 +1697,24 @@ original line and use the absolute value."
 
 (setq gdb-many-windows t)
 (setq gdb-speedbar-auto-raise t)
+(gud-tooltip-mode 1)
+(defun my-pdb-hook ()
+  (interactive)
+
+  (global-set-key [f5]     (lambda ()(interactive) (my-pdb-send-cmd "run")))
+  (global-set-key [S-f5]   (lambda ()(interactive) (my-pdb-send-cmd "restart")))
+  (global-set-key [f7]     (lambda ()(interactive) (my-pdb-send-cmd "continue")))   ;; continue
+  (global-set-key [f9]     (lambda ()(interactive) (my-pdb-send-cmd (format "break %s:%d" (buffer-file-name) (line-number-at-pos)))))  ;; add breakpoint
+  (global-set-key [C-f9]   (lambda ()(interactive) (my-pdb-send-cmd (format "clear %s:%d" (buffer-file-name) (line-number-at-pos))))) ;; remove breakpoint
+  (global-set-key [S-f9]   (lambda ()(interactive) (my-pdb-send-cmd "pp")))  ;; print var under cursor or region
+  (global-set-key [C-S-f9] (lambda ()(interactive) (my-pdb-send-cmd "pp")))  ;; watch var under cursor or region
+  (global-set-key [f10]    (lambda ()(interactive) (my-pdb-send-cmd "next")))   ;; step over
+  ;;(global-set-key [C-f10]  (lambda ()(interactive) (my-pdb-send-cmd "run")))  ;; execute until current line
+  (global-set-key [f11]    (lambda ()(interactive) (my-pdb-send-cmd "step")))   ;; step into
+  (global-set-key [S-f11]  (lambda ()(interactive) (my-pdb-send-cmd "return"))) ;; finish current function
+  )
 (defun my-gdb-hook ()
+  (interactive)
   (gud-def my-gdb-run-program "run" "" "(re)start the program")
   (gud-def my-gdb-kill-program "kill" "" "kill the program")
 
@@ -1696,7 +1733,6 @@ original line and use the absolute value."
   ;; make the gdb prompt sticky to its window
   ;; this assumes that the gud window is focused
   ;;(sticky-buffer-mode 1)
-  ()
 
   ;; Problems with source files opening in different windows:
   ;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
@@ -1720,61 +1756,61 @@ original line and use the absolute value."
   ;; Most of the trickiness in here comes from wanting to preserve the current
   ;; region-restriction if that's possible.  We use an explicit display-buffer
   ;; to get around the fact that this is called inside a save-excursion.
-  (defadvice gud-display-line (true-file line)
-    (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
-           (buffer
-            (with-current-buffer gud-comint-buffer
-              (gud-find-file true-file)))
-           (window (and buffer
-                        (or (get-buffer-window buffer)
-                            (display-buffer buffer))))
-           (pos))
-      (when buffer
-        (with-current-buffer buffer
-          (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
-            (if (yes-or-no-p
-                 (format "File %s changed on disk.  Reread from disk? "
-                         (buffer-name)))
-                (revert-buffer t t)
-              (setq gud-keep-buffer t)))
-          (save-restriction
-            (widen)
-            (goto-char (point-min))
-            (forward-line (1- line))
-            (setq pos (point))
-            (or gud-overlay-arrow-position
-                (setq gud-overlay-arrow-position (make-marker)))
-            (set-marker gud-overlay-arrow-position (point) (current-buffer))
-            ;; If they turned on hl-line, move the hl-line highlight to
-            ;; the arrow's line.
-            (when (featurep 'hl-line)
-              (cond
-               (global-hl-line-mode
-                (global-hl-line-highlight))
-               ((and hl-line-mode hl-line-sticky-flag)
-                (hl-line-highlight)))))
-          (cond ((or (< pos (point-min)) (> pos (point-max)))
-                 (widen)
-                 (goto-char pos))))
-        (when window
-          (set-window-point window gud-overlay-arrow-position)
-          (if (eq gud-minor-mode 'gdbmi)
-              (unless (gdb-display-source-buffer buffer)
-                (gdb-display-buffer buffer nil 'visible))
-            (message "aqui caralho 0")
-            )
-          (message "aqui caralho 1")
-          (get-buffer-window buffer)
-          (display-buffer buffer)
-          )
-        ;(when window
-        ;  (set-window-point window gud-overlay-arrow-position)
-        ;  (if (eq gud-minor-mode 'gdbmi)
-        ;      (setq gdb-source-window window))
-        ;  )
-        )
-      )
-    )
+  ;; (defadvice gud-display-line (true-file line)
+  ;;   (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+  ;;          (buffer
+  ;;           (with-current-buffer gud-comint-buffer
+  ;;             (gud-find-file true-file)))
+  ;;          (window (and buffer
+  ;;                       (or (get-buffer-window buffer)
+  ;;                           (display-buffer buffer))))
+  ;;          (pos))
+  ;;     (when buffer
+  ;;       (with-current-buffer buffer
+  ;;         (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+  ;;           (if (yes-or-no-p
+  ;;                (format "File %s changed on disk.  Reread from disk? "
+  ;;                        (buffer-name)))
+  ;;               (revert-buffer t t)
+  ;;             (setq gud-keep-buffer t)))
+  ;;         (save-restriction
+  ;;           (widen)
+  ;;           (goto-char (point-min))
+  ;;           (forward-line (1- line))
+  ;;           (setq pos (point))
+  ;;           (or gud-overlay-arrow-position
+  ;;               (setq gud-overlay-arrow-position (make-marker)))
+  ;;           (set-marker gud-overlay-arrow-position (point) (current-buffer))
+  ;;           ;; If they turned on hl-line, move the hl-line highlight to
+  ;;           ;; the arrow's line.
+  ;;           (when (featurep 'hl-line)
+  ;;             (cond
+  ;;              (global-hl-line-mode
+  ;;               (global-hl-line-highlight))
+  ;;              ((and hl-line-mode hl-line-sticky-flag)
+  ;;               (hl-line-highlight)))))
+  ;;         (cond ((or (< pos (point-min)) (> pos (point-max)))
+  ;;                (widen)
+  ;;                (goto-char pos))))
+  ;;       (when window
+  ;;         (set-window-point window gud-overlay-arrow-position)
+  ;;         (if (eq gud-minor-mode 'gdbmi)
+  ;;             (unless (gdb-display-source-buffer buffer)
+  ;;               (gdb-display-buffer buffer nil 'visible))
+  ;;           (message "aqui fonix 0")
+  ;;           )
+  ;;         (message "aqui fonix 1")
+  ;;         (get-buffer-window buffer)
+  ;;         (display-buffer buffer)
+  ;;         )
+  ;;       ;(when window
+  ;;       ;  (set-window-point window gud-overlay-arrow-position)
+  ;;       ;  (if (eq gud-minor-mode 'gdbmi)
+  ;;       ;      (setq gdb-source-window window))
+  ;;       ;  )
+  ;;       )
+  ;;     )
+  ;;   )
   )
 (add-hook 'gdb-mode-hook 'my-gdb-hook)
 (global-set-key [f5] 'gdb)
