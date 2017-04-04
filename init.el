@@ -18,7 +18,13 @@
   (interactive)
   (find-file (concat user-emacs-directory "init.el"))
   )
+(defun my-open-cmany-el ()
+  "edit ~/.emacs.d/cmany.el/cmany.el"
+  (interactive)
+  (find-file (concat user-emacs-directory "cmany.el/cmany.el"))
+  )
 (global-set-key (kbd "C-c u e") 'my-open-init-el)
+(global-set-key (kbd "C-c u m") 'my-open-cmany-el)
 
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
@@ -1107,13 +1113,6 @@ original line and use the absolute value."
         (forward-line 1)
         (forward-char pos)))))
 
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
 (global-set-key (kbd "C-d") 'duplicate-line-or-region)
 
 ;;-------------------------------------------------------------------------
