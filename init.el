@@ -1433,7 +1433,8 @@ original line and use the absolute value."
   )
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
 (load "cmany")
-(add-hook 'c-mode-common-hook 'cmany-mode)
+(global-cmany-mode 1)
+;;(add-hook 'c-mode-common-hook 'cmany-mode)
 
 
 ;;; PHP
