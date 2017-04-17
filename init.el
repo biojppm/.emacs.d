@@ -748,6 +748,7 @@
   (setq company-minimum-prefix-length 3)
   (setq company-auto-complete t)
   (setq company-show-numbers t)
+  (setq company-selection-wraparound t)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
@@ -1474,6 +1475,7 @@ original line and use the absolute value."
   (require 'gud)
   (require 'gdb-mi)
   (require 'tooltip)
+  (subword-mode 1)
   )
 (use-package python
   :defer t
@@ -1497,6 +1499,8 @@ original line and use the absolute value."
                 ("C-<down>" . forward-paragraph)
                 ("M-<up>" . drag-stuff-up)
                 ("M-<down>" . drag-stuff-down)
+                ("C-<right>" . subword-forward)
+                ("C-<left>" . subword-backward)
                 )
     )
   (elpy-enable)
@@ -1592,6 +1596,7 @@ original line and use the absolute value."
   (if (eq window-system 'x)
       (font-lock-mode 1))
   :config
+  (setq inferior-octave-program "octave-cli")
   (use-snips)(add-hook 'octave-mode-hook #'hook-snips)
   :mode ("\\.m$" . octave-mode)
   )
