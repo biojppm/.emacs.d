@@ -1341,6 +1341,10 @@ original line and use the absolute value."
 ;;Auto-close bracket pairs
 ;(electric-pair-mode 1)
 
+;; Prevent electric-indent-mode from indenting the current line
+;; https://emacs.stackexchange.com/questions/20896/change-the-behaviour-of-ret-with-electric-indent-to-only-indent-the-new-line
+(setq-default electric-indent-inhibit t)
+
 ;; show unnecessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
           (lambda () (interactive)
