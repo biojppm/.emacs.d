@@ -343,6 +343,16 @@
 ;; Set debug-on-quit to t
 ;; When the problem happens, hit C-g for a backtrace.
 
+(defun keymap-symbol (keymap)
+  "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists.
+  http://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap"
+  (catch 'gotit
+    (mapatoms (lambda (sym)
+                (and (boundp sym)
+                     (eq (symbol-value sym) keymap)
+                     (not (eq sym 'keymap))
+                     (throw 'gotit sym))))))
+
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
 
@@ -1370,8 +1380,6 @@ original line and use the absolute value."
     )
   (add-to-list 'company-backends 'company-rtags)
   (add-to-list 'company-backends 'company-c-headers)
-  ;; this shortcut needs to be set again
-  (global-set-key (kbd "C-d") 'duplicate-line-or-region)
   )
 (use-package clang-format
   :defer t
@@ -1382,6 +1390,7 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
   )
 (use-package cc-mode
   :defer t
@@ -1389,6 +1398,7 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
+  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
   )
 ;; RTAGS
 ;; http://diobla.info/doc/rtags
