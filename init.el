@@ -1505,7 +1505,7 @@ original line and use the absolute value."
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
          )
-    (elpy-use-ipython)
+    (elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
@@ -1540,8 +1540,13 @@ original line and use the absolute value."
   (add-hook 'R-mode-hook #'smartparens-strict-mode))
 
 
-;;; XML
-;;http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
+;;; JavaScript
+(setq js-indent-level 2)
+
+;;; XML/HTML
+;; http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
+;; C-c <right> / C-c <left> move to end of matching tag
+;; C-M-n / C-M-p jump to begin/end of tag
 (use-package nxml
   :init (setq nxml-slash-auto-complete-flag t)
   :mode (("\\.xml\\'" . nxml-mode)
@@ -1599,7 +1604,6 @@ original line and use the absolute value."
          ("\\.fx\\'" . hlsl-mode)
          ("\\.usf\\'" . hlsl-mode))
   )
-
 
 ;;; Octave/Matlab
 ;;see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
