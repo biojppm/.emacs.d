@@ -1436,6 +1436,9 @@ original line and use the absolute value."
 ;;    Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
 ;
 
+;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
+(setq compilation-scroll-output 'first-error)
+
 ;;see https://www.emacswiki.org/emacs/CompilationMode#toc4
 (defun my-compile()
   "run compile"
