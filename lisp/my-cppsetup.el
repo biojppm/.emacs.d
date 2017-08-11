@@ -104,7 +104,7 @@
   ; Turn off tab character
   (setq-default indent-tabs-mode nil)
 
-  ;; fuck electric mode
+  ;; fuck electric mode (maybe? https://www.gnu.org/software/emacs/manual/html_node/emacs/Electric-C.html)
   (c-toggle-electric-state -1)
   ;(electric-indent-mode -1)
 

@@ -12,6 +12,20 @@
 ;;http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
 
+;; a shortcut for opening this file
+(defun my-open-init-el ()
+  "edit ~/.emacs.d/init.el"
+  (interactive)
+  (find-file (concat user-emacs-directory "init.el"))
+  )
+(defun my-open-cmany-el ()
+  "edit ~/.emacs.d/cmany.el/cmany.el"
+  (interactive)
+  (find-file (concat user-emacs-directory "cmany.el/cmany.el"))
+  )
+(global-set-key (kbd "C-c u e") 'my-open-init-el)
+(global-set-key (kbd "C-c u m") 'my-open-cmany-el)
+
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
 ;(require 'backup-dir)
@@ -53,7 +67,22 @@
     (let ((prefix-arg prefixarg))
       (command-execute command))))
 
-;-------------------------------------------------------------------------------
+;;-------------------------------------------------------------------------------
+;; re-builder: regular expression builder
+;; see https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+(setq reb-re-syntax 'string)
+
+;; C-c TAB     switch re-builder syntax mode.
+;; C-c C-u     Show Error
+;; C-c C-e     enter the sub-expression mode to only highlight capturing groups
+;; C-c C-i     toggle the case sensitivity
+;; C-c C-s     next match
+;; C-c C-r     prev match
+;; C-c C-b     Change Target Buffer
+;; C-c C-w     Copy Regular Expression (and convert where applicable) the expression to a string format suitable for use in elisp
+;; C-c C-q     Quit re-builder
+
+;;------------------------------------------------------------------------------
 ;; MELPA - package installer
 ;; http://melpa.milkbox.net/#/getting-started
 ;; http://ergoemacs.org/emacs/emacs_package_system.html
@@ -313,6 +342,16 @@
 ;; Spinning:
 ;; Set debug-on-quit to t
 ;; When the problem happens, hit C-g for a backtrace.
+
+(defun keymap-symbol (keymap)
+  "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists.
+  http://stackoverflow.com/questions/14489848/emacs-name-of-current-local-keymap"
+  (catch 'gotit
+    (mapatoms (lambda (sym)
+                (and (boundp sym)
+                     (eq (symbol-value sym) keymap)
+                     (not (eq sym 'keymap))
+                     (throw 'gotit sym))))))
 
 ;;------------------------------------------------------------------------------
 ;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
@@ -719,6 +758,7 @@
   (setq company-minimum-prefix-length 3)
   (setq company-auto-complete t)
   (setq company-show-numbers t)
+  (setq company-selection-wraparound t)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
@@ -737,11 +777,45 @@
 ;;-------------------------------------------------------------------------
 
 (use-package tramp
-  :defer t
   :config
-  (setq tramp-default-method "ssh"
-	tramp-auto-save-directory
-        (expand-file-name "~/.emacs.d/auto-save-list"))
+  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html
+  (setenv "ESHELL" "bash")
+  (setq tramp-default-method "ssh")
+  ;;(setq tramp-auto-save-directory (expand-file-name "~/.emacs.d/auto-save-list"))
+
+  ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
+  ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
+  (setq tramp-shell-prompt-pattern
+        "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
+  )
+
+;; prevent TRAMP from connecting to hosts on startup
+(defun ido-remove-tramp-from-cache nil
+  "Taken from https://www.emacswiki.org/emacs/TrampMode
+    Remove any TRAMP entries from `ido-dir-file-cache'.
+    This stops tramp from trying to connect to remote hosts on emacs startup,
+    which can be very annoying."
+  (interactive)
+  (setq ido-dir-file-cache
+        (cl-remove-if
+         (lambda (x)
+           (string-match "/\\(rsh\\|ssh\\|telnet\\|su\\|sudo\\|sshx\\|krlogin\\|ksu\\|rcp\\|scp\\|rsync\\|scpx\\|fcp\\|nc\\|ftp\\|smb\\|adb\\):" (car x)))
+         ido-dir-file-cache)))
+;; redefine `ido-kill-emacs-hook' so that cache is cleaned before being saved
+(defun ido-kill-emacs-hook ()
+  (ido-remove-tramp-from-cache)
+  (ido-save-history))
+
+
+(defun my-tramp-open (user host port file)
+  "interactively open a file on another host"
+  (interactive (list
+                (read-string "user: ")
+                (read-string "host: ")
+                (read-string "port: " "22")
+                (read-string "file: " "~")))
+  (setq fn (concat "/" tramp-default-method ":" user "@" host "#" port ":" file))
+  (find-file fn)
   )
 
 ;;=========================================================================
@@ -1051,13 +1125,6 @@ original line and use the absolute value."
         (forward-char pos)))))
 
 (global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
-(global-set-key (kbd "C-d") 'duplicate-line-or-region)
 
 ;;-------------------------------------------------------------------------
 
@@ -1134,6 +1201,144 @@ original line and use the absolute value."
 )
 
 ;;-------------------------------------------------------------------------
+;; https://projectile.readthedocs.io/en/
+
+(use-package projectile
+  ;;:defer t
+  :init
+  (setq projectile-enable-caching t)
+  ;;:bind ("s-p" . projectile-command-map)
+  :config
+  (projectile-mode)
+  ;;(persp-mode)
+  ;;(use-package persp-projectile
+  ;;  :commands persp-projectile
+  ;;  :config
+  ;;  (add-hook 'persp-activated-hook
+  ;;            #'(lambda ()
+  ;;                (persp-add-buffer
+  ;;                 (get-buffer-create "*Messages*")))))
+  ;;(require 'persp-projectile)
+  (setq projectile-switch-project-action 'projectile-dired)
+  (setq projectile-mode-line
+        '(:eval (if (file-remote-p default-directory)
+                    " Prj[*remote*]"
+                  (format " Prj[%s]" (projectile-project-name)))))
+  )
+
+;; C-c p f 	Display a list of all files in the project. With a prefix argument it will clear the cache first.
+;; C-c p F 	Display a list of all files in all known projects.
+;; C-c p g 	Display a list of all files at point in the project. With a prefix argument it will clear the cache first.
+;; C-c p 4 f 	Jump to a project's file using completion and show it in another window.
+;; C-c p 4 g 	Jump to a project's file based on context at point and show it in another window.
+;; C-c p d 	Display a list of all directories in the project. With a prefix argument it will clear the cache first.
+;; C-c p 4 d 	Switch to a project directory and show it in another window.
+;; C-c p 4 a 	Switch between files with the same name but different extensions in other window.
+;; C-c p T 	Display a list of all test files(specs, features, etc) in the project.
+;; C-c p l 	Display a list of all files in a directory (that's not necessarily a project)
+;; C-c p s g 	Run grep on the files in the project.
+;; M-- C-c p s g 	Run grep on projectile-grep-default-files in the project.
+;; C-c p v 	Run vc-dir on the root directory of the project.
+;; C-c p V 	Browse dirty version controlled projects.
+;; C-c p b 	Display a list of all project buffers currently open.
+;; C-c p 4 b 	Switch to a project buffer and show it in another window.
+;; C-c p 4 C-o 	Display a project buffer in another window without selecting it.
+;; C-c p a 	Switch between files with the same name but different extensions.
+;; C-c p o 	Runs multi-occur on all project buffers currently open.
+;; C-c p r 	Runs interactive query-replace on all files in the projects.
+;; C-c p i 	Invalidates the project cache (if existing).
+;; C-c p R 	Regenerates the projects TAGS file.
+;; C-c p j 	Find tag in project's TAGS file.
+;; C-c p k 	Kills all project buffers.
+;; C-c p D 	Opens the root of the project in dired.
+;; C-c p e 	Shows a list of recently visited project files.
+;; C-c p E 	Opens the .dirs-local.el file of the project.
+;; C-c p s s 	Runs ag on the project. Requires the presence of ag.el.
+;; C-c p ! 	Runs shell-command in the root directory of the project.
+;; C-c p & 	Runs async-shell-command in the root directory of the project.
+;; C-c p c 	Runs a standard compilation command for your type of project.
+;; C-c p P 	Runs a standard test command for your type of project.
+;; C-c p t 	Toggle between an implementation file and its test file.
+;; C-c p 4 t 	Jump to implementation or test file in other window.
+;; C-c p z 	Adds the currently visited file to the cache.
+;; C-c p p 	Display a list of known projects you can switch to.
+;; C-c p S 	Save all project buffers.
+;; C-c p m 	Run the commander (an interface to run commands with a single key).
+;; C-c p ESC 	Switch to the most recently selected Projectile buffer.
+;;
+;; If you ever forget any of Projectile's keybindings just do a:
+;;
+;; C-c p C-h
+;;
+
+;;-------------------------------------------------------------------------
+;; https://github.com/atilaneves/cmake-ide
+
+;;(defun cmake-ide--get-default-build-dir ()
+;;  "get a default value for cmake-ide-build-dir"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      ;; if there's a current cmake-ide-build-dir, use it
+;;      (progn
+;;        ;;(message "cmake-ide-build-dir already defined")
+;;        cmake-ide-build-dir)
+;;      ;; otherwise...
+;;    (progn
+;;      ;; is there a result from a previous session?
+;;      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
+;;        (if (file-exists-p fn)
+;;          (progn
+;;            ;; load the file into a string
+;;            ;;(message "found a previous session at %s: %s" fn
+;;            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
+;;          ;; otherwise, just use the current directory
+;;          (progn
+;;            ;;(message "cmake-ide-build-dir from current directory: %s"
+;;            ;;         (setq fonix (file-name-directory (buffer-file-name))))
+;;            (file-name-directory (buffer-file-name))
+;;            )
+;;          )
+;;        )
+;;      )
+;;    )
+;;  )
+;;
+;;(defun cmake-ide--set-build-dir (dir)
+;;  "set cmake-ide-build-dir, and store the value to a persistent file"
+;;  (if (and (boundp 'cmake-ide-build-dir)
+;;           (not (string-equal 'cmake-ide-build-dir "")))
+;;      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
+;;      (progn (message "cmake-ide-build-dir was empty"))
+;;    )
+;;  (setq cmake-ide-build-dir dir)
+;;  (message "cmake-ide-build-dir is now %s" dir)
+;;  ;; save this value to a file for use in future sessions
+;;  (write-region cmake-ide-build-dir nil
+;;                (concat user-emacs-directory "cmake-ide-build-dir.save"))
+;;  )
+;;
+;;(defun cmake-ide-set-build-dir (dir)
+;;  (interactive
+;;   (list (read-directory-name "Enter the cmake-ide build directory: "
+;;                              (cmake-ide--get-default-build-dir))))
+;;  (cmake-ide--set-build-dir dir)
+;;  )
+;;
+;;(defun my-cmake-ide-setup()
+;;  (interactive)
+;;  (require 'rtags)
+;;  (call-interactively 'cmake-ide-set-build-dir)
+;;  )
+;;
+;;(use-package cmake-ide
+;;  :defer t
+;;  :init
+;;;;  :bind ("s-p" . projectile-command-map)
+;;  :commands (cmake-ide-setup)
+;;  )
+
+;;-------------------------------------------------------------------------
 ;;MODES
 ;;to enable a mode at runtime, type M-x the-mode-name
 
@@ -1145,6 +1350,10 @@ original line and use the absolute value."
 
 ;;Auto-close bracket pairs
 ;(electric-pair-mode 1)
+
+;; Prevent electric-indent-mode from indenting the current line
+;; https://emacs.stackexchange.com/questions/20896/change-the-behaviour-of-ret-with-electric-indent-to-only-indent-the-new-line
+(setq-default electric-indent-inhibit t)
 
 ;; show unnecessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
@@ -1166,7 +1375,11 @@ original line and use the absolute value."
 (defun my-rtags-hook ()
   (interactive)
   (rtags-start-process-unless-running)
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
   (add-to-list 'company-backends 'company-rtags)
+  (add-to-list 'company-backends 'company-c-headers)
   )
 (use-package clang-format
   :defer t
@@ -1177,7 +1390,7 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  (add-to-list 'company-backends 'company-c-headers)
+  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
   )
 (use-package cc-mode
   :defer t
@@ -1185,7 +1398,7 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  (add-to-list 'company-backends 'company-c-headers)
+  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
   )
 ;; RTAGS
 ;; http://diobla.info/doc/rtags
@@ -1233,8 +1446,10 @@ original line and use the absolute value."
         ("C-c r T" . rtags-taglist)
         )
   )
+(add-to-list 'load-path (concat emacs-dir "cmany.el"))
 (load "cmany")
-(add-hook 'c-mode-common-hook 'cmany-mode)
+(global-cmany-mode 1)
+;;(add-hook 'c-mode-common-hook 'cmany-mode)
 
 
 ;;; PHP
@@ -1256,8 +1471,25 @@ original line and use the absolute value."
 ;;; Python
 ;;https://elpy.readthedocs.io/en/
 ;;https://github.com/jorgenschaefer/elpy
+(defun my-pdb-send-cmd (cmd)
+  (interactive (list (read-string "command to send to pdb: " "")))
+  (let ((b (current-buffer)))
+    (message "pdb: sending command %s" cmd)
+    (switch-to-buffer (get-buffer "*gud-main.py*"))
+    (end-of-buffer)
+    (insert cmd)
+    (execute-kbd-macro "\C-m")
+    (switch-to-buffer b)
+    )
+  )
+
+
 (defun my-python-hook ()
   (win-nav-rsz)
+  (require 'gud)
+  (require 'gdb-mi)
+  (require 'tooltip)
+  (subword-mode 1)
   )
 (use-package python
   :defer t
@@ -1273,18 +1505,22 @@ original line and use the absolute value."
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
          )
-    (elpy-use-ipython)
+    (elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
+    (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
                 ("C-<up>" . backward-paragraph)
                 ("C-<down>" . forward-paragraph)
                 ("M-<up>" . drag-stuff-up)
                 ("M-<down>" . drag-stuff-down)
+                ("C-<right>" . subword-forward)
+                ("C-<left>" . subword-backward)
                 )
     )
   (elpy-enable)
   (use-snips)
   (add-hook 'python-mode-hook #'hook-snips)
+  (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
   )
 (use-package cython-mode
@@ -1304,8 +1540,13 @@ original line and use the absolute value."
   (add-hook 'R-mode-hook #'smartparens-strict-mode))
 
 
-;;; XML
-;;http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
+;;; JavaScript
+(setq js-indent-level 2)
+
+;;; XML/HTML
+;; http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
+;; C-c <right> / C-c <left> move to end of matching tag
+;; C-M-n / C-M-p jump to begin/end of tag
 (use-package nxml
   :init (setq nxml-slash-auto-complete-flag t)
   :mode (("\\.xml\\'" . nxml-mode)
@@ -1364,7 +1605,6 @@ original line and use the absolute value."
          ("\\.usf\\'" . hlsl-mode))
   )
 
-
 ;;; Octave/Matlab
 ;;see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
 (use-package octave-mode
@@ -1374,6 +1614,7 @@ original line and use the absolute value."
   (if (eq window-system 'x)
       (font-lock-mode 1))
   :config
+  (setq inferior-octave-program "octave-cli")
   (use-snips)(add-hook 'octave-mode-hook #'hook-snips)
   :mode ("\\.m$" . octave-mode)
   )
@@ -1621,25 +1862,42 @@ original line and use the absolute value."
 
 (setq gdb-many-windows t)
 (setq gdb-speedbar-auto-raise t)
+(gud-tooltip-mode 1)
+(defun my-pdb-hook ()
+  (interactive)
+
+  (global-set-key [f5]     (lambda ()(interactive) (my-pdb-send-cmd "run")))
+  (global-set-key [S-f5]   (lambda ()(interactive) (my-pdb-send-cmd "restart")))
+  (global-set-key [f7]     (lambda ()(interactive) (my-pdb-send-cmd "continue")))   ;; continue
+  (global-set-key [f9]     (lambda ()(interactive) (my-pdb-send-cmd (format "break %s:%d" (buffer-file-name) (line-number-at-pos)))))  ;; add breakpoint
+  (global-set-key [C-f9]   (lambda ()(interactive) (my-pdb-send-cmd (format "clear %s:%d" (buffer-file-name) (line-number-at-pos))))) ;; remove breakpoint
+  (global-set-key [S-f9]   (lambda ()(interactive) (my-pdb-send-cmd "pp")))  ;; print var under cursor or region
+  (global-set-key [C-S-f9] (lambda ()(interactive) (my-pdb-send-cmd "pp")))  ;; watch var under cursor or region
+  (global-set-key [f10]    (lambda ()(interactive) (my-pdb-send-cmd "next")))   ;; step over
+  ;;(global-set-key [C-f10]  (lambda ()(interactive) (my-pdb-send-cmd "run")))  ;; execute until current line
+  (global-set-key [f11]    (lambda ()(interactive) (my-pdb-send-cmd "step")))   ;; step into
+  (global-set-key [S-f11]  (lambda ()(interactive) (my-pdb-send-cmd "return"))) ;; finish current function
+  )
 (defun my-gdb-hook ()
+  (interactive)
   (gud-def my-gdb-run-program "run" "" "(re)start the program")
   (gud-def my-gdb-kill-program "kill" "" "kill the program")
 
-  (global-set-key [f5] 'my-gdb-run-program)
-  (global-set-key [S-f5] 'my-gdb-kill-program)
-  (global-set-key [f7] 'gud-cont)      ;; continue
-  (global-set-key [f9] 'gud-break)     ;; add breakpoint
-  (global-set-key [C-f9] 'gud-remove)  ;; remove breakpoint
-  (global-set-key [S-f9] 'gud-print)   ;; print var under cursor or region
-  (global-set-key [C-S-f9] 'gud-watch) ;; watch var under cursor or region
-  (global-set-key [f10] 'gud-next)     ;; step over
-  (global-set-key [C-f10] 'gud-until)  ;; execute until current line
-  (global-set-key [f11] 'gud-step)     ;; step into
-  (global-set-key [S-f11] 'gud-finish) ;; finish current function
+  (global-set-key [f5]     'my-gdb-run-program)
+  (global-set-key [S-f5]   'my-gdb-kill-program)
+  (global-set-key [f7]     'gud-cont)   ;; continue
+  (global-set-key [f9]     'gud-break)  ;; add breakpoint
+  (global-set-key [C-f9]   'gud-remove) ;; remove breakpoint
+  (global-set-key [S-f9]   'gud-print)  ;; print var under cursor or region
+  (global-set-key [C-S-f9] 'gud-watch)  ;; watch var under cursor or region
+  (global-set-key [f10]    'gud-next)   ;; step over
+  (global-set-key [C-f10]  'gud-until)  ;; execute until current line
+  (global-set-key [f11]    'gud-step)   ;; step into
+  (global-set-key [S-f11]  'gud-finish) ;; finish current function
 
   ;; make the gdb prompt sticky to its window
   ;; this assumes that the gud window is focused
-  ;(sticky-buffer-mode 1)
+  ;;(sticky-buffer-mode 1)
 
   ;; Problems with source files opening in different windows:
   ;; http://stackoverflow.com/questions/20226626/emacs-gdb-always-display-source-in-specific-window-with-gdb-many-windows
@@ -1663,61 +1921,61 @@ original line and use the absolute value."
   ;; Most of the trickiness in here comes from wanting to preserve the current
   ;; region-restriction if that's possible.  We use an explicit display-buffer
   ;; to get around the fact that this is called inside a save-excursion.
-  (defadvice gud-display-line (true-file line)
-    (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
-           (buffer
-            (with-current-buffer gud-comint-buffer
-              (gud-find-file true-file)))
-           (window (and buffer
-                        (or (get-buffer-window buffer)
-                            (display-buffer buffer))))
-           (pos))
-      (when buffer
-        (with-current-buffer buffer
-          (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
-            (if (yes-or-no-p
-                 (format "File %s changed on disk.  Reread from disk? "
-                         (buffer-name)))
-                (revert-buffer t t)
-              (setq gud-keep-buffer t)))
-          (save-restriction
-            (widen)
-            (goto-char (point-min))
-            (forward-line (1- line))
-            (setq pos (point))
-            (or gud-overlay-arrow-position
-                (setq gud-overlay-arrow-position (make-marker)))
-            (set-marker gud-overlay-arrow-position (point) (current-buffer))
-            ;; If they turned on hl-line, move the hl-line highlight to
-            ;; the arrow's line.
-            (when (featurep 'hl-line)
-              (cond
-               (global-hl-line-mode
-                (global-hl-line-highlight))
-               ((and hl-line-mode hl-line-sticky-flag)
-                (hl-line-highlight)))))
-          (cond ((or (< pos (point-min)) (> pos (point-max)))
-                 (widen)
-                 (goto-char pos))))
-        (when window
-          (set-window-point window gud-overlay-arrow-position)
-          (if (eq gud-minor-mode 'gdbmi)
-              (unless (gdb-display-source-buffer buffer)
-                (gdb-display-buffer buffer nil 'visible))
-            (message "aqui caralho 0")
-            )
-          (message "aqui caralho 1")
-          (get-buffer-window buffer)
-          (display-buffer buffer)
-          )
-        ;(when window
-        ;  (set-window-point window gud-overlay-arrow-position)
-        ;  (if (eq gud-minor-mode 'gdbmi)
-        ;      (setq gdb-source-window window))
-        ;  )
-        )
-      )
-    )
+  ;; (defadvice gud-display-line (true-file line)
+  ;;   (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+  ;;          (buffer
+  ;;           (with-current-buffer gud-comint-buffer
+  ;;             (gud-find-file true-file)))
+  ;;          (window (and buffer
+  ;;                       (or (get-buffer-window buffer)
+  ;;                           (display-buffer buffer))))
+  ;;          (pos))
+  ;;     (when buffer
+  ;;       (with-current-buffer buffer
+  ;;         (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+  ;;           (if (yes-or-no-p
+  ;;                (format "File %s changed on disk.  Reread from disk? "
+  ;;                        (buffer-name)))
+  ;;               (revert-buffer t t)
+  ;;             (setq gud-keep-buffer t)))
+  ;;         (save-restriction
+  ;;           (widen)
+  ;;           (goto-char (point-min))
+  ;;           (forward-line (1- line))
+  ;;           (setq pos (point))
+  ;;           (or gud-overlay-arrow-position
+  ;;               (setq gud-overlay-arrow-position (make-marker)))
+  ;;           (set-marker gud-overlay-arrow-position (point) (current-buffer))
+  ;;           ;; If they turned on hl-line, move the hl-line highlight to
+  ;;           ;; the arrow's line.
+  ;;           (when (featurep 'hl-line)
+  ;;             (cond
+  ;;              (global-hl-line-mode
+  ;;               (global-hl-line-highlight))
+  ;;              ((and hl-line-mode hl-line-sticky-flag)
+  ;;               (hl-line-highlight)))))
+  ;;         (cond ((or (< pos (point-min)) (> pos (point-max)))
+  ;;                (widen)
+  ;;                (goto-char pos))))
+  ;;       (when window
+  ;;         (set-window-point window gud-overlay-arrow-position)
+  ;;         (if (eq gud-minor-mode 'gdbmi)
+  ;;             (unless (gdb-display-source-buffer buffer)
+  ;;               (gdb-display-buffer buffer nil 'visible))
+  ;;           (message "aqui fonix 0")
+  ;;           )
+  ;;         (message "aqui fonix 1")
+  ;;         (get-buffer-window buffer)
+  ;;         (display-buffer buffer)
+  ;;         )
+  ;;       ;(when window
+  ;;       ;  (set-window-point window gud-overlay-arrow-position)
+  ;;       ;  (if (eq gud-minor-mode 'gdbmi)
+  ;;       ;      (setq gdb-source-window window))
+  ;;       ;  )
+  ;;       )
+  ;;     )
+  ;;   )
   )
 (add-hook 'gdb-mode-hook 'my-gdb-hook)
 (global-set-key [f5] 'gdb)
@@ -1745,144 +2003,6 @@ original line and use the absolute value."
 
 ;; Search and replace:
 ;; https://www.emacswiki.org/emacs/CategorySearchAndReplace
-
-;;-------------------------------------------------------------------------
-;; https://projectile.readthedocs.io/en/
-
-(use-package projectile
-  ;;:defer t
-  :init
-  (setq projectile-enable-caching t)
-  ;;:bind ("s-p" . projectile-command-map)
-  :config
-  (projectile-mode)
-  ;;(persp-mode)
-  ;;(use-package persp-projectile
-  ;;  :commands persp-projectile
-  ;;  :config
-  ;;  (add-hook 'persp-activated-hook
-  ;;            #'(lambda ()
-  ;;                (persp-add-buffer
-  ;;                 (get-buffer-create "*Messages*")))))
-  ;;(require 'persp-projectile)
-  (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-mode-line
-        '(:eval (if (file-remote-p default-directory)
-                    " Prj[*remote*]"
-                  (format " Prj[%s]" (projectile-project-name)))))
-  )
-
-;; C-c p f 	Display a list of all files in the project. With a prefix argument it will clear the cache first.
-;; C-c p F 	Display a list of all files in all known projects.
-;; C-c p g 	Display a list of all files at point in the project. With a prefix argument it will clear the cache first.
-;; C-c p 4 f 	Jump to a project's file using completion and show it in another window.
-;; C-c p 4 g 	Jump to a project's file based on context at point and show it in another window.
-;; C-c p d 	Display a list of all directories in the project. With a prefix argument it will clear the cache first.
-;; C-c p 4 d 	Switch to a project directory and show it in another window.
-;; C-c p 4 a 	Switch between files with the same name but different extensions in other window.
-;; C-c p T 	Display a list of all test files(specs, features, etc) in the project.
-;; C-c p l 	Display a list of all files in a directory (that's not necessarily a project)
-;; C-c p s g 	Run grep on the files in the project.
-;; M-- C-c p s g 	Run grep on projectile-grep-default-files in the project.
-;; C-c p v 	Run vc-dir on the root directory of the project.
-;; C-c p V 	Browse dirty version controlled projects.
-;; C-c p b 	Display a list of all project buffers currently open.
-;; C-c p 4 b 	Switch to a project buffer and show it in another window.
-;; C-c p 4 C-o 	Display a project buffer in another window without selecting it.
-;; C-c p a 	Switch between files with the same name but different extensions.
-;; C-c p o 	Runs multi-occur on all project buffers currently open.
-;; C-c p r 	Runs interactive query-replace on all files in the projects.
-;; C-c p i 	Invalidates the project cache (if existing).
-;; C-c p R 	Regenerates the projects TAGS file.
-;; C-c p j 	Find tag in project's TAGS file.
-;; C-c p k 	Kills all project buffers.
-;; C-c p D 	Opens the root of the project in dired.
-;; C-c p e 	Shows a list of recently visited project files.
-;; C-c p E 	Opens the .dirs-local.el file of the project.
-;; C-c p s s 	Runs ag on the project. Requires the presence of ag.el.
-;; C-c p ! 	Runs shell-command in the root directory of the project.
-;; C-c p & 	Runs async-shell-command in the root directory of the project.
-;; C-c p c 	Runs a standard compilation command for your type of project.
-;; C-c p P 	Runs a standard test command for your type of project.
-;; C-c p t 	Toggle between an implementation file and its test file.
-;; C-c p 4 t 	Jump to implementation or test file in other window.
-;; C-c p z 	Adds the currently visited file to the cache.
-;; C-c p p 	Display a list of known projects you can switch to.
-;; C-c p S 	Save all project buffers.
-;; C-c p m 	Run the commander (an interface to run commands with a single key).
-;; C-c p ESC 	Switch to the most recently selected Projectile buffer.
-;;
-;; If you ever forget any of Projectile's keybindings just do a:
-;;
-;; C-c p C-h
-;;
-
-;;-------------------------------------------------------------------------
-;; https://github.com/atilaneves/cmake-ide
-
-;;(defun cmake-ide--get-default-build-dir ()
-;;  "get a default value for cmake-ide-build-dir"
-;;  (if (and (boundp 'cmake-ide-build-dir)
-;;           (not (string-equal 'cmake-ide-build-dir "")))
-;;      ;; if there's a current cmake-ide-build-dir, use it
-;;      (progn
-;;        ;;(message "cmake-ide-build-dir already defined")
-;;        cmake-ide-build-dir)
-;;      ;; otherwise...
-;;    (progn
-;;      ;; is there a result from a previous session?
-;;      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
-;;        (if (file-exists-p fn)
-;;          (progn
-;;            ;; load the file into a string
-;;            ;;(message "found a previous session at %s: %s" fn
-;;            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-;;            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-;;          ;; otherwise, just use the current directory
-;;          (progn
-;;            ;;(message "cmake-ide-build-dir from current directory: %s"
-;;            ;;         (setq fonix (file-name-directory (buffer-file-name))))
-;;            (file-name-directory (buffer-file-name))
-;;            )
-;;          )
-;;        )
-;;      )
-;;    )
-;;  )
-;;
-;;(defun cmake-ide--set-build-dir (dir)
-;;  "set cmake-ide-build-dir, and store the value to a persistent file"
-;;  (if (and (boundp 'cmake-ide-build-dir)
-;;           (not (string-equal 'cmake-ide-build-dir "")))
-;;      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
-;;      (progn (message "cmake-ide-build-dir was empty"))
-;;    )
-;;  (setq cmake-ide-build-dir dir)
-;;  (message "cmake-ide-build-dir is now %s" dir)
-;;  ;; save this value to a file for use in future sessions
-;;  (write-region cmake-ide-build-dir nil
-;;                (concat user-emacs-directory "cmake-ide-build-dir.save"))
-;;  )
-;;
-;;(defun cmake-ide-set-build-dir (dir)
-;;  (interactive
-;;   (list (read-directory-name "Enter the cmake-ide build directory: "
-;;                              (cmake-ide--get-default-build-dir))))
-;;  (cmake-ide--set-build-dir dir)
-;;  )
-;;
-;;(defun my-cmake-ide-setup()
-;;  (interactive)
-;;  (require 'rtags)
-;;  (call-interactively 'cmake-ide-set-build-dir)
-;;  )
-;;
-;;(use-package cmake-ide
-;;  :defer t
-;;  :init
-;;;;  :bind ("s-p" . projectile-command-map)
-;;  :commands (cmake-ide-setup)
-;;  )
 
 ;;-------------------------------------------------------------------------
 ;;text modes
@@ -1988,13 +2108,14 @@ original line and use the absolute value."
 (if this-is-windows
   (progn
     ;;if in Windows run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
-                                              :family "Consolas")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+                                              :height 100 :family "Consolas")))))
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "unknown"
-                                              :family "Consolas")))));;"Inconsolata")))))
+    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+                                              :height 120 :family "Inconsolata")))))
+                                              ;;:height 100 :family "Consolas")))))
   )
 )
 
