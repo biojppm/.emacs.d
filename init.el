@@ -525,6 +525,8 @@
         (set-face-background 'region "#666666")
         )
     )
+  (set-face-background 'mode-line "#404040")
+  (set-face-background 'mode-line-inactive "#303030")
 )
 
 (defun my-set-theme-firebelly()
@@ -1677,31 +1679,71 @@ original line and use the absolute value."
 ;;    Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
 ;
 
+;;; Shut up compile saves
+(setq compilation-ask-about-save nil)
+;;; Don't save *anything*
+(setq compilation-save-buffers-predicate '(lambda () nil))
 ;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 (setq compilation-scroll-output 'first-error)
+
+(defvar my-compilation-exit-code nil)
+(defun my-compilation-exit-message-function (status_ code message)
+  (setq my-compilation-exit-code code)
+  (cons message code)
+  )
+(setq compilation-exit-message-function 'my-compilation-exit-message-function)
+
+(defun my-call-compile-or-recompile(which)
+  (setq my-compilation-curr-window (selected-window))
+  (call-interactively which)
+  (setq my-compilation-comp-window (get-buffer-window "*compilation*"))
+  (select-window my-compilation-comp-window)
+  (disable-line-wrapping)
+  (linum-mode 0)
+  ;;(setq h (window-height w))
+  ;;(shrink-window (- h 10))
+  (previous-buffer)
+  (setq my-compilation-comp-buffer (current-buffer))
+  (next-buffer)
+  (select-window my-compilation-curr-window)
+  )
 
 ;;see https://www.emacswiki.org/emacs/CompilationMode#toc4
 (defun my-compile()
   "run compile"
   (interactive)
-  (progn
-    (call-interactively 'compile)
-    (setq cur (selected-window))
-    (setq w (get-buffer-window "*compilation*"))
-    (select-window w)
-    (disable-line-wrapping)
-    (linum-mode 0)
-    ;(setq h (window-height w))
-    ;(shrink-window (- h 10))
-    (select-window cur)
-    )
+  (my-call-compile-or-recompile 'compile)
+  )
+(defun my-recompile()
+  "run recompile"
+  (interactive)
+  (my-call-compile-or-recompile 'recompile)
   )
 (defun my-compilation-hook()
   )
+(defun my-after-compilation-hook(buffer desc)
+  ;; https://emacs.stackexchange.com/questions/14187/run-code-right-after-compilation
+  ;; https://emacs.stackexchange.com/questions/9949/how-to-access-the-original-buffer-when-running-m-x-compile-and-friends?rq=1
+  ;;(message "Buffer %s: %s ---- exit code=%d" buffer desc my-compilation-exit-code)
+  (if (= my-compilation-exit-code 0)
+      (progn
+        ;(message "Compilation succeeded!")
+        (select-window my-compilation-comp-window)
+        (switch-to-buffer my-compilation-comp-buffer)
+        (select-window my-compilation-curr-window)
+        )
+      (progn
+        ;(message "Compilation failed...")
+        ;;(select-window my-compilation-comp-window)
+        ;;(next-error)
+        )
+      )
+  )
 (add-hook 'compilation-mode-hook 'my-compilation-hook)
+(add-hook 'compilation-finish-functions 'my-after-compilation-hook)
 (global-set-key [C-pause] 'kill-compilation)
 (global-set-key [S-f6] 'my-compile)
-(global-set-key [f6] 'recompile)
+(global-set-key [f6] 'my-recompile)
 (global-set-key [f8] 'next-error)
 (global-set-key [S-f8] 'previous-error)
 
