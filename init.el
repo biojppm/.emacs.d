@@ -1033,8 +1033,11 @@ If point was already at that position, move point to beginning of line."
 ;;-------------------------------------------------------------------------
 ;;Insert a new line and jump to it, indenting
 ;;http://superuser.com/questions/331660/how-to-insert-a-new-line-and-jump-to-it-in-emacs
-(global-set-key (kbd "<S-return>") "\C-e\C-m")   ; create line after current and indent
-(global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m") ; create line before current and indent
+(defun my-newline-shortcuts()
+  (global-set-key (kbd "<S-return>") "\C-e\C-m")   ; create line after current and indent
+  (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m") ; create line before current and indent
+  )
+(my-newline-shortcuts)
 
 ;;------------------------------------------------------------------
 ;; ===== Delete the previous word without adding it to the killring =====
@@ -1541,11 +1544,34 @@ original line and use the absolute value."
   (add-hook 'R-mode-hook #'subword-mode)
   (add-hook 'R-mode-hook #'smartparens-strict-mode))
 
+;;; HTML
+;; http://web-mode.org/
+(use-package web-mode
+  :init
+  (setq web-mode-engines-alist
+        '(("php"    . "\\.phtml\\'")
+          ("blade"  . "\\.blade\\."))
+        )
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.phtml\\'" . web-mode))
+  :config
+  (subword-mode 1)
+  (my-newline-shortcuts)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-style-padding 2)
+  (setq web-mode-script-padding 2)
+  (setq web-mode-block-padding 0)
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+  )
 
 ;;; JavaScript
 (setq js-indent-level 2)
 
-;;; XML/HTML
+;;; XML
 ;; http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
 ;; C-c <right> / C-c <left> move to end of matching tag
 ;; C-M-n / C-M-p jump to begin/end of tag
