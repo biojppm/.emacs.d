@@ -567,6 +567,12 @@
   (toggle-truncate-lines 1)
 )
 
+(defun enable-line-wrapping()
+  (interactive)
+  (visual-line-mode 1)
+  (toggle-truncate-lines 0)
+)
+
 (use-package window-number
   :commands window-number-mode
   :load-path "site-lisp/"
