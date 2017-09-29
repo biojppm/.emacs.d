@@ -13,5 +13,6 @@ cmake-ide-build-dir.save
 cmany.save
 *~
 smex-items
+.#smex-items
 projectile.cache
 bookmarks
