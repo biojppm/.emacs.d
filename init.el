@@ -26,6 +26,16 @@
 (global-set-key (kbd "C-c u e") 'my-open-init-el)
 (global-set-key (kbd "C-c u m") 'my-open-cmany-el)
 
+;; https://edivad.wordpress.com/2007/04/03/emacs-convert-dos-to-unix-and-vice-versa/
+(defun my-dos2unix()
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix)
+  )
+(defun my-unix2dos()
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos)
+  )
+
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
 ;(require 'backup-dir)
@@ -1569,6 +1579,7 @@ original line and use the absolute value."
   (setq web-mode-style-padding 2)
   (setq web-mode-script-padding 2)
   (setq web-mode-block-padding 0)
+  (setq web-mode-enable-auto-closing t)
   (setq web-mode-enable-auto-pairing t)
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-current-column-highlight t)
