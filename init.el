@@ -26,6 +26,16 @@
 (global-set-key (kbd "C-c u e") 'my-open-init-el)
 (global-set-key (kbd "C-c u m") 'my-open-cmany-el)
 
+;; https://edivad.wordpress.com/2007/04/03/emacs-convert-dos-to-unix-and-vice-versa/
+(defun my-dos2unix()
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix)
+  )
+(defun my-unix2dos()
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos)
+  )
+
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
 ;(require 'backup-dir)
@@ -1569,6 +1579,7 @@ original line and use the absolute value."
   (setq web-mode-style-padding 2)
   (setq web-mode-script-padding 2)
   (setq web-mode-block-padding 0)
+  (setq web-mode-enable-auto-closing t)
   (setq web-mode-enable-auto-pairing t)
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-current-column-highlight t)
@@ -1725,15 +1736,31 @@ original line and use the absolute value."
   )
 (setq compilation-exit-message-function 'my-compilation-exit-message-function)
 
+
 (defun my-call-compile-or-recompile(which)
+  (setq my-compilation-buffer-exists
+        (not (eq nil (get-buffer "*compilation*"))))
+  (setq my-compilation-buffer-is-visible nil)
+  (setq my-compilation-buffer-is-current nil)
+  (when my-compilation-buffer-exists
+    (setq my-compilation-buffer-is-visible
+          (not (eq nil (get-buffer-window-list "*compilation*"))))
+    (setq my-compilation-buffer-is-current
+          (eq (selected-window) (get-buffer-window "*compilation*")))
+    )
+  (message "compilation buffer exists: %s" my-compilation-buffer-exists)
+  (message "compilation buffer is visible: %s" my-compilation-buffer-is-visible)
+  (message "compilation buffer is current: %s" my-compilation-buffer-is-current)
   (setq my-compilation-curr-window (selected-window))
   (call-interactively which)
   (setq my-compilation-comp-window (get-buffer-window "*compilation*"))
   (select-window my-compilation-comp-window)
-  (disable-line-wrapping)
-  (linum-mode 0)
-  ;;(setq h (window-height w))
-  ;;(shrink-window (- h 10))
+  (when (not my-compilation-buffer-exists)
+    (disable-line-wrapping)
+    (linum-mode 0)
+    ;;(setq h (window-height w))
+    ;;(shrink-window (- h 10))
+    )
   (previous-buffer)
   (setq my-compilation-comp-buffer (current-buffer))
   (next-buffer)
@@ -1760,9 +1787,17 @@ original line and use the absolute value."
   (if (= my-compilation-exit-code 0)
       (progn
         ;(message "Compilation succeeded!")
-        (select-window my-compilation-comp-window)
-        (switch-to-buffer my-compilation-comp-buffer)
-        (select-window my-compilation-curr-window)
+        (when (not my-compilation-buffer-is-visible)
+          (select-window my-compilation-comp-window)
+          (switch-to-buffer my-compilation-comp-buffer)
+          (select-window my-compilation-curr-window)
+          )
+        (when my-compilation-buffer-is-visible
+          (select-window my-compilation-comp-window)
+          ;;(recenter-top-bottom)
+          (move-to-window-line -1)
+          (select-window my-compilation-curr-window)
+          )
         )
       (progn
         ;(message "Compilation failed...")
@@ -1771,6 +1806,7 @@ original line and use the absolute value."
         )
       )
   )
+
 (add-hook 'compilation-mode-hook 'my-compilation-hook)
 (add-hook 'compilation-finish-functions 'my-after-compilation-hook)
 (global-set-key [C-pause] 'kill-compilation)
