@@ -2182,14 +2182,20 @@ original line and use the absolute value."
 (if this-is-windows
   (progn
     ;;if in Windows run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-                                              :height 100 :family "Consolas")))))
+    (set-face-attribute 'default nil :font "Consolas-10")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          :height 100 :family "Consolas")))))
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-                                              :height 120 :family "Inconsolata")))))
-                                              ;;:height 100 :family "Consolas")))))
+    ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
+    (set-face-attribute 'default nil :font "Inconsolata-12")
+    ;;(set-face-attribute 'default nil :font "Consolas-11")
+    ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          ;;:height 120 :family "Inconsolata")))))
+    ;;                                          ;;:height 120 :family "Consolas")))))
+    ;;                                          :height 100 :family "Monospace")))))
   )
 )
 
