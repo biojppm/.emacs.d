@@ -1393,6 +1393,7 @@ original line and use the absolute value."
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
+
 (defun my-rtags-hook ()
   (interactive)
   (rtags-start-process-unless-running)
@@ -1411,7 +1412,10 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
+  :bind
+  (:map c-mode-base-map
+        ("C-d" . duplicate-line-or-region)
+        )
   )
 (use-package cc-mode
   :defer t
@@ -1419,7 +1423,10 @@ original line and use the absolute value."
   (use-snips)
   (add-hook 'c-mode-common-hook #'my-c-hook)
   (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
+  :bind
+  (:map c-mode-base-map
+        ("C-d" . duplicate-line-or-region)
+        )
   )
 ;; RTAGS
 ;; http://diobla.info/doc/rtags

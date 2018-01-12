@@ -16,3 +16,4 @@ smex-items
 .#smex-items
 projectile.cache
 bookmarks
+.yas-compiled-snippets.el

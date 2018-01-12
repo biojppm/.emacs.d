@@ -1,4 +1,4 @@
-; LOTS OF INFO: https://tuhdo.github.io/c-ide.html
+;; LOTS OF INFO: https://tuhdo.github.io/c-ide.html
 ; https://martinralbrecht.wordpress.com/2014/11/03/c-development-with-emacs/
 ; see https://github.com/Sarcasm/irony-mode
 ; https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
@@ -87,6 +87,20 @@
 ;;    file names.
 ;;
 
+(defun my-cc-curly-brackets ()
+  (interactive)
+  (end-of-visual-line)
+  (newline-and-indent)
+  (insert-string "{")
+  (c-indent-line-or-region)
+  (newline-and-indent)
+  (insert-string "}")
+  (c-indent-line-or-region)
+  (previous-line)
+  (end-of-visual-line)
+  (newline-and-indent)
+  )
+
 ;;
 ;; non-CEDET setup (fast boot, doesn't require CEDET)
 ;; this setup is available for all
@@ -99,6 +113,7 @@
 
   (local-set-key (kbd "RET") 'c-context-line-break)
   (local-set-key (kbd "C-c o") 'ff-find-other-file)
+  (local-set-key (kbd "C-c {") 'my-cc-curly-brackets)
   (local-set-key (kbd "M-q") 'c-fill-paragraph)
 
   ; Turn off tab character
