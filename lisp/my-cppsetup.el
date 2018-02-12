@@ -135,6 +135,7 @@
   ;; Indent size
   (setq c-default-style "linux")
   (c-set-offset 'substatement-open 0)
+  (c-set-offset 'inline-open 0)
   (c-set-offset 'innamespace [0])
   (setq c++-tab-always-indent t)
   (setq standard-indent 4)
