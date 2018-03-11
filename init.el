@@ -49,6 +49,9 @@
    kept-old-versions 2
    version-control t)       ; use versioned backups
 
+;; save command history
+(savehist-mode 1)
+
 ;;reload files automatically
 ;;http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
@@ -776,27 +779,27 @@
   (setq ivy-count-format "%d/%d ")
   )
 
-(use-package swiper
-  :ensure t
-  :bind (("C-s" . swiper)
-         ("C-r" . swiper))
-  )
+;; (use-package swiper
+;;   :ensure t
+;;   :bind (("C-s" . swiper)
+;;          ("C-r" . swiper))
+;;   )
 
 ;; https://github.com/redguardtoo/counsel-etags
 (use-package counsel
   :ensure t
   :bind (("M-x" . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
+         ;;("C-x C-f" . counsel-find-file)
          ("<f1> f" . counsel-describe-function)
          ("<f1> v" . counsel-describe-variable)
          ("<f1> l" . counsel-find-library)
          ;;("<f2> i" . counsel-info-lookup-symbol)
          ;;("<f2> u" . counsel-unicode-char)
-         ("C-c g" . counsel-git-grep)
-         ("C-c j" . counsel-git)
-         ("C-c k" . counsel-ag)
-         ("C-c r" . counsel-rg)
-         ("C-x l" . counsel-locate)
+         ("C-c s g" . counsel-git-grep)
+         ("C-c s j" . counsel-git)
+         ("C-c s k" . counsel-ag)
+         ("C-c s r" . counsel-rg)
+         ("C-c s l" . counsel-locate)
          :map minibuffer-local-map
          ("C-r" . counsel-minibuffer-add)
          )
