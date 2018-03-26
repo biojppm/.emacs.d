@@ -1186,7 +1186,7 @@ If point was already at that position, move point to beginning of line."
   (("M-m" . mc/edit-lines)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this)
-   ("C-c a" . mc/mark-all-like-this)
+   ("C-ç a" . mc/mark-all-like-this)
    )
 )
 
