@@ -1167,6 +1167,30 @@ If point was already at that position, move point to beginning of line."
 ;; details.
 
 ;;------------------------------------------------------------------
+;; multiple-cursors. https://github.com/magnars/multiple-cursors.el
+
+;; To get out of multiple-cursors-mode, press <return> or C-g. The latter
+;; will first disable multiple regions before disabling multiple cursors. If
+;; you want to insert a newline in multiple-cursors-mode, use C-j.
+
+(use-package multiple-cursors
+  :commands (
+             mc/edit-lines
+             mc/mark-next-like-this
+             mc/mark-previous-like-this
+             mc/mark-all-like-this
+             )
+  :bind
+  ;; When you have an active region that spans multiple lines, the following
+  ;; will add a cursor to each line:
+  (("M-m" . mc/edit-lines)
+   ("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/mark-previous-like-this)
+   ("C-c a" . mc/mark-all-like-this)
+   )
+)
+
+;;------------------------------------------------------------------
 ;; https://github.com/k-talo/volatile-highlights.el
 ;; brings visual feedback to some operations by highlighting portions
 ;; relating to the operations.
