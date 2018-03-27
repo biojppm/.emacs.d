@@ -599,7 +599,7 @@
 
 ;;-------------------------------------------
 ;; Show line numbers
-(global-linum-mode 1)
+;;(global-linum-mode 1)
 ;;Use C-<F5> to toggle line numbers
 (global-set-key (kbd "C-<f5>") 'linum-mode)
 
