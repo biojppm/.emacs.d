@@ -28,16 +28,27 @@
 # DEALINGS IN THE SOFTWARE.
 
 import os
+import glob
 
 import ycm_core
 
 default_flags = ['-x', 'c++', '-Wall', '-Wextra', '-Werror', '-std=c++14']
 
-cpp_source_extensions = ['.cpp', '.cxx', '.cc', '.c', '.m', '.mm']
+cpp_source_extensions = ['.cpp', '.cxx', '.cc', '.c', '.m', '.mm', '.cu']
 
 header_file_extensions = ['.h', '.H', '.hxx', '.hpp', '.hh']
 
 completion_database = []
+
+# glob patterns
+build_dir_patterns = ["build/cmany.el-current", "build", "build-*"]
+
+
+def HasBuildDirAsSibling(my_dir):
+    for p in build_dir_patterns:
+        d = os.path.join(my_dir, "..", p)
+        if os.path.isdir(d) or os.path.islink(d):
+            return d
 
 
 def FindCompilationDatabaseAndDir(my_dir):
@@ -50,8 +61,28 @@ def FindCompilationDatabaseAndDir(my_dir):
     while my_dir != '/':
         if os.path.isfile(os.path.join(my_dir, "compile_commands.json")):
             return [my_dir, ycm_core.CompilationDatabase(my_dir)]
+        # check if a sibling build dir exists
+        # this could be enhanced by using a build dir pattern
+        bdir = HasBuildDirAsSibling(my_dir)
+        if bdir is not None:
+            print("dir exists:", bdir)
+            ccmd = FindCompilationDatabaseAndDirDownwards(bdir)
+            if ccmd is not None:
+                return ccmd
         my_dir = os.path.dirname(my_dir)
     return None
+
+
+def FindCompilationDatabaseAndDirDownwards(my_dir):
+    for root, dirs, _ in os.walk(my_dir):
+        for d in dirs:
+            d = os.path.join(root, d)
+            ccmd = os.path.join(d, "compile_commands.json")
+            print("trying", d)
+            if os.path.isfile(ccmd):
+                print("found compile_commands:", )
+                return [my_dir, ycm_core.CompilationDatabase(my_dir)]
+        return None
 
 
 def ReloadCompilationDatabase(my_dir):
