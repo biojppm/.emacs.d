@@ -1663,8 +1663,8 @@ original line and use the absolute value."
 (defun my-c++-completion-hook()
   (if this-is-windows
     (my-universal-tags-hook)
-    (my-universal-tags-hook)
-    ;;(my-rtags-hook)
+    ;;(my-universal-tags-hook)
+    (my-rtags-hook)
     )
   )
 
@@ -1676,7 +1676,6 @@ original line and use the absolute value."
 
 (defun my-rtags-hook ()
   (interactive)
-  (error "caralho")
   (load "my-rtags-setup")
   (rtags-start-process-unless-running)
   (when (not (boundp 'company-backends))
