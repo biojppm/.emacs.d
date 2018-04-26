@@ -1,9 +1,9 @@
 ;;; rtags-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
+(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "rtags" "rtags.el" (22873 7349 778789 820000))
+;;;### (autoloads nil "rtags" "rtags.el" (23253 49606 715053 90000))
 ;;; Generated autoloads from rtags.el
 
 (autoload 'rtags-set-periodic-reparse-timeout "rtags" "\
@@ -118,6 +118,11 @@ Show the RTags results buffer.
 
 \(fn POS)" t nil)
 
+(autoload 'rtags-location-stack-filter "rtags" "\
+
+
+\(fn PATH/LAMBDA/RX)" t nil)
+
 (autoload 'rtags-location-stack-jump "rtags" "\
 
 
@@ -178,7 +183,7 @@ treated as references to the referenced symbol.
 \(fn &optional PREFIX)" t nil)
 
 (autoload 'rtags-find-virtuals-at-point "rtags" "\
-List all reimplentations of function under cursor.
+List all reimplementations of function under cursor.
 This includes both declarations and definitions.
 
 \(fn &optional PREFIX)" t nil)
@@ -194,7 +199,17 @@ This includes both declarations and definitions.
 \(fn)" t nil)
 
 (autoload 'rtags-rename-symbol "rtags" "\
+Rename symbol (identifier) at point.
 
+Normally this function will ask the user (via minibuffer) for the
+replacement and then ask for confirmation.  However, when the scope
+of the symbol at point is just one file (the file that's being
+visited by current buffer), the variable `rtags-use-multiple-cursors'
+is non-nil and the `multiple-cursors' package is available, then this
+function will create fake cursors at all occurrences of the symbol.
+
+The optional argument NO-CONFIRM means agree to all replacements and
+can be specified with a prefix argument.
 
 \(fn &optional NO-CONFIRM)" t nil)
 
@@ -243,7 +258,7 @@ This includes both declarations and definitions.
 
 \(fn)" t nil)
 
-(autoload 'rtags-cycle-overlays-on-screen "rtags" "\
+(autoload 'rtags-cycle-through-diagnostics "rtags" "\
 
 
 \(fn)" t nil)
@@ -344,9 +359,15 @@ This includes both declarations and definitions.
 \(fn)" t nil)
 
 (autoload 'rtags-find-file "rtags" "\
+Find files matching a file pattern in the RTags database.
 
+With PREFIX and when `rtags-use-filename-completion' is nil,
+negate `rtags-find-file-prefer-exact-match' when matching files.
 
-\(fn &optional PREFIX DEFAULT-TAG)" t nil)
+Initial file pattern to match is obtained from `rtags-current-symbol'
+which can be overridden by specifying DEFAULT-FILE
+
+\(fn &optional PREFIX DEFAULT-FILE)" t nil)
 
 (autoload 'rtags-show-rtags-buffer "rtags" "\
 
