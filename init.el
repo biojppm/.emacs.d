@@ -1665,15 +1665,22 @@ original line and use the absolute value."
 
 (defun my-c++-completion-hook()
   (if this-is-windows
-    (my-universal-tags-hook)
-    ;;(my-universal-tags-hook)
-    (my-rtags-hook)
+      (progn
+        (my-cquery-hook)
+        )
+    (progn
+      (my-cquery-hook)
+      )
     )
+  )
+
+(defun my-cquery-hook()
+  (interactive)
+  (load "my-cquery-setup")
   )
 
 (defun my-universal-tags-hook ()
   (interactive)
-  (message "FDX")
   (load "my-ycmd-setup")
   )
 
@@ -2534,7 +2541,7 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (lsp-ui company-lsp lsp-mode zenburn-theme yaml-mode ws-butler window-number wgrep-ag web-mode volatile-highlights vlf use-package undo-tree term-run tango-plus-theme syntax-subword solarized-theme smex smartparens smart-mode-line slime seq rg realgud php-mode persp-projectile persp-mode pdb-mode multiple-cursors monokai-theme modern-cpp-font-lock markdown-mode magit levenshtein iedit ido-vertical-mode ido-ubiquitous hungry-delete highlight-symbol hemisu-theme help-fns+ glsl-mode git-timemachine flx-ido firebelly-theme ess elpy elisp-slime-nav dtrt-indent drag-stuff dirtree cython-mode csharp-mode counsel-projectile counsel-etags company-ycmd company-rtags company-c-headers cmake-mode clean-aindent-mode clang-format anzu)))
+    (cquery lsp-ui company-lsp lsp-mode zenburn-theme yaml-mode ws-butler window-number wgrep-ag web-mode volatile-highlights vlf use-package undo-tree term-run tango-plus-theme syntax-subword solarized-theme smex smartparens smart-mode-line slime seq rg realgud php-mode persp-projectile persp-mode pdb-mode multiple-cursors monokai-theme modern-cpp-font-lock markdown-mode magit levenshtein iedit ido-vertical-mode ido-ubiquitous hungry-delete highlight-symbol hemisu-theme help-fns+ glsl-mode git-timemachine flx-ido firebelly-theme ess elpy elisp-slime-nav dtrt-indent drag-stuff dirtree cython-mode csharp-mode counsel-projectile counsel-etags company-ycmd company-rtags company-c-headers cmake-mode clean-aindent-mode clang-format anzu)))
  '(safe-local-variable-values
    (quote
     ((eval load-file
