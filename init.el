@@ -65,6 +65,8 @@
 ;;http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
 
+(require 'quick-yes)
+
 ;;-------------------------------------------------------------------------------
 ;; set garbage-collection threshold to 10MB to speed up flx-ido:
 ;; see https://github.com/lewang/flx
