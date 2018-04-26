@@ -65,6 +65,7 @@
 ;;http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
 
+;; quick yes: bind M-y to answer "yes" to a yes-or-no-p question
 (require 'quick-yes)
 
 ;;-------------------------------------------------------------------------------
@@ -1950,6 +1951,10 @@ original line and use the absolute value."
 (setq compilation-save-buffers-predicate '(lambda () nil))
 ;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 (setq compilation-scroll-output 'first-error)
+
+;; always kill compile buffer http://user42.tuxfamily.org/compilation-always-kill/index.html
+(autoload 'compilation-always-kill-mode "compilation-always-kill" nil t)
+(eval-after-load "compile" '(compilation-always-kill-mode 1))
 
 (defvar my-compilation-exit-code nil)
 (defun my-compilation-exit-message-function (status_ code message)
