@@ -2532,6 +2532,9 @@ original line and use the absolute value."
    (quote
     ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
  '(ecb-options-version "2.40")
+ '(package-selected-packages
+   (quote
+    (lsp-ui company-lsp lsp-mode zenburn-theme yaml-mode ws-butler window-number wgrep-ag web-mode volatile-highlights vlf use-package undo-tree term-run tango-plus-theme syntax-subword solarized-theme smex smartparens smart-mode-line slime seq rg realgud php-mode persp-projectile persp-mode pdb-mode multiple-cursors monokai-theme modern-cpp-font-lock markdown-mode magit levenshtein iedit ido-vertical-mode ido-ubiquitous hungry-delete highlight-symbol hemisu-theme help-fns+ glsl-mode git-timemachine flx-ido firebelly-theme ess elpy elisp-slime-nav dtrt-indent drag-stuff dirtree cython-mode csharp-mode counsel-projectile counsel-etags company-ycmd company-rtags company-c-headers cmake-mode clean-aindent-mode clang-format anzu)))
  '(safe-local-variable-values
    (quote
     ((eval load-file
@@ -2552,7 +2555,6 @@ original line and use the absolute value."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;;'(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
  '(highlight-indentation-face ((t (:background "gray24")))))
 
