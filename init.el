@@ -423,6 +423,8 @@
 
 ;;------------------------------------------------------------------------------
 
+(global-unset-key (kbd "C-z")) ;; disable Ctrl-z
+
 (if window-system
   (progn
     ; turn on highlighting current line
