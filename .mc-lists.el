@@ -3,14 +3,19 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        c-electric-colon
         c-electric-lt-gt
         c-electric-paren
         c-electric-semi&comma
+        c-electric-slash
         c-electric-star
+        c-hungry-delete-forward
         kill-region
+        my-open-init-el
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        gud-tooltip-mouse-motion
         my-recompile
         ))
