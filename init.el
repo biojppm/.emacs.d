@@ -68,6 +68,12 @@
 ;; quick yes: bind M-y to answer "yes" to a yes-or-no-p question
 (require 'quick-yes)
 
+;; disable C-x C-z
+;; https://stackoverflow.com/questions/7243155/cant-seem-to-get-rid-of-ctrl-x-ctrl-z-key-binding-in-emacs-for-minimizing-windo
+(put 'suspend-frame 'disabled t)
+(global-set-key "\C-x\C-z" nil)
+(global-set-key (kbd "C-x C-z") nil)
+
 ;;-------------------------------------------------------------------------------
 ;; set garbage-collection threshold to 10MB to speed up flx-ido:
 ;; see https://github.com/lewang/flx
