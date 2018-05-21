@@ -12,6 +12,8 @@
         c-hungry-delete-forward
         kill-region
         my-open-init-el
+        overwrite-mode
+        smart-beginning-of-line
         ))
 
 (setq mc/cmds-to-run-once
