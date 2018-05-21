@@ -1666,10 +1666,10 @@ original line and use the absolute value."
 (defun my-c++-completion-hook()
   (if this-is-windows
       (progn
-        (my-cquery-hook)
+        (my-universal-tags-hook)
         )
     (progn
-      (my-cquery-hook)
+      (my-rtags-hook)
       )
     )
   )
