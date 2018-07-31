@@ -10,6 +10,7 @@
         c-electric-slash
         c-electric-star
         c-hungry-delete-forward
+        duplicate-line-or-region
         kill-region
         my-open-init-el
         overwrite-mode
