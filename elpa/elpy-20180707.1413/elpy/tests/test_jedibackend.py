@@ -15,8 +15,10 @@ from elpy.tests.support import RPCGetCompletionDocstringTests
 from elpy.tests.support import RPCGetCompletionLocationTests
 from elpy.tests.support import RPCGetDocstringTests
 from elpy.tests.support import RPCGetDefinitionTests
+from elpy.tests.support import RPCGetAssignmentTests
 from elpy.tests.support import RPCGetCalltipTests
 from elpy.tests.support import RPCGetUsagesTests
+from elpy.tests.support import RPCGetNamesTests
 
 
 class JediBackendTestCase(BackendTestCase):
@@ -47,15 +49,21 @@ class TestRPCGetCompletionLocation(RPCGetCompletionLocationTests,
 
 class TestRPCGetDocstring(RPCGetDocstringTests,
                           JediBackendTestCase):
-    JSON_LOADS_DOCSTRING = (
-        'loads(s, encoding=None, cls=None, '
-        'object_hook=None, parse_float=None,'
-    )
 
     def check_docstring(self, docstring):
+        if sys.version_info >= (3, 6):
+            JSON_LOADS_DOCSTRING = (
+                'loads(s, *, encoding=None, cls=None, '
+                'object_hook=None, parse_float=None,'
+            )
+        else:
+            JSON_LOADS_DOCSTRING = (
+                'loads(s, encoding=None, cls=None, '
+                'object_hook=None, parse_float=None,'
+            )
         lines = docstring.splitlines()
         self.assertEqual(lines[0], 'Documentation for json.loads:')
-        self.assertEqual(lines[2], self.JSON_LOADS_DOCSTRING)
+        self.assertEqual(lines[2], JSON_LOADS_DOCSTRING)
 
     @mock.patch("elpy.jedibackend.run_with_debug")
     def test_should_not_return_empty_docstring(self, run_with_debug):
@@ -90,19 +98,33 @@ class TestRPCGetDefinition(RPCGetDefinitionTests,
         self.assertIsNone(location)
 
 
+class TestRPCGetAssignment(RPCGetAssignmentTests,
+                           JediBackendTestCase):
+    @mock.patch("jedi.Script")
+    def test_should_not_fail_if_module_path_is_none(self, Script):
+        """Do not fail if loc.module_path is None.
+
+        """
+        locations = [
+            mock.Mock(module_path=None)
+        ]
+        script = Script.return_value
+        script.goto_assignments.return_value = locations
+        script.goto_assignments.return_value = locations
+
+        location = self.rpc("", "", 0)
+
+        self.assertIsNone(location)
+
+
 class TestRPCGetCalltip(RPCGetCalltipTests,
                         JediBackendTestCase):
     KEYS_CALLTIP = {'index': 0,
                     'params': ['param '],
                     'name': u'keys'}
-    if sys.version_info >= (3, 5):
-        RADIX_CALLTIP = {'index': 0,
-                         'params': ['param 10'],
-                         'name': u'radix'}
-    else:
-        RADIX_CALLTIP = {'index': None,
-                         'params': [],
-                         'name': u'radix'}
+    RADIX_CALLTIP = {'index': None,
+                     'params': [],
+                     'name': u'radix'}
     ADD_CALLTIP = {'index': 0,
                    'params': [u'param a', u'param b'],
                    'name': u'add'}
@@ -147,6 +169,11 @@ class TestRPCGetUsages(RPCGetUsagesTests,
         filename = self.project_file("project.py", source)
 
         self.rpc(filename, source, offset)
+
+
+class TestRPCGetNames(RPCGetNamesTests,
+                      JediBackendTestCase):
+    pass
 
 
 class TestPosToLinecol(unittest.TestCase):

@@ -47,98 +47,37 @@ class TestRPCEcho(ServerTestCase):
 
 class TestRPCInit(ServerTestCase):
     @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_set_project_root(self, RopeBackend, JediBackend):
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": "rope"})
+    def test_should_set_project_root(self, JediBackend):
+        self.srv.rpc_init({"project_root": "/project/root"})
 
         self.assertEqual("/project/root", self.srv.project_root)
 
     @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_initialize_rope(self, RopeBackend, JediBackend):
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": "rope"})
-
-        RopeBackend.assert_called_with("/project/root")
-
-    @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_initialize_jedi(self, RopeBackend, JediBackend):
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": "jedi"})
+    def test_should_initialize_jedi(self, JediBackend):
+        self.srv.rpc_init({"project_root": "/project/root"})
 
         JediBackend.assert_called_with("/project/root")
 
-    @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_use_rope_if_available_and_requested(
-            self, RopeBackend, JediBackend):
-        RopeBackend.return_value.name = "rope"
-        JediBackend.return_value.name = "jedi"
-
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": "rope"})
-
-        self.assertEqual("rope", self.srv.backend.name)
 
     @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_use_jedi_if_available_and_requested(
-            self, RopeBackend, JediBackend):
-        RopeBackend.return_value.name = "rope"
+    def test_should_use_jedi_if_available(self, JediBackend):
         JediBackend.return_value.name = "jedi"
 
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": "jedi"})
+        self.srv.rpc_init({"project_root": "/project/root"})
 
         self.assertEqual("jedi", self.srv.backend.name)
 
-    @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_use_rope_if_available_and_nothing_requested(
-            self, RopeBackend, JediBackend):
-        RopeBackend.return_value.name = "rope"
-        JediBackend.return_value.name = "jedi"
-
-        self.srv.rpc_init({"project_root": "/project/root",
-                           "backend": None})
-
-        self.assertEqual("rope", self.srv.backend.name)
 
     @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
-    def test_should_use_jedi_if_rope_not_available_and_nothing_requested(
-            self, RopeBackend, JediBackend):
-        RopeBackend.return_value.name = "rope"
-        JediBackend.return_value.name = "jedi"
-        old_rope = server.ropebackend
-        server.ropebackend = None
-
-        try:
-            self.srv.rpc_init({"project_root": "/project/root",
-                               "backend": None})
-        finally:
-            server.ropebackend = old_rope
-
-        self.assertEqual("jedi", self.srv.backend.name)
-
-    @mock.patch("elpy.jedibackend.JediBackend")
-    @mock.patch("elpy.ropebackend.RopeBackend")
     def test_should_use_none_if_nothing_available(
-            self, RopeBackend, JediBackend):
-        RopeBackend.return_value.name = "rope"
+            self, JediBackend):
         JediBackend.return_value.name = "jedi"
-        old_rope = server.ropebackend
         old_jedi = server.jedibackend
-        server.ropebackend = None
         server.jedibackend = None
 
         try:
-            self.srv.rpc_init({"project_root": "/project/root",
-                               "backend": None})
+            self.srv.rpc_init({"project_root": "/project/root"})
         finally:
-            server.ropebackend = old_rope
             server.jedibackend = old_jedi
 
         self.assertIsNone(self.srv.backend)
@@ -227,6 +166,16 @@ class TestRPCGetDefinition(BackendCallTestCase):
     def test_should_handle_no_backend(self):
         self.srv.backend = None
         self.assertIsNone(self.srv.rpc_get_definition("filname", "source",
+                                                      "offset"))
+
+
+class TestRPCGetAssignment(BackendCallTestCase):
+    def test_should_call_backend(self):
+        self.assert_calls_backend("rpc_get_assignment")
+
+    def test_should_handle_no_backend(self):
+        self.srv.backend = None
+        self.assertIsNone(self.srv.rpc_get_assignment("filname", "source",
                                                       "offset"))
 
 
@@ -341,17 +290,14 @@ class TestRPCGetUsages(BackendCallTestCase):
                                                       "offset"))
 
 
-class TestRPCImportMagic(ServerTestCase):
-    def test_should_call_importmagic(self):
-        with mock.patch.object(self.srv, "import_magic") as impmagic:
-            self.srv.rpc_get_import_symbols("filename", "source", "os")
-            impmagic.get_import_symbols.assert_called_with("os")
-            self.srv.rpc_add_import("filename", "source", "import os")
-            impmagic.add_import.assert_called_with("source", "import os")
-            self.srv.rpc_get_unresolved_symbols("filename", "source")
-            impmagic.get_unresolved_symbols.assert_called_with("source")
-            self.srv.rpc_remove_unreferenced_imports("filename", "source")
-            impmagic.remove_unreferenced_imports.assert_called_with("source")
+class TestRPCGetNames(BackendCallTestCase):
+    def test_should_call_backend(self):
+        self.assert_calls_backend("rpc_get_names")
+
+    def test_should_handle_no_backend(self):
+        self.srv.backend = None
+        with self.assertRaises(rpc.Fault):
+            self.assertIsNone(self.srv.rpc_get_names("filname", "source", 0))
 
 
 class TestGetSource(unittest.TestCase):
@@ -417,5 +363,5 @@ class Autopep8TestCase(ServerTestCase):
 
     def test_rpc_fix_code_should_return_formatted_string(self):
         code_block = 'x=       123\n'
-        new_block = self.srv.rpc_fix_code(code_block)
+        new_block = self.srv.rpc_fix_code(code_block, os.getcwd())
         self.assertEqual(new_block, 'x = 123\n')

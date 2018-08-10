@@ -34,21 +34,21 @@
 Best to set it to full path to 'manage.py' if it's available."
   :type 'string
   :safe 'stringp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-command)
 
 (defcustom elpy-django-server-ipaddr "127.0.0.1"
   "What address Django will use when running the dev server."
   :type 'string
   :safe 'stringp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-server-ipaddr)
 
 (defcustom elpy-django-server-port "8000"
   "What port Django will use when running the dev server."
   :type 'string
   :safe 'stringp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-server-port)
 
 (defcustom elpy-django-server-command "runserver"
@@ -56,7 +56,7 @@ Best to set it to full path to 'manage.py' if it's available."
 command to use."
   :type 'string
   :safe 'stringp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-server-command)
 
 (defcustom elpy-django-always-prompt nil
@@ -64,7 +64,7 @@ command to use."
 to pass with the chosen command."
   :type 'boolean
   :safe 'booleanp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-always-prompt)
 
 (defcustom elpy-django-commands-with-req-arg '("startapp" "startproject"
@@ -75,8 +75,46 @@ to pass with the chosen command."
 require arguments in order for it to work."
   :type 'list
   :safe 'listp
-  :group 'elpy)
+  :group 'elpy-django)
 (make-variable-buffer-local 'elpy-django-commands-with-req-arg)
+
+(defcustom elpy-django-test-runner-formats '(("django_nose.NoseTestSuiteRunner" . ":")
+                                             ("django.test.runner.DiscoverRunner" . "."))
+  "List of test runners and their format for calling tests.
+
+Some tests runners are called differently. For example, Nose requires a ':' when calling specific tests,
+but the default Django test runner uses '.'"
+  :type 'list
+  :safe 'listp
+  :group 'elpy-django)
+(make-variable-buffer-local 'elpy-django-test-runner-formats)
+
+(defcustom elpy-django-test-runner-args '("test" "--noinput")
+  "Arguments to pass to the test runner when calling tests."
+  :type '(repeat string)
+  :group 'elpy-django)
+(make-variable-buffer-local 'elpy-django-test-runner-args)
+
+(defcustom elpy-test-django-runner-command nil
+  "Deprecated. Please define Django command in `elpy-django-command' and
+test arguments in `elpy-django-test-runner-args'"
+  :type '(repeat string)
+  :group 'elpy-django)
+(make-obsolete-variable 'elpy-test-django-runner-command nil "March 2018")
+
+(defcustom elpy-test-django-runner-manage-command nil
+  "Deprecated. Please define Django command in `elpy-django-command' and
+test arguments in `elpy-django-test-runner-args'."
+  :type '(repeat string)
+  :group 'elpy-django)
+(make-obsolete-variable 'elpy-test-django-runner-manage-command nil "March 2018")
+
+(defcustom elpy-test-django-with-manage nil
+  "Deprecated.  Please define Django command in `elpy-django-command' and
+test arguments in `elpy-django-test-runner-args'."
+  :type 'boolean
+  :group 'elpy-django)
+(make-obsolete-variable 'elpy-test-django-with-manage nil "March 2018")
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Key map
@@ -101,7 +139,7 @@ require arguments in order for it to work."
     ;; This only affects the buffer if there's no directory
     ;; variable overwriting it.
     (setq elpy-django-command
-          (concat (locate-dominating-file default-directory "manage.py") "manage.py"))
+          (expand-file-name (concat (locate-dominating-file default-directory "manage.py") "manage.py")))
     (elpy-django 1)))
 
 (defun elpy-django--get-commands ()
@@ -118,14 +156,44 @@ require arguments in order for it to work."
               ;; cleanup [auth] and stuff
               (goto-char (point-min))
               (save-excursion
-                (replace-regexp "\\[.*\\]" ""))
+                (while (re-search-forward "\\[.*\\]" nil t)
+                  (replace-match "" nil nil)))
               (buffer-string))))
     ;; get a list of commands from the output of manage.py -h
     ;; What would be the pattern to optimize this ?
     (setq dj-commands-str (split-string dj-commands-str "\n"))
-    (setq dj-commands-str (-remove (lambda (x) (string= x "")) dj-commands-str))
+    (setq dj-commands-str (cl-remove-if (lambda (x) (string= x "")) dj-commands-str))
     (setq dj-commands-str (mapcar (lambda (x) (s-trim x)) dj-commands-str))
     (sort dj-commands-str 'string-lessp)))
+
+(defun elpy-django--get-test-runner ()
+  "Return the name of the django test runner.
+Needs `DJANGO_SETTINGS_MODULE' to be set in order to work."
+  (let ((django-import-cmd "import django;django.setup();from django.conf import settings;print(settings.TEST_RUNNER)")
+        (django-settings-env (getenv "DJANGO_SETTINGS_MODULE"))
+        (default-directory (elpy-project-root)))
+    ;; If no Django settings has been set, then nothing will work. Warn user
+    (when (not django-settings-env)
+      (error "Please set environment variable `DJANGO_SETTINGS_MODULE' if you'd like to run the test runner"))
+
+    ;; We have to be able to import the DJANGO_SETTINGS_MODULE otherwise it will also break
+    ;; If we get a traceback when import django settings, then warn the user that settings is not valid
+    (when (not (string= "" (shell-command-to-string
+                            (format "%s -c 'import %s'" elpy-rpc-python-command django-settings-env))))
+      (error (format "Unable to import DJANGO_SETTINGS_MODULE: '%s'" django-settings-env)))
+
+    ;; Return test runner
+    (s-trim (shell-command-to-string
+             (format "%s -c '%s'" elpy-rpc-python-command django-import-cmd)))))
+
+(defun elpy-django--get-test-format ()
+  "When running a Django test, some test runners require a different format that others.
+Return the correct string format here."
+  (let  ((pair (assoc (elpy-django--get-test-runner) elpy-django-test-runner-formats)))
+    (if pair
+        ;; Return the associated test format
+        (cdr pair)
+      (error (format "Unable to find test format for `%s'" (elpy--get-django-test-runner))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;; User Functions
@@ -161,9 +229,31 @@ When called with a prefix (C-u), it will prompt for additional args."
     (with-current-buffer "*compilation*"
       (rename-buffer buff-name))))
 
+(defun elpy-test-django-runner (top _file module test)
+  "Test the project using the Django discover runner,
+or with manage.py if elpy-test-django-with-manage is true.
+
+This requires Django 1.6 or the django-discover-runner package."
+  (interactive (elpy-test-at-point))
+  (if module
+      (apply #'elpy-test-run
+             top
+             (append
+              (list elpy-django-command)
+              elpy-django-test-runner-args
+              (list (if test
+                        (format "%s%s%s" module (elpy-django--get-test-format) test)
+                      module))))
+    (apply #'elpy-test-run
+           top
+           (append
+            (list elpy-django-command)
+            elpy-django-test-runner-args))))
+(put 'elpy-test-django-runner 'elpy-test-runner-p t)
+
 (define-minor-mode elpy-django
-  "Minor mode to for Django commands."
-  :group 'elpy)
+  "Minor mode for Django commands."
+  :group 'elpy-django)
 
 (provide 'elpy-django)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

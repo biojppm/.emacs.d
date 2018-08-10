@@ -11,20 +11,15 @@ import pydoc
 
 from elpy.pydocutils import get_pydoc_completions
 from elpy.rpc import JSONRPCServer, Fault
-from elpy.impmagic import ImportMagic, ImportMagicError
 from elpy.auto_pep8 import fix_code
 from elpy.yapfutil import fix_code as fix_code_with_yapf
+from elpy.blackutil import fix_code as fix_code_with_black
 
 
 try:
     from elpy import jedibackend
 except ImportError:  # pragma: no cover
     jedibackend = None
-
-try:
-    from elpy import ropebackend
-except ImportError:  # pragma: no cover
-    ropebackend = None
 
 
 class ElpyRPCServer(JSONRPCServer):
@@ -36,7 +31,6 @@ class ElpyRPCServer(JSONRPCServer):
     def __init__(self, *args, **kwargs):
         super(ElpyRPCServer, self).__init__(*args, **kwargs)
         self.backend = None
-        self.import_magic = ImportMagic()
         self.project_root = None
 
     def _call_backend(self, method, default, *args, **kwargs):
@@ -61,23 +55,13 @@ class ElpyRPCServer(JSONRPCServer):
     def rpc_init(self, options):
         self.project_root = options["project_root"]
 
-        if self.import_magic.is_enabled:
-            self.import_magic.build_index(self.project_root)
-
-        if ropebackend and options["backend"] == "rope":
-            self.backend = ropebackend.RopeBackend(self.project_root)
-        elif jedibackend and options["backend"] == "jedi":
-            self.backend = jedibackend.JediBackend(self.project_root)
-        elif ropebackend:
-            self.backend = ropebackend.RopeBackend(self.project_root)
-        elif jedibackend:
+        if jedibackend:
             self.backend = jedibackend.JediBackend(self.project_root)
         else:
             self.backend = None
 
         return {
-            'backend': (self.backend.name if self.backend is not None
-                        else None)
+            'jedi_available': (self.backend is not None)
         }
 
     def rpc_get_calltip(self, filename, source, offset):
@@ -120,6 +104,13 @@ class ElpyRPCServer(JSONRPCServer):
 
         """
         return self._call_backend("rpc_get_definition", None, filename,
+                                  get_source(source), offset)
+
+    def rpc_get_assignment(self, filename, source, offset):
+        """Get the location of the assignment for the symbol at the offset.
+
+        """
+        return self._call_backend("rpc_get_assignment", None, filename,
                                   get_source(source), offset)
 
     def rpc_get_docstring(self, filename, source, offset):
@@ -198,69 +189,37 @@ class ElpyRPCServer(JSONRPCServer):
             raise Fault("get_usages not implemented by current backend",
                         code=400)
 
-    def _ensure_import_magic(self):  # pragma: no cover
-        if not self.import_magic.is_enabled:
-            raise Fault("fixup_imports not enabled; install importmagic module",
+    def rpc_get_names(self, filename, source, offset):
+        """Get all possible names
+
+        """
+        source = get_source(source)
+        if hasattr(self.backend, "rpc_get_names"):
+            return self.backend.rpc_get_names(filename, source, offset)
+        else:
+            raise Fault("get_names not implemented by current backend",
                         code=400)
-        if not self.import_magic.symbol_index:
-            raise Fault(self.import_magic.fail_message, code=200)  # XXX code?
 
-    def rpc_get_import_symbols(self, filename, source, symbol):
-        """Return a list of modules from which the given symbol can be imported.
-
-        """
-        self._ensure_import_magic()
-        try:
-            return self.import_magic.get_import_symbols(symbol)
-        except ImportMagicError as err:
-            raise Fault(str(err), code=200)
-
-    def rpc_add_import(self, filename, source, statement):
-        """Add an import statement to the module.
-
-        """
-        self._ensure_import_magic()
-        source = get_source(source)
-        try:
-            return self.import_magic.add_import(source, statement)
-        except ImportMagicError as err:
-            raise Fault(str(err), code=200)
-
-    def rpc_get_unresolved_symbols(self, filename, source):
-        """Return a list of unreferenced symbols in the module.
-
-        """
-        self._ensure_import_magic()
-        source = get_source(source)
-        try:
-            return self.import_magic.get_unresolved_symbols(source)
-        except ImportMagicError as err:
-            raise Fault(str(err), code=200)
-
-    def rpc_remove_unreferenced_imports(self, filename, source):
-        """Remove unused import statements.
-
-        """
-        self._ensure_import_magic()
-        source = get_source(source)
-        try:
-            return self.import_magic.remove_unreferenced_imports(source)
-        except ImportMagicError as err:
-            raise Fault(str(err), code=200)
-
-    def rpc_fix_code(self, source):
+    def rpc_fix_code(self, source, directory):
         """Formats Python code to conform to the PEP 8 style guide.
 
         """
         source = get_source(source)
-        return fix_code(source)
+        return fix_code(source, directory)
 
-    def rpc_fix_code_with_yapf(self, source):
+    def rpc_fix_code_with_yapf(self, source, directory):
         """Formats Python code to conform to the PEP 8 style guide.
 
         """
         source = get_source(source)
-        return fix_code_with_yapf(source)
+        return fix_code_with_yapf(source, directory)
+
+    def rpc_fix_code_with_black(self, source, directory):
+        """Formats Python code to conform to the PEP 8 style guide.
+
+        """
+        source = get_source(source)
+        return fix_code_with_black(source, directory)
 
 
 def get_source(fileobj):

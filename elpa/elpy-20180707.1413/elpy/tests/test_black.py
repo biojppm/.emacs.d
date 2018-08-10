@@ -1,23 +1,24 @@
 # coding: utf-8
-"""Tests for the elpy.yapf module"""
+"""Tests for the elpy.black module"""
 
 import unittest
+import os
 
-from elpy import yapfutil
+from elpy import blackutil
 from elpy.rpc import Fault
 from elpy.tests.support import BackendTestCase
 
 
-@unittest.skipIf(yapfutil.YAPF_NOT_SUPPORTED,
-                 'yapf not supported for current python version')
-class YAPFTestCase(BackendTestCase):
+@unittest.skipIf(blackutil.BLACK_NOT_SUPPORTED,
+                 'black not supported for current python version')
+class BLACKTestCase(BackendTestCase):
     def setUp(self):
-        if yapfutil.YAPF_NOT_SUPPORTED:
+        if blackutil.BLACK_NOT_SUPPORTED:
             raise unittest.SkipTest
 
     def test_fix_code_should_throw_error_for_invalid_code(self):
         src = 'x = '
-        self.assertRaises(Fault, yapfutil.fix_code, src)
+        self.assertRaises(Fault, blackutil.fix_code, src, os.getcwd())
 
     def test_fix_code(self):
         testdata = [
@@ -28,5 +29,5 @@ class YAPFTestCase(BackendTestCase):
             self._assert_format(src, expected)
 
     def _assert_format(self, src, expected):
-        new_block = yapfutil.fix_code(src)
+        new_block = blackutil.fix_code(src, os.getcwd())
         self.assertEqual(new_block, expected)
