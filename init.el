@@ -972,7 +972,8 @@
   :config
   (global-company-mode)
   (setq company-minimum-prefix-length 3)
-  (setq company-auto-complete t)
+  ;;(setq company-auto-complete t)
+  (setq company-auto-complete 0)
   (setq company-show-numbers t)
   (setq company-selection-wraparound t)
   :bind
@@ -984,8 +985,8 @@
    ;; ... but this doesn't!!!
    ("<escape>" . company-abort)
    ;; prevent company from completing on its own when we type regular characters
-   ("SPC" . company--my-insert-spc)
-   ("."   . company--my-insert-dot)
+   ;;("SPC" . company--my-insert-spc)
+   ;;("."   . company--my-insert-dot)
    )
   )
 
@@ -1894,6 +1895,13 @@ original line and use the absolute value."
          ("\\.usf\\'" . hlsl-mode))
   )
 
+
+;;; Arduino
+(use-package arduino-mode
+  :config (use-snips)(add-hook 'arduino-mode-hook #'hook-snips)
+  :mode ("\\.ino\\'" . arduino-mode)
+  )
+
 ;;; Octave/Matlab
 ;;see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
 (use-package octave-mode
@@ -2555,7 +2563,73 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (orgalist org-beautify-theme cquery lsp-ui company-lsp lsp-mode zenburn-theme yaml-mode ws-butler window-number wgrep-ag web-mode volatile-highlights vlf use-package undo-tree term-run tango-plus-theme syntax-subword solarized-theme smex smartparens smart-mode-line slime seq rg realgud php-mode persp-projectile persp-mode pdb-mode multiple-cursors monokai-theme modern-cpp-font-lock markdown-mode magit levenshtein iedit ido-vertical-mode ido-ubiquitous hungry-delete highlight-symbol hemisu-theme help-fns+ glsl-mode git-timemachine flx-ido firebelly-theme ess elpy elisp-slime-nav dtrt-indent drag-stuff dirtree cython-mode csharp-mode counsel-projectile counsel-etags company-ycmd company-rtags company-c-headers cmake-mode clean-aindent-mode clang-format anzu)))
+    (
+     anzu
+     arduino-mode
+     clang-format
+     clean-aindent-mode
+     cmake-mode
+     company-c-headers
+     company-lsp
+     company-rtags
+     company-ycmd
+     counsel-etags
+     counsel-projectile
+     cquery
+     csharp-mode
+     cython-mode
+     dirtree
+     drag-stuff
+     dtrt-indent
+     elisp-slime-nav
+     elpy
+     elpygen
+     ess
+     firebelly-theme
+     flx-ido
+     git-timemachine
+     glsl-mode
+     help-fns+
+     hemisu-theme
+     highlight-symbol
+     hungry-delete
+     ido-ubiquitous
+     ido-vertical-mode
+     iedit
+     levenshtein
+     lsp-mode
+     lsp-ui
+     magit
+     markdown-mode
+     modern-cpp-font-lock
+     monokai-theme
+     multiple-cursors
+     pdb-mode
+     persp-mode
+     persp-projectile
+     php-mode
+     realgud
+     rg
+     seq
+     slime
+     smart-mode-line
+     smartparens
+     smex
+     solarized-theme
+     syntax-subword
+     tango-plus-theme
+     term-run
+     undo-tree
+     use-package
+     vlf
+     volatile-highlights
+     web-mode
+     wgrep-ag
+     window-number
+     ws-butler
+     yaml-mode
+     zenburn-theme
+     )))
  '(safe-local-variable-values
    (quote
     ((eval load-file
