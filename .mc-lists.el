@@ -10,10 +10,15 @@
         c-electric-slash
         c-electric-star
         c-hungry-delete-forward
+        gcm-scroll-down
+        gcm-scroll-up
+        hungry-delete-backward
+        hungry-delete-forward
         kill-region
         my-open-init-el
         overwrite-mode
         smart-beginning-of-line
+        yaml-electric-backspace
         ))
 
 (setq mc/cmds-to-run-once

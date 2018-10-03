@@ -835,8 +835,8 @@
   :ensure t
   :bind (
          ("M-." . counsel-etags-find-tag-at-point)
-         ("M-g" . counsel-etags-grep-symbol-at-point)
-         ("M-t" . counsel-etags-find-tag))
+         ("M-G" . counsel-etags-grep-symbol-at-point)
+         ("M-T" . counsel-etags-find-tag))
   :config
   ;; Ignore files above 800kb
   (setq counsel-etags-max-file-size 800)
@@ -947,19 +947,20 @@
 ;(ac-config-default)
 ;;(require 'auto-complete-etags)
 
-;;General Usage: Completion will start automatically after you type a
-;;few letters. Use M-n and M-p to select, <return> to complete or <tab>
-;;to complete the common part. Search through the completions with C-s,
-;;C-r and C-o. Press M-(digit) to quickly complete with one of the
-;;first 10 candidates. When the completion candidates are shown, press
-;;<f1> to display the documentation for the selected candidate, or C-w
-;;to see its source. Not all back-ends support this.
-;
-;;The variable company-backends specifies a list of backends that
-;;company-mode uses to retrieves completion candidates for you.
+;; General Usage: Completion will start automatically after you type a
+;; few letters. Use M-n and M-p to select, <return> to complete or <tab>
+;; to complete the common part. Search through the completions with C-s,
+;; C-r and C-o. Press M-(digit) to quickly complete with one of the
+;; first 10 candidates. When the completion candidates are shown, press
+;; <f1> to display the documentation for the selected candidate, or C-w
+;; to see its source. Not all back-ends support this.
+;;
+;; The variable company-backends specifies a list of backends that
+;; company-mode uses to retrieves completion candidates for you.
 
 (defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
 (defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
+(defun company--my-insert-comma() (interactive)(company-abort)(insert-char #10r44))
 (use-package company
   :config
   (global-company-mode)
@@ -978,6 +979,7 @@
    ;; prevent company from completing on its own when we type regular characters
    ("SPC" . company--my-insert-spc)
    ("."   . company--my-insert-dot)
+   (","   . company--my-insert-comma)
    )
   )
 
@@ -1757,7 +1759,7 @@ original line and use the absolute value."
     :config
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
-    (setq elpy-rpc-python-command "python3"
+    (setq elpy-rpc-python-command "python"
 ;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
