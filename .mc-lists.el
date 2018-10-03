@@ -14,15 +14,21 @@
         gcm-scroll-up
         hungry-delete-backward
         hungry-delete-forward
+        indent-for-tab-command
         kill-region
         my-open-init-el
         overwrite-mode
         smart-beginning-of-line
         yaml-electric-backspace
+        yaml-electric-dash-and-dot
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        compile-goto-error
+        counsel-yank-pop
         gud-tooltip-mouse-motion
+        my-open-init-el
+        my-open-cmany-el
         my-recompile
         ))
