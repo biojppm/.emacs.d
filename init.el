@@ -969,14 +969,20 @@
 (defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
 (defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
 (defun company--my-insert-comma() (interactive)(company-abort)(insert-char #10r44))
+(defun company--my-insert-equal() (interactive)(company-abort)(insert-char #10r61))
+(defun company--my-setup()
+  (interactive)
+  (setq company-minimum-prefix-length 3)
+  (setq company-idle-delay nil) ;; disable auto popup
+  ;;(setq company-auto-complete t)
+  (setq company-auto-complete nil)
+  (setq company-show-numbers t)
+  (setq company-selection-wraparound t)
+  )
 (use-package company
   :config
   (global-company-mode)
-  (setq company-minimum-prefix-length 3)
-  ;;(setq company-auto-complete t)
-  (setq company-auto-complete 0)
-  (setq company-show-numbers t)
-  (setq company-selection-wraparound t)
+  (company--my-setup)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
@@ -986,9 +992,10 @@
    ;; ... but this doesn't!!!
    ("<escape>" . company-abort)
    ;; prevent company from completing on its own when we type regular characters
-   ;;("SPC" . company--my-insert-spc)
-   ;;("."   . company--my-insert-dot)
-   ;;(","   . company--my-insert-comma)
+   ("SPC" . company--my-insert-spc)
+   ("."   . company--my-insert-dot)
+   (","   . company--my-insert-comma)
+   ("="   . company--my-insert-equal)
    )
   )
 
@@ -1055,6 +1062,11 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-conservatively 10000) ;; scroll just one line when hitting bottom of window
 (setq auto-window-vscroll nil)
+
+;; smooth horizontal scrolling
+;; https://stackoverflow.com/questions/20628878/changing-horizontal-scrolling-in-emacs
+(setq hscroll-margin 0)
+(setq hscroll-step 1)
 
 ;; scroll without moving the cursor
 (defun gcm-scroll-down ()
@@ -1759,6 +1771,7 @@ original line and use the absolute value."
   (require 'gdb-mi)
   (require 'tooltip)
   (subword-mode 1)
+  (company--my-setup)
   )
 (use-package python
   :defer t
@@ -1774,7 +1787,7 @@ original line and use the absolute value."
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
          )
-    (elpy-use-ipython "ipython3")
+    ;;(elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
@@ -1791,6 +1804,7 @@ original line and use the absolute value."
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
+  (company--my-setup)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
@@ -1867,9 +1881,18 @@ original line and use the absolute value."
 
 
 ;;; YAML
+(defun my-yaml-hook()
+  (message "my-yaml-hook: enter")
+  (hook-snips)
+  (use-snips)
+  (auto-fill-mode 0)
+  (disable-line-wrapping)
+  (message "my-yaml-hook: exit")
+  )
 (use-package yaml-mode
-  :config (use-snips)(add-hook 'yaml-mode-hook #'hook-snips)
-  :mode ("\\.yml\\'" . yaml-mode)
+  :config (add-hook 'yaml-mode-hook #'my-yaml-hook)
+  :mode (("\\.yml\\'" . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode))
 )
 
 
@@ -2446,8 +2469,13 @@ original line and use the absolute value."
 (add-hook 'text-mode-hook 'my-text-hook)
 
 ;;; LaTeX
-(add-hook 'tex-mode-hook 'my-text-hook)
-(add-hook 'latex-mode-hook 'my-text-hook)
+(defun my-latex-hook()
+  (message "my-latex-hook: enter")
+  (my-text-hook)
+  (message "my-latex-hook: exit")
+  )
+(add-hook 'tex-mode-hook 'my-latex-hook)
+(add-hook 'latex-mode-hook 'my-latex-hook)
 
 
 ;;; Restructured Text

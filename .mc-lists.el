@@ -10,6 +10,7 @@
         c-electric-slash
         c-electric-star
         c-hungry-delete-forward
+        drag-stuff-down
         gcm-scroll-down
         gcm-scroll-up
         hungry-delete-backward
@@ -28,7 +29,7 @@
         compile-goto-error
         counsel-yank-pop
         gud-tooltip-mouse-motion
-        my-open-init-el
         my-open-cmany-el
+        my-open-init-el
         my-recompile
         ))
