@@ -1883,8 +1883,8 @@ original line and use the absolute value."
 ;;; YAML
 (defun my-yaml-hook()
   (message "my-yaml-hook: enter")
-  (hook-snips)
   (use-snips)
+  (hook-snips)
   (auto-fill-mode 0)
   (disable-line-wrapping)
   (message "my-yaml-hook: exit")
