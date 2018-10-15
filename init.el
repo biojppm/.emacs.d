@@ -49,6 +49,9 @@
    kept-old-versions 2
    version-control t)       ; use versioned backups
 
+;; save command history
+(savehist-mode 1)
+
 ;;reload files automatically
 ;;http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
@@ -61,6 +64,23 @@
 ;;http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
 ;;http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
+
+;; quick yes: bind M-y to answer "yes" to a yes-or-no-p question
+(require 'quick-yes)
+
+;; disable C-x C-z
+;; https://stackoverflow.com/questions/7243155/cant-seem-to-get-rid-of-ctrl-x-ctrl-z-key-binding-in-emacs-for-minimizing-windo
+(put 'suspend-frame 'disabled t)
+(global-set-key "\C-x\C-z" nil)
+(global-set-key (kbd "C-x C-z") nil)
+
+;;-------------------------------------------------------------------------------
+;; set garbage-collection threshold to 10MB to speed up flx-ido:
+;; see https://github.com/lewang/flx
+(setq gc-cons-threshold 10000000)
+;; restore after startup
+(add-hook 'after-init-hook
+          #'(lambda () (setq gc-cons-threshold 800000)))
 
 ;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
 (defun run-command-in-new-frame-simple (command)
@@ -76,6 +96,46 @@
     (select-frame (make-frame))
     (let ((prefix-arg prefixarg))
       (command-execute command))))
+
+;;-------------------------------------------------------------------------------
+;; Automatically compile and save ~/.emacs.el
+;; https://nilsdeppe.com/posts/emacs-c++-ide2
+
+(defun byte-compile-init-files (file)
+  "Automatically compile FILE."
+  (interactive)
+  (save-restriction
+    ;; Suppress the warning when you setq an undefined variable.
+    (if (>= emacs-major-version 23)
+        (setq byte-compile-warnings '(not free-vars obsolete))
+      (setq byte-compile-warnings
+            '(unresolved
+              callargs
+              redefine
+              obsolete
+              noruntime
+              cl-warnings
+              interactive-only)))
+    (byte-compile-file (expand-file-name file)))
+  )
+
+(add-hook
+ 'after-save-hook
+ (function
+  (lambda ()
+    (if (string= (file-truename "~/.emacs.el")
+                 (file-truename (buffer-file-name)))
+        (byte-compile-init-files (file-truename "~/.emacs.el")))
+    )
+  )
+ )
+
+;; Byte-compile again to ~/.emacs.elc if it is outdated
+(if (file-newer-than-file-p
+     (file-truename "~/.emacs.el")
+     (file-truename "~/.emacs.elc"))
+(byte-compile-init-files "~/.emacs.el"))
+
 
 ;;-------------------------------------------------------------------------------
 ;; re-builder: regular expression builder
@@ -158,6 +218,13 @@
 ;;
 ;; )
 
+
+;;-------------------------------------------------------------------------------
+;; vlf - handle open very large files
+(use-package vlf
+  :ensure t
+  :config
+  (require 'vlf-setup))
 
 ;;-------------------------------------------------------------------------------
 
@@ -364,26 +431,8 @@
                      (throw 'gotit sym))))))
 
 ;;------------------------------------------------------------------------------
-;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
 
-;; C-x space
-;; C-space <movement> C-space
-;;    start rectangular selection
-;; C-x r t
-;;    (replace-rectangle) replace text in selected rectangle
-;; C-x r k
-;;    (kill-rectangle) kill rectangle
-;; C-x r d
-;;    (delete-rectangle) delete rectangle
-;; C-x r y
-;;    (yank-rectangle) paste rectangular selection
-;; C-x r o
-;;    (open-rectangle) insert a whitespace rectangle into the region
-;; C-x r N
-;;    (rectangle-number-lines) insert numbers in a vertical column
-
-
-;;------------------------------------------------------------------------------
+(global-unset-key (kbd "C-z")) ;; disable Ctrl-z
 
 (if window-system
   (progn
@@ -422,6 +471,14 @@
   ;(set-frame-width (selected-frame) 130)
   )
 )
+
+;;--------------------------------------------------------------------
+;; ORG-MODE
+
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-switchb)
 
 ;;-------------------------------------------
 ;; DIRTREE: https://github.com/zk/emacs-dirtree
@@ -561,7 +618,7 @@
 
 ;;-------------------------------------------
 ;; Show line numbers
-(global-linum-mode 1)
+;;(global-linum-mode 1)
 ;;Use C-<F5> to toggle line numbers
 (global-set-key (kbd "C-<f5>") 'linum-mode)
 
@@ -614,8 +671,8 @@
   (setq term-buffer-maximum-size 8192)
   )
 
-(if (eq system-type 'windows-nt)
-    (udf-windows-setup))
+;;(if (eq system-type 'windows-nt)
+;;    (udf-windows-setup))
 
 ;;-------------------------------------------------------------------------
 ;; IDO mode: (Interactively DO things)
@@ -640,9 +697,6 @@
 ;; disable ido faces to see flx highlights.
 ;(setq ido-use-faces nil)
 
-;; set garbage-collection threshold to 10MB to speed up flx-ido:
-;; see https://github.com/lewang/flx
-(setq gc-cons-threshold 10000000)
 
 ;;FIND FILE AT POINT:
 ;;either this:
@@ -664,66 +718,210 @@
 ;;Takes a list of files to ignore in C-x C-f
 ;(setq ido-ignore-files '())
 
-;;General-purpose IDO Commands
-;
-;;To skip IDO's current suggestion and accept what's already typed-in,
-;;hit C-j
-;
-;;Tricks for windows:
-;; * for opening a file/dir in a different drive (eg D:), do: C-x C-f D:/
-;;   and IDO will intelligently switch to D:
-;; * for opening a file/dir in the home directory do: C-X C-f ~/
-;
-;;C-b Reverts to the old switch-buffer completion engine. Available in Buffers.
-;;C-f Reverts to the old find-file completion engine. Available in Files
-;;C-d Opens a dired buffer in the current directory. Available in Dirs / Files
-;;C-a Toggles showing ignored files (see ido-ignore-files). Available in Files / Buffers
-;;C-c Toggles if searching of buffer and file names should ignore case. (see
-;;    ido-case-fold). Available in Dirs / Files / Buffers
-;;TAB Attempt to complete the input like the normal completing read
-;;    functionality. Available in Dirs / Files / Buffers
-;;C-p Toggles prefix matching; when it's on the input will only match the
-;;    beginning of a filename instead of any part of it.
-;
-;;Files
-;
-;;C-s / C-r
-;;            Moves to the next and previous match, respectively. Available
-;;            everywhere
-;;C-t
-;;            Toggles matching by Emacs regular expression.. Available everywhere
-;;Backspace
-;;            Deletes characters as usual or goes up one directory if it makes
-;;            sense to do so.. Available everywhere
-;;C-SPC / C-@
-;;            Restricts the completion list to anything that matches your
-;;            current input. Available everywhere
-;;//
-;;            Like most Linux shells two forward slashes in a path means
-;;            "ignore the preceding path, and go back to the top-most
-;;            directory". Works the same in Ido but it's more interactive: it
-;;            will go to the root / (or the root of the current drive in
-;;            Windows) Available in Files
-;;~/
-;;            Jumps to the home directory. On Windows this would be typically
-;;            be %USERPROFILE% or %HOME%, if it is defined. Available in
-;;            Files / Dirs
-;;M-d
-;;            Searches for the input in all sub-directories to the directory
-;;            you're in.. Available in Files
-;;C-k
-;;            Kills the currently focused buffer or deletes the file
-;;            depending on the mode.. Available in Files / Buffers
-;;M-m
-;;            Creates a new sub-directory to the directory you're
-;;            in. Available in Files
-;
-;;OK, so you probably won't get in the habit of using all the commands;
-;;that's fine, but some are more important to remember than others, like:
-;;Backspace; C-s and C-r; // and ~/; and C-d.
-;
-;;If Ido is getting in your way, remember the fallback commands:
-;; C-f for files; C-b for buffers.
+;; General-purpose IDO Commands
+;;
+;; To skip IDO's current suggestion and accept what's already typed-in,
+;; hit C-j
+;;
+;; Tricks for windows:
+;;  * for opening a file/dir in a different drive (eg D:), do: C-x C-f D:/
+;;    and IDO will intelligently switch to D:
+;;  * for opening a file/dir in the home directory do: C-X C-f ~/
+;;
+;; C-b Reverts to the old switch-buffer completion engine. Available in Buffers.
+;; C-f Reverts to the old find-file completion engine. Available in Files
+;; C-d Opens a dired buffer in the current directory. Available in Dirs / Files
+;; C-a Toggles showing ignored files (see ido-ignore-files). Available in Files / Buffers
+;; C-c Toggles if searching of buffer and file names should ignore case. (see
+;;     ido-case-fold). Available in Dirs / Files / Buffers
+;; TAB Attempt to complete the input like the normal completing read
+;;     functionality. Available in Dirs / Files / Buffers
+;; C-p Toggles prefix matching; when it's on the input will only match the
+;;     beginning of a filename instead of any part of it.
+;;
+;; Files
+;;
+;; C-s / C-r
+;;             Moves to the next and previous match, respectively. Available
+;;             everywhere
+;; C-t
+;;             Toggles matching by Emacs regular expression.. Available everywhere
+;; Backspace
+;;             Deletes characters as usual or goes up one directory if it makes
+;;             sense to do so.. Available everywhere
+;; C-SPC / C-@
+;;             Restricts the completion list to anything that matches your
+;;             current input. Available everywhere
+;; //
+;;             Like most Linux shells two forward slashes in a path means
+;;             "ignore the preceding path, and go back to the top-most
+;;             directory". Works the same in Ido but it's more interactive: it
+;;             will go to the root / (or the root of the current drive in
+;;             Windows) Available in Files
+;; ~/
+;;             Jumps to the home directory. On Windows this would be typically
+;;             be %USERPROFILE% or %HOME%, if it is defined. Available in
+;;             Files / Dirs
+;; M-d
+;;             Searches for the input in all sub-directories to the directory
+;;             you're in.. Available in Files
+;; C-k
+;;             Kills the currently focused buffer or deletes the file
+;;             depending on the mode.. Available in Files / Buffers
+;; M-m
+;;             Creates a new sub-directory to the directory you're
+;;             in. Available in Files
+;;
+;; OK, so you probably won't get in the habit of using all the commands;
+;; that's fine, but some are more important to remember than others, like:
+;; Backspace; C-s and C-r; // and ~/; and C-d.
+;;
+;; If Ido is getting in your way, remember the fallback commands:
+;;  C-f for files; C-b for buffers.
+
+;;-----------------------------------------------------------------------------
+;; Ivy config
+;; https://nilsdeppe.com/posts/emacs-c++-ide2
+
+(use-package ivy
+  :ensure t
+  :config
+  (require 'ivy)
+  (ivy-mode t)
+  (setq ivy-wrap t)
+  (setq ivy-display-style 'fancy)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (setq magit-completing-read-function 'ivy-completing-read)
+  (global-set-key (kbd "C-c C-r") 'ivy-resume)
+  ;; Show #/total when scrolling buffers
+  (setq ivy-count-format "%d/%d ")
+  )
+
+;; (use-package swiper
+;;   :ensure t
+;;   :bind (("C-s" . swiper)
+;;          ("C-r" . swiper))
+;;   )
+
+;; https://github.com/redguardtoo/counsel-etags
+(use-package counsel
+  :ensure t
+  :bind (("M-x" . counsel-M-x)
+         ;;("C-x C-f" . counsel-find-file)
+         ("<f1> f" . counsel-describe-function)
+         ("<f1> v" . counsel-describe-variable)
+         ("<f1> l" . counsel-find-library)
+         ;;("<f2> i" . counsel-info-lookup-symbol)
+         ;;("<f2> u" . counsel-unicode-char)
+         ("C-c s g" . counsel-git-grep)
+         ("C-c s j" . counsel-git)
+         ("C-c s k" . counsel-ag)
+         ("C-c s r" . counsel-rg)
+         ("C-c s l" . counsel-locate)
+         :map minibuffer-local-map
+         ("C-r" . counsel-minibuffer-add)
+         )
+  :config
+  (if (executable-find "rg")
+      ;; use ripgrep instead of grep because it's way faster
+      (setq counsel-grep-base-command
+            "rg -i -M 120 --no-heading --line-number --color never '%s' %s"
+            counsel-rg-base-command
+            "rg -i -M 120 --no-heading --line-number --color never %s ."
+            )
+    (warn "\nWARNING: Could not find the ripgrep executable. It "
+          "is recommended you install ripgrep.")
+    )
+  )
+
+;; Use universal ctags to build the tags database for the project.
+;; When you first want to build a TAGS database run 'touch TAGS'
+;; in the root directory of your project.
+;; https://github.com/redguardtoo/counsel-etags
+(use-package counsel-etags
+  :ensure t
+  :bind (
+         ("M-." . counsel-etags-find-tag-at-point)
+         ("M-G" . counsel-etags-grep-symbol-at-point)
+         ("M-T" . counsel-etags-find-tag))
+  :config
+  ;; Ignore files above 800kb
+  (setq counsel-etags-max-file-size 800)
+  ;; Ignore build directories for tagging
+  (add-to-list 'counsel-etags-ignore-directories '"build*")
+  (add-to-list 'counsel-etags-ignore-directories '"install*")
+  (add-to-list 'counsel-etags-ignore-directories '".vscode")
+  (add-to-list 'counsel-etags-ignore-filenames '".clang-format")
+  ;; Don't ask before rereading the TAGS files if they have changed
+  (setq tags-revert-without-query t)
+  ;; Don't warn when TAGS files are large
+  (setq large-file-warning-threshold nil)
+  ;; How many seconds to wait before rerunning tags for auto-update
+  (setq counsel-etags-update-interval 180)
+  ;; Set up auto-update
+  (add-hook
+   'prog-mode-hook
+   (lambda () (add-hook 'after-save-hook
+                        (lambda ()
+                          (counsel-etags-virtual-update-tags))))
+   )
+
+  ;; The function provided by counsel-etags is broken (at least on Linux)
+  ;; and doesn't correctly exclude directories, leading to an excessive
+  ;; amount of incorrect tags. The issue seems to be that the trailing '/'
+  ;; in e.g. '*dirname/*' causes 'find' to not correctly exclude all files
+  ;; in that directory, only files in sub-directories of the dir set to be
+  ;; ignore.
+  (defun my-scan-dir (src-dir &optional force)
+    "Create tags file from SRC-DIR. \
+     If FORCE is t, the commmand is executed without \
+     checking the timer."
+    (let* ((find-pg (or
+                     counsel-etags-find-program
+                     (counsel-etags-guess-program "find")))
+           (ctags-pg (or
+                      counsel-etags-tags-program
+                      (format "%s -e -L" (counsel-etags-guess-program
+                                          "ctags"))))
+           (default-directory src-dir)
+           ;; run find&ctags to create TAGS
+           (cmd (format
+                 "%s . \\( %s \\) -prune -o -type f -not -size +%sk %s | %s -"
+                 find-pg
+                 (mapconcat
+                  (lambda (p)
+                    (format "-iwholename \"*%s*\"" p))
+                  counsel-etags-ignore-directories " -or ")
+                 counsel-etags-max-file-size
+                 (mapconcat (lambda (n)
+                              (format "-not -name \"%s\"" n))
+                            counsel-etags-ignore-filenames " ")
+                 ctags-pg))
+           (tags-file (concat (file-name-as-directory src-dir) "TAGS"))
+           (doit (or force (not (file-exists-p tags-file)))))
+      ;; always update cli options
+      (when doit
+        (message "%s at %s" cmd default-directory)
+        (shell-command cmd)
+        (visit-tags-table tags-file t)
+        )
+      )
+    )
+
+  (setq counsel-etags-update-tags-backend
+        (lambda ()
+          (interactive)
+          (let* ((tags-file (counsel-etags-locate-tags-file)))
+            (when tags-file
+              (my-scan-dir (file-name-directory tags-file) t)
+              (run-hook-with-args
+               'counsel-etags-after-update-tags-hook tags-file)
+              (unless counsel-etags-quiet-when-updating-tags
+                (message "%s is updated!" tags-file))))
+          )
+        )
+  )
 
 ;;-------------------------------------------------------------------------
 ;; smex
@@ -757,26 +955,34 @@
 ;(ac-config-default)
 ;;(require 'auto-complete-etags)
 
-;;General Usage: Completion will start automatically after you type a
-;;few letters. Use M-n and M-p to select, <return> to complete or <tab>
-;;to complete the common part. Search through the completions with C-s,
-;;C-r and C-o. Press M-(digit) to quickly complete with one of the
-;;first 10 candidates. When the completion candidates are shown, press
-;;<f1> to display the documentation for the selected candidate, or C-w
-;;to see its source. Not all back-ends support this.
-;
-;;The variable company-backends specifies a list of backends that
-;;company-mode uses to retrieves completion candidates for you.
+;; General Usage: Completion will start automatically after you type a
+;; few letters. Use M-n and M-p to select, <return> to complete or <tab>
+;; to complete the common part. Search through the completions with C-s,
+;; C-r and C-o. Press M-(digit) to quickly complete with one of the
+;; first 10 candidates. When the completion candidates are shown, press
+;; <f1> to display the documentation for the selected candidate, or C-w
+;; to see its source. Not all back-ends support this.
+;;
+;; The variable company-backends specifies a list of backends that
+;; company-mode uses to retrieves completion candidates for you.
 
 (defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
 (defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
+(defun company--my-insert-comma() (interactive)(company-abort)(insert-char #10r44))
+(defun company--my-insert-equal() (interactive)(company-abort)(insert-char #10r61))
+(defun company--my-setup()
+  (interactive)
+  (setq company-minimum-prefix-length 3)
+  (setq company-idle-delay nil) ;; disable auto popup
+  ;;(setq company-auto-complete t)
+  (setq company-auto-complete nil)
+  (setq company-show-numbers t)
+  (setq company-selection-wraparound t)
+  )
 (use-package company
   :config
   (global-company-mode)
-  (setq company-minimum-prefix-length 3)
-  (setq company-auto-complete t)
-  (setq company-show-numbers t)
-  (setq company-selection-wraparound t)
+  (company--my-setup)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
@@ -788,6 +994,8 @@
    ;; prevent company from completing on its own when we type regular characters
    ("SPC" . company--my-insert-spc)
    ("."   . company--my-insert-dot)
+   (","   . company--my-insert-comma)
+   ("="   . company--my-insert-equal)
    )
   )
 
@@ -795,6 +1003,8 @@
 ;;-------------------------------------------------------------------------
 
 (use-package tramp
+  :defer t
+  :commands tramp
   :config
   ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html
   (setenv "ESHELL" "bash")
@@ -804,7 +1014,8 @@
   ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
   ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
   (setq tramp-shell-prompt-pattern
-        "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
+        "\\(?:^\\|
+\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
   )
 
 ;; prevent TRAMP from connecting to hosts on startup
@@ -836,6 +1047,7 @@
   (find-file fn)
   )
 
+
 ;;=========================================================================
 ;; CURSOR MOVEMENT
 
@@ -850,6 +1062,11 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-conservatively 10000) ;; scroll just one line when hitting bottom of window
 (setq auto-window-vscroll nil)
+
+;; smooth horizontal scrolling
+;; https://stackoverflow.com/questions/20628878/changing-horizontal-scrolling-in-emacs
+(setq hscroll-margin 0)
+(setq hscroll-step 1)
 
 ;; scroll without moving the cursor
 (defun gcm-scroll-down ()
@@ -927,6 +1144,26 @@ If point was already at that position, move point to beginning of line."
 ;;=========================================================================
 ;; EDITING
 
+;;------------------------------------------------------------------------------
+;; Rectangular editing http://ergoemacs.org/emacs/emacs_string-rectangle_ascii-art.html
+
+;; C-x space
+;; C-space <movement> C-space
+;;    start rectangular selection
+;; C-x r t
+;;    (replace-rectangle) replace text in selected rectangle
+;; C-x r k
+;;    (kill-rectangle) kill rectangle
+;; C-x r d
+;;    (delete-rectangle) delete rectangle
+;; C-x r y
+;;    (yank-rectangle) paste rectangular selection
+;; C-x r o
+;;    (open-rectangle) insert a whitespace rectangle into the region
+;; C-x r N
+;;    (rectangle-number-lines) insert numbers in a vertical column
+
+
 ;;------------------------------------------------------------------
 (require 'iedit)
 ;; iedit. https://github.com/victorhge/iedit
@@ -963,6 +1200,30 @@ If point was already at that position, move point to beginning of line."
 ;; There are also some other facilities you may never think about. Refer to
 ;; the document of function ‘iedit-mode’ (C-h f iedit-mode RET) for more
 ;; details.
+
+;;------------------------------------------------------------------
+;; multiple-cursors. https://github.com/magnars/multiple-cursors.el
+
+;; To get out of multiple-cursors-mode, press <return> or C-g. The latter
+;; will first disable multiple regions before disabling multiple cursors. If
+;; you want to insert a newline in multiple-cursors-mode, use C-j.
+
+(use-package multiple-cursors
+  :commands (
+             mc/edit-lines
+             mc/mark-next-like-this
+             mc/mark-previous-like-this
+             mc/mark-all-like-this
+             )
+  :bind
+  ;; When you have an active region that spans multiple lines, the following
+  ;; will add a cursor to each line:
+  (("M-m" . mc/edit-lines)
+   ("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/mark-previous-like-this)
+   ("C-ç a" . mc/mark-all-like-this)
+   )
+)
 
 ;;------------------------------------------------------------------
 ;; https://github.com/k-talo/volatile-highlights.el
@@ -1397,8 +1658,69 @@ original line and use the absolute value."
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
+
+(use-package clang-format
+  :defer t
+  :bind ("C-c C-M-f" . clang-format-region))
+
+(use-package c-mode
+  :defer t
+  :config
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-c++-completion-hook)
+  :bind
+  (:map c-mode-base-map
+        ("C-d" . duplicate-line-or-region)
+        )
+  )
+
+(use-package cc-mode
+  :defer t
+  :config
+  (use-snips)
+  (add-hook 'c-mode-common-hook #'my-c-hook)
+  (add-hook 'c-mode-common-hook #'my-c++-completion-hook)
+  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+  :bind
+  (:map c-mode-base-map
+        ("C-d" . duplicate-line-or-region)
+        )
+  )
+
+;; C++11 update to C++ syntax highlighting
+;; https://github.com/ludwigpacifici/modern-cpp-font-lock
+(use-package modern-cpp-font-lock
+  :defer t
+  :commands
+  modern-c++-font-lock-global-mode
+  modern-c++-font-lock-mode
+  )
+
+(defun my-c++-completion-hook()
+  (if this-is-windows
+      (progn
+        (my-universal-tags-hook)
+        )
+    (progn
+      (my-rtags-hook)
+      )
+    )
+  )
+
+(defun my-cquery-hook()
+  (interactive)
+  (load "my-cquery-setup")
+  )
+
+(defun my-universal-tags-hook ()
+  (interactive)
+  (load "my-ycmd-setup")
+  )
+
 (defun my-rtags-hook ()
   (interactive)
+  (load "my-rtags-setup")
   (rtags-start-process-unless-running)
   (when (not (boundp 'company-backends))
     (setq company-backends ())
@@ -1406,71 +1728,9 @@ original line and use the absolute value."
   (add-to-list 'company-backends 'company-rtags)
   (add-to-list 'company-backends 'company-c-headers)
   )
-(use-package clang-format
-  :defer t
-  :bind ("C-c C-M-f" . clang-format-region))
-(use-package c-mode
-  :defer t
-  :config
-  (use-snips)
-  (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
-  )
-(use-package cc-mode
-  :defer t
-  :config
-  (use-snips)
-  (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-rtags-hook)
-  :bind (:map c-mode-base-map ("C-d" . duplicate-line-or-region))
-  )
-;; RTAGS
-;; http://diobla.info/doc/rtags
-;; https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
-(use-package rtags
-  :init
-  (setq rtags-completions-enabled t)
-  (setq rtags-autostart-diagnostics t)
-  (setq rtags-rc-log-enabled t)
-  :config
-  (require 'company-rtags)
-  (add-to-list 'company-backends 'company-rtags)
-  (rtags-diagnostics)
-  :bind
-  (:map c-mode-base-map
-        ("M-<left>"  . rtags-location-stack-back)
-        ("M-<right>" . rtags-location-stack-forward)
-        ("M-."       . rtags-find-symbol-at-point)
-        ("M-,"       . rtags-find-references-at-point)
-        ("C-c r ." . rtags-find-symbol-at-point)
-        ("C-c r ," . rtags-find-references-at-point)
-        ("C-c r v" . rtags-find-virtuals-at-point)
-        ("C-c r V" . rtags-print-enum-value-at-point)
-        ("C-c r /" . rtags-find-all-references-at-point)
-        ("C-c r Y" . rtags-cycle-overlays-on-screen)
-        ("C-c r >" . rtags-find-symbol)
-        ("C-c r <" . rtags-find-references)
-        ("C-c r -" . rtags-location-stack-back)
-        ("C-c r +" . rtags-location-stack-forward)
-        ("C-c r D" . rtags-diagnostics)
-        ("C-c r G" . rtags-guess-function-at-point)
-        ("C-c r p" . rtags-set-current-project)
-        ("C-c r P" . rtags-print-dependencies)
-        ("C-c r e" . rtags-reparse-file)
-        ("C-c r E" . rtags-preprocess-file)
-        ("C-c r R" . rtags-rename-symbol)
-        ("C-c r M" . rtags-symbol-info)
-        ("C-c r S" . rtags-display-summary)
-        ("C-c r O" . rtags-goto-offset)
-        ("C-c r ;" . rtags-find-file)
-        ("C-c r F" . rtags-fixit)
-        ("C-c r X" . rtags-fix-fixit-at-point)
-        ("C-c r B" . rtags-show-rtags-buffer)
-        ("C-c r I" . rtags-imenu)
-        ("C-c r T" . rtags-taglist)
-        )
-  )
+
+
+;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
 (load "cmany")
 (global-cmany-mode 1)
@@ -1515,6 +1775,7 @@ original line and use the absolute value."
   (require 'gdb-mi)
   (require 'tooltip)
   (subword-mode 1)
+  (company--my-setup)
   )
 (use-package python
   :defer t
@@ -1525,12 +1786,12 @@ original line and use the absolute value."
     :config
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
-   (setq elpy-rpc-python-command "python3"
+    (setq elpy-rpc-python-command "python"
 ;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
          )
-    (elpy-use-ipython "ipython3")
+    ;;(elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
@@ -1547,6 +1808,7 @@ original line and use the absolute value."
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
+  (company--my-setup)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
@@ -1623,9 +1885,18 @@ original line and use the absolute value."
 
 
 ;;; YAML
+(defun my-yaml-hook()
+  (message "my-yaml-hook: enter")
+  (use-snips)
+  (hook-snips)
+  (auto-fill-mode 0)
+  (disable-line-wrapping)
+  (message "my-yaml-hook: exit")
+  )
 (use-package yaml-mode
-  :config (use-snips)(add-hook 'yaml-mode-hook #'hook-snips)
-  :mode ("\\.yml\\'" . yaml-mode)
+  :config (add-hook 'yaml-mode-hook #'my-yaml-hook)
+  :mode (("\\.yml\\'" . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode))
 )
 
 
@@ -1652,6 +1923,13 @@ original line and use the absolute value."
          ("\\.hlsli\\'" . hlsl-mode)
          ("\\.fx\\'" . hlsl-mode)
          ("\\.usf\\'" . hlsl-mode))
+  )
+
+
+;;; Arduino
+(use-package arduino-mode
+  :config (use-snips)(add-hook 'arduino-mode-hook #'hook-snips)
+  :mode ("\\.ino\\'" . arduino-mode)
   )
 
 ;;; Octave/Matlab
@@ -1733,6 +2011,10 @@ original line and use the absolute value."
 ;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 (setq compilation-scroll-output 'first-error)
 
+;; always kill compile buffer http://user42.tuxfamily.org/compilation-always-kill/index.html
+(autoload 'compilation-always-kill-mode "compilation-always-kill" nil t)
+(eval-after-load "compile" '(compilation-always-kill-mode 1))
+
 (defvar my-compilation-exit-code nil)
 (defun my-compilation-exit-message-function (status_ code message)
   (setq my-compilation-exit-code code)
@@ -1759,12 +2041,12 @@ original line and use the absolute value."
   (call-interactively which)
   (setq my-compilation-comp-window (get-buffer-window "*compilation*"))
   (select-window my-compilation-comp-window)
-  (when (not my-compilation-buffer-exists)
-    (disable-line-wrapping)
-    (linum-mode 0)
+  ;;(when (not my-compilation-buffer-exists)
+  (disable-line-wrapping)
+  (linum-mode 0)
     ;;(setq h (window-height w))
     ;;(shrink-window (- h 10))
-    )
+  ;;)
   (previous-buffer)
   (setq my-compilation-comp-buffer (current-buffer))
   (next-buffer)
@@ -2118,6 +2400,64 @@ original line and use the absolute value."
 ;; Search and replace:
 ;; https://www.emacswiki.org/emacs/CategorySearchAndReplace
 
+
+;; rg.el: emacs wrapper for ripgrep: https://github.com/dajva/rg.el
+;; ripgrep recursively searches directories for a regex pattern
+;; https://github.com/BurntSushi/ripgrep
+(use-package rg
+  :defer t
+  :commands
+  ;; This works the same way as M-x rgrep, i.e. you get an interactive
+  ;; prompt to enter search details. Universal argument can be used as for
+  ;; rgrep
+  rg
+  ;; M-x rg-literal is a non regexp version of rg
+  rg-literal
+  ;; M-x rg-project searches in a project defined by projectile,
+  ;; find-file-in-project or a vc-backend
+  rg-project
+  ;; M-x rg-dwim searches for thing at point in a project in all files with
+  ;; the same type alias as the current buffer file.
+  rg-dwim
+  ;; A search result buffer can be saved by invoking rg-save-search or
+  ;; rg-save-search-as-name. The former will give the saved buffer a unique
+  ;; name and the latter will prompt the user for a name. The
+  ;; rg-list-searches command will open a buffer with all active rg-mode
+  ;; buffers showing basic information about each search.
+   rg-save-search
+   rg-save-search-as-name
+   rg-list-searches
+  :init
+  ;; M-s r 	rg
+  ;; M-s d 	rg-dwim
+  ;; M-s k 	rg-kill-saved-searches
+  ;; M-s l 	rg-list-searches
+  ;; M-s p 	rg-project
+  ;; M-s s 	rg-save-search
+  ;; M-s S 	rg-save-search-as-name
+  ;; M-s t 	rg-literal
+  ;;(rg-enable-default-bindings (kbd "M-s"))
+  (add-hook 'rg-mode-hook 'wgrep-ag-setup)
+  :config
+  (setq rg-show-columns t)
+  )
+
+;; this is needed for rg (see above)
+(use-package wgrep-ag
+  :defer t
+  :commands wgrep-ag-setup
+  :init
+  )
+
+;; wgrep allows you to edit all files in a grep result. For example,
+;; you can use C-c g or C-c r to search all files in a project, then
+;; use C-c C-o to enter ivy-occur mode, followed by 'w' to make
+;; the grep results buffer editable, then you can edit the results
+;; however you wish.
+(use-package wgrep
+:ensure t)
+
+
 ;;-------------------------------------------------------------------------
 ;;text modes
 
@@ -2133,8 +2473,13 @@ original line and use the absolute value."
 (add-hook 'text-mode-hook 'my-text-hook)
 
 ;;; LaTeX
-(add-hook 'tex-mode-hook 'my-text-hook)
-(add-hook 'latex-mode-hook 'my-text-hook)
+(defun my-latex-hook()
+  (message "my-latex-hook: enter")
+  (my-text-hook)
+  (message "my-latex-hook: exit")
+  )
+(add-hook 'tex-mode-hook 'my-latex-hook)
+(add-hook 'latex-mode-hook 'my-latex-hook)
 
 
 ;;; Restructured Text
@@ -2222,14 +2567,21 @@ original line and use the absolute value."
 (if this-is-windows
   (progn
     ;;if in Windows run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-                                              :height 100 :family "Consolas")))))
+    (set-face-attribute 'default nil :font "Consolas-10")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          :height 100 :family "Consolas")))))
   )
   (progn
     ;;otherwise run this block
-    (custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-                                              :height 120 :family "Inconsolata")))))
-                                              ;;:height 100 :family "Consolas")))))
+    ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
+    (set-face-attribute 'default nil :font "Consolas-11")
+    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
+    ;;(set-face-attribute 'default nil :font "Consolas-11")
+    ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          ;;:height 120 :family "Inconsolata")))))
+    ;;                                          ;;:height 120 :family "Consolas")))))
+    ;;                                          :height 100 :family "Monospace")))))
   )
 )
 
@@ -2244,6 +2596,75 @@ original line and use the absolute value."
    (quote
     ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
  '(ecb-options-version "2.40")
+ '(package-selected-packages
+   (quote
+    (
+     anzu
+     arduino-mode
+     clang-format
+     clean-aindent-mode
+     cmake-mode
+     company-c-headers
+     company-lsp
+     company-rtags
+     company-ycmd
+     counsel-etags
+     counsel-projectile
+     cquery
+     csharp-mode
+     cython-mode
+     dirtree
+     drag-stuff
+     dtrt-indent
+     elisp-slime-nav
+     elpy
+     elpygen
+     ess
+     firebelly-theme
+     flx-ido
+     git-timemachine
+     glsl-mode
+     help-fns+
+     hemisu-theme
+     highlight-symbol
+     hungry-delete
+     ido-ubiquitous
+     ido-vertical-mode
+     iedit
+     levenshtein
+     lsp-mode
+     lsp-ui
+     magit
+     markdown-mode
+     modern-cpp-font-lock
+     monokai-theme
+     multiple-cursors
+     pdb-mode
+     persp-mode
+     persp-projectile
+     php-mode
+     realgud
+     rg
+     seq
+     slime
+     smart-mode-line
+     smartparens
+     smex
+     solarized-theme
+     syntax-subword
+     tango-plus-theme
+     term-run
+     undo-tree
+     use-package
+     vlf
+     volatile-highlights
+     web-mode
+     wgrep-ag
+     window-number
+     ws-butler
+     yaml-mode
+     zenburn-theme
+     )))
  '(safe-local-variable-values
    (quote
     ((eval load-file
@@ -2264,8 +2685,7 @@ original line and use the absolute value."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;;'(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
- '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
+ '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))) t)
  '(highlight-indentation-face ((t (:background "gray24")))))
 
 
