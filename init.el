@@ -1050,8 +1050,12 @@ If point was already at that position, move point to beginning of line."
 ;;Insert a new line and jump to it, indenting
 ;;http://superuser.com/questions/331660/how-to-insert-a-new-line-and-jump-to-it-in-emacs
 (defun my-newline-shortcuts()
-  (global-set-key (kbd "<S-return>") "\C-e\C-m")   ; create line after current and indent
-  (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m") ; create line before current and indent
+  ;; create line after current and indent
+  (global-set-key (kbd "<S-return>") "\C-e\C-m")
+  (global-set-key (kbd "S-RET"     ) "\C-e\C-m")
+  ;; create line before current and indent
+  (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m")
+  (global-set-key (kbd "S-C-RET"     ) "\C-p\C-e\C-m")
   )
 (my-newline-shortcuts)
 
