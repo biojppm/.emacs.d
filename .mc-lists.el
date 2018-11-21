@@ -20,5 +20,6 @@
 (setq mc/cmds-to-run-once
       '(
         gud-tooltip-mouse-motion
+        mouse-set-region
         my-recompile
         ))
