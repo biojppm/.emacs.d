@@ -843,8 +843,8 @@
   :ensure t
   :bind (
          ("M-." . counsel-etags-find-tag-at-point)
-         ("M-g" . counsel-etags-grep-symbol-at-point)
-         ("M-t" . counsel-etags-find-tag))
+         ("M-G" . counsel-etags-grep-symbol-at-point)
+         ("M-T" . counsel-etags-find-tag))
   :config
   ;; Ignore files above 800kb
   (setq counsel-etags-max-file-size 800)
@@ -955,26 +955,34 @@
 ;(ac-config-default)
 ;;(require 'auto-complete-etags)
 
-;;General Usage: Completion will start automatically after you type a
-;;few letters. Use M-n and M-p to select, <return> to complete or <tab>
-;;to complete the common part. Search through the completions with C-s,
-;;C-r and C-o. Press M-(digit) to quickly complete with one of the
-;;first 10 candidates. When the completion candidates are shown, press
-;;<f1> to display the documentation for the selected candidate, or C-w
-;;to see its source. Not all back-ends support this.
-;
-;;The variable company-backends specifies a list of backends that
-;;company-mode uses to retrieves completion candidates for you.
+;; General Usage: Completion will start automatically after you type a
+;; few letters. Use M-n and M-p to select, <return> to complete or <tab>
+;; to complete the common part. Search through the completions with C-s,
+;; C-r and C-o. Press M-(digit) to quickly complete with one of the
+;; first 10 candidates. When the completion candidates are shown, press
+;; <f1> to display the documentation for the selected candidate, or C-w
+;; to see its source. Not all back-ends support this.
+;;
+;; The variable company-backends specifies a list of backends that
+;; company-mode uses to retrieves completion candidates for you.
 
 (defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
 (defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
+(defun company--my-insert-comma() (interactive)(company-abort)(insert-char #10r44))
+(defun company--my-insert-equal() (interactive)(company-abort)(insert-char #10r61))
+(defun company--my-setup()
+  (interactive)
+  (setq company-minimum-prefix-length 3)
+  (setq company-idle-delay nil) ;; disable auto popup
+  ;;(setq company-auto-complete t)
+  (setq company-auto-complete nil)
+  (setq company-show-numbers t)
+  (setq company-selection-wraparound t)
+  )
 (use-package company
   :config
   (global-company-mode)
-  (setq company-minimum-prefix-length 3)
-  (setq company-auto-complete t)
-  (setq company-show-numbers t)
-  (setq company-selection-wraparound t)
+  (company--my-setup)
   :bind
   (("C-<tab>" . company-complete)
    :map company-active-map
@@ -986,6 +994,8 @@
    ;; prevent company from completing on its own when we type regular characters
    ("SPC" . company--my-insert-spc)
    ("."   . company--my-insert-dot)
+   (","   . company--my-insert-comma)
+   ("="   . company--my-insert-equal)
    )
   )
 
@@ -1004,7 +1014,8 @@
   ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
   ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
   (setq tramp-shell-prompt-pattern
-        "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
+        "\\(?:^\\|
+\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
   )
 
 ;; prevent TRAMP from connecting to hosts on startup
@@ -1051,6 +1062,11 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-conservatively 10000) ;; scroll just one line when hitting bottom of window
 (setq auto-window-vscroll nil)
+
+;; smooth horizontal scrolling
+;; https://stackoverflow.com/questions/20628878/changing-horizontal-scrolling-in-emacs
+(setq hscroll-margin 0)
+(setq hscroll-step 1)
 
 ;; scroll without moving the cursor
 (defun gcm-scroll-down ()
@@ -1295,8 +1311,12 @@ If point was already at that position, move point to beginning of line."
 ;;Insert a new line and jump to it, indenting
 ;;http://superuser.com/questions/331660/how-to-insert-a-new-line-and-jump-to-it-in-emacs
 (defun my-newline-shortcuts()
-  (global-set-key (kbd "<S-return>") "\C-e\C-m")   ; create line after current and indent
-  (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m") ; create line before current and indent
+  ;; create line after current and indent
+  (global-set-key (kbd "<S-return>") "\C-e\C-m")
+  (global-set-key (kbd "S-RET"     ) "\C-e\C-m")
+  ;; create line before current and indent
+  (global-set-key (kbd "<S-C-return>") "\C-p\C-e\C-m")
+  (global-set-key (kbd "S-C-RET"     ) "\C-p\C-e\C-m")
   )
 (my-newline-shortcuts)
 
@@ -1755,6 +1775,7 @@ original line and use the absolute value."
   (require 'gdb-mi)
   (require 'tooltip)
   (subword-mode 1)
+  (company--my-setup)
   )
 (use-package python
   :defer t
@@ -1765,12 +1786,12 @@ original line and use the absolute value."
     :config
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
-    (setq elpy-rpc-python-command "python3"
+    (setq elpy-rpc-python-command "python"
 ;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
          )
-    (elpy-use-ipython "ipython3")
+    ;;(elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
     :bind (:map elpy-mode-map
@@ -1787,6 +1808,7 @@ original line and use the absolute value."
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
+  (company--my-setup)
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
@@ -1863,9 +1885,18 @@ original line and use the absolute value."
 
 
 ;;; YAML
+(defun my-yaml-hook()
+  (message "my-yaml-hook: enter")
+  (use-snips)
+  (hook-snips)
+  (auto-fill-mode 0)
+  (disable-line-wrapping)
+  (message "my-yaml-hook: exit")
+  )
 (use-package yaml-mode
-  :config (use-snips)(add-hook 'yaml-mode-hook #'hook-snips)
-  :mode ("\\.yml\\'" . yaml-mode)
+  :config (add-hook 'yaml-mode-hook #'my-yaml-hook)
+  :mode (("\\.yml\\'" . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode))
 )
 
 
@@ -1892,6 +1923,13 @@ original line and use the absolute value."
          ("\\.hlsli\\'" . hlsl-mode)
          ("\\.fx\\'" . hlsl-mode)
          ("\\.usf\\'" . hlsl-mode))
+  )
+
+
+;;; Arduino
+(use-package arduino-mode
+  :config (use-snips)(add-hook 'arduino-mode-hook #'hook-snips)
+  :mode ("\\.ino\\'" . arduino-mode)
   )
 
 ;;; Octave/Matlab
@@ -2435,8 +2473,13 @@ original line and use the absolute value."
 (add-hook 'text-mode-hook 'my-text-hook)
 
 ;;; LaTeX
-(add-hook 'tex-mode-hook 'my-text-hook)
-(add-hook 'latex-mode-hook 'my-text-hook)
+(defun my-latex-hook()
+  (message "my-latex-hook: enter")
+  (my-text-hook)
+  (message "my-latex-hook: exit")
+  )
+(add-hook 'tex-mode-hook 'my-latex-hook)
+(add-hook 'latex-mode-hook 'my-latex-hook)
 
 
 ;;; Restructured Text
@@ -2555,7 +2598,73 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (orgalist org-beautify-theme cquery lsp-ui company-lsp lsp-mode zenburn-theme yaml-mode ws-butler window-number wgrep-ag web-mode volatile-highlights vlf use-package undo-tree term-run tango-plus-theme syntax-subword solarized-theme smex smartparens smart-mode-line slime seq rg realgud php-mode persp-projectile persp-mode pdb-mode multiple-cursors monokai-theme modern-cpp-font-lock markdown-mode magit levenshtein iedit ido-vertical-mode ido-ubiquitous hungry-delete highlight-symbol hemisu-theme help-fns+ glsl-mode git-timemachine flx-ido firebelly-theme ess elpy elisp-slime-nav dtrt-indent drag-stuff dirtree cython-mode csharp-mode counsel-projectile counsel-etags company-ycmd company-rtags company-c-headers cmake-mode clean-aindent-mode clang-format anzu)))
+    (
+     anzu
+     arduino-mode
+     clang-format
+     clean-aindent-mode
+     cmake-mode
+     company-c-headers
+     company-lsp
+     company-rtags
+     company-ycmd
+     counsel-etags
+     counsel-projectile
+     cquery
+     csharp-mode
+     cython-mode
+     dirtree
+     drag-stuff
+     dtrt-indent
+     elisp-slime-nav
+     elpy
+     elpygen
+     ess
+     firebelly-theme
+     flx-ido
+     git-timemachine
+     glsl-mode
+     help-fns+
+     hemisu-theme
+     highlight-symbol
+     hungry-delete
+     ido-ubiquitous
+     ido-vertical-mode
+     iedit
+     levenshtein
+     lsp-mode
+     lsp-ui
+     magit
+     markdown-mode
+     modern-cpp-font-lock
+     monokai-theme
+     multiple-cursors
+     pdb-mode
+     persp-mode
+     persp-projectile
+     php-mode
+     realgud
+     rg
+     seq
+     slime
+     smart-mode-line
+     smartparens
+     smex
+     solarized-theme
+     syntax-subword
+     tango-plus-theme
+     term-run
+     undo-tree
+     use-package
+     vlf
+     volatile-highlights
+     web-mode
+     wgrep-ag
+     window-number
+     ws-butler
+     yaml-mode
+     zenburn-theme
+     )))
  '(safe-local-variable-values
    (quote
     ((eval load-file
