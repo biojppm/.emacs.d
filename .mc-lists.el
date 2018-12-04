@@ -18,6 +18,7 @@
         indent-for-tab-command
         kill-region
         my-open-init-el
+        nuke-line
         overwrite-mode
         smart-beginning-of-line
         yaml-electric-backspace
