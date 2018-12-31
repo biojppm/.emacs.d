@@ -472,6 +472,7 @@
   )
 )
 
+
 ;;--------------------------------------------------------------------
 ;; ORG-MODE
 
@@ -479,6 +480,72 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-cb" 'org-switchb)
+
+;; https://orgmode.org/manual/Clocking-work-time.html
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+;; C-c C-x C-r     (org-clock-report) Insert a dynamic block
+;; C-c C-c  or  C-c C-x C-u     (org-dblock-update) Update dynamic block at point
+;; C-u C-c C-x C-u      Update all dynamic blocks
+;; S-LEFT, S-RIGHT     (org-clocktable-try-shift) Shift the current :block interval and update the table.
+;; C-c C-t     (org-todo) Changing the TODO state of an item to DONE automatically stops the clock if it is running in this same item.
+;; C-c C-x C-i     (org-clock-in)
+;; C-c C-x C-o     (org-clock-out)
+;; C-c C-x C-x     (org-clock-in-last)
+;; C-c C-x C-e     (org-clock-modify-effort-estimate)
+;; C-c C-c  or  C-c C-y     (org-evaluate-time-range) Recompute the time interval after changing one of the timestamps. This is only necessary if you edit the timestamps directly.
+;; C-S-up/down     (org-clock-timestamps-up/down)
+;; S-M-up/down     (org-timestamp-up/down)
+;; C-c C-x C-q     (org-clock-cancel)
+;; C-c C-x C-j     (org-clock-goto)
+;; C-c C-x C-d     (org-clock-display)
+
+;; AGENDA VIEW
+;; C-c [        Add current file to the list of agenda files. The file is added to the front of the list. If it was already in the list, it is moved to the front. With a prefix argument, file is added/moved to the end.
+;; C-c ]        Remove current file from the list of agenda files.
+;; C-,          Cycle through agenda file list, visiting one file after the other.
+;; C-c a a      The calendar-like agenda (see Weekly/daily agenda).
+;; C-c a t / T  A list of all TODO items (see Global TODO list).
+;; C-c a m / M  A list of headlines matching a TAGS expression (see Matching tags and properties).
+;; C-c a s      A list of entries selected by a boolean expression of keywords and/or regular expressions that must or must not occur in the entry.
+;;
+;; Motion
+;; n  Next line (same as up and C-p).
+;; p  Previous line (same as down and C-n).
+;;
+;; View/Go to Org file
+;; mouse-3 / SPC  Display the original location of the item in another window. With prefix arg, make sure that the entire entry is made visible in the outline, not only the heading.
+;; TAB            Go to the original location of the item in another window. Under Emacs 22, mouse-1 will also work for this.
+;; RET            Go to the original location of the item and delete other windows.
+;;
+;; Change display
+;; o               Delete other windows.
+;; d / w           Switch to day/week view.
+;; f and b         Go forward/backward in time to display the following org-agenda-current-span days. For example, if the display covers a week, switch to the following/previous week.
+;; .               Go to today.
+;; j               Prompt for a date and go there.
+;; v l or short l  Toggle Logbook mode. In Logbook mode, entries that were marked DONE while logging was on (variable org-log-done) are shown in the agenda, as are entries that have been clocked on that day. When called with a C-u prefix, show all possible logbook entries, including state changes.
+;; r or g          Recreate the agenda buffer, to reflect the changes.
+;; s               Save all Org buffers in the current Emacs session, and also the locations of IDs.
+;;
+;; Secondary filtering and query editing
+;; /      Filter the current agenda view with respect to a tag. You are prompted for a letter to select a tag. Press ‘-’ first to select against the tag.
+;; \      Narrow the current agenda filter by an additional condition.
+;;
+;; Remote editing (see the manual for many more commands)
+;; 0--9        Digit argument.
+;; t           Change the TODO state of the item, in the agenda and in the org file.
+;; C-k         Delete the current agenda item along with the entire subtree belonging to it in the original Org file.
+;; C-c C-w     Refile the entry at point.
+;; C-c C-x C-a  or short  a Archive the subtree corresponding to the entry at point using the default archiving command set in org-archive-default-command.
+;; C-c C-x C-s  or short  $ Archive the subtree corresponding to the current headline.
+;; C-c C-s     Schedule this item, with prefix arg remove the scheduling timestamp
+;; C-c C-d     Set a deadline for this item, with prefix arg remove the deadline.
+;; S-right and S-left Change the timestamp associated with the current line by one day.
+;; I           Start the clock on the current item.
+;; O / X       Stop/cancel the previously started clock.
+;; J           Jump to the running clock in another window.
+
 
 ;;-------------------------------------------
 ;; DIRTREE: https://github.com/zk/emacs-dirtree
@@ -2601,6 +2668,8 @@ original line and use the absolute value."
     (
      anzu
      arduino-mode
+     babel
+     babel-repl
      clang-format
      clean-aindent-mode
      cmake-mode
@@ -2639,6 +2708,7 @@ original line and use the absolute value."
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
+     org-babel-eval-in-repl
      pdb-mode
      persp-mode
      persp-projectile
@@ -2663,6 +2733,7 @@ original line and use the absolute value."
      window-number
      ws-butler
      yaml-mode
+     yasnippet-classic-snippets
      zenburn-theme
      )))
  '(safe-local-variable-values
