@@ -909,6 +909,7 @@
 (use-package counsel-etags
   :ensure t
   :bind (
+         ;; to save grep results to a buffer, use C-c C-o
          ("M-." . counsel-etags-find-tag-at-point)
          ("M-G" . counsel-etags-grep-symbol-at-point)
          ("M-T" . counsel-etags-find-tag))
