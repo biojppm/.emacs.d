@@ -31,6 +31,7 @@
         compile-goto-error
         counsel-yank-pop
         gud-tooltip-mouse-motion
+        help-for-help
         mouse-set-region
         my-open-cmany-el
         my-open-init-el

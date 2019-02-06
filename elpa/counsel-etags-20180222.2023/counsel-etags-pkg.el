@@ -1,1 +1,0 @@
-(define-package "counsel-etags" "20180222.2023" "Fast and complete Ctags/Etags solution using ivy" '((emacs "24.4") (counsel "0.9.1")) :commit "9d70490b551503aac22241c8089a46e55dd3deba" :url "http://github.com/redguardtoo/counsel-etags" :keywords '("tools" "convenience"))

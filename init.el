@@ -871,7 +871,6 @@
 ;;          ("C-r" . swiper))
 ;;   )
 
-;; https://github.com/redguardtoo/counsel-etags
 (use-package counsel
   :ensure t
   :bind (("M-x" . counsel-M-x)
@@ -907,10 +906,10 @@
 ;; in the root directory of your project.
 ;; https://github.com/redguardtoo/counsel-etags
 (use-package counsel-etags
-  :ensure t
+  :defer t
   :bind (
          ;; to save grep results to a buffer, use C-c C-o
-         ("M-." . counsel-etags-find-tag-at-point)
+         ("M-:" . counsel-etags-find-tag-at-point)
          ("M-G" . counsel-etags-grep-symbol-at-point)
          ("M-T" . counsel-etags-find-tag))
   :config
@@ -1034,8 +1033,8 @@
 ;; The variable company-backends specifies a list of backends that
 ;; company-mode uses to retrieves completion candidates for you.
 
-(defun company--my-insert-spc() (interactive)(company-abort)(insert-char #10r32))
-(defun company--my-insert-dot() (interactive)(company-abort)(insert-char #10r46))
+(defun company--my-insert-spc()   (interactive)(company-abort)(insert-char #10r32))
+(defun company--my-insert-dot()   (interactive)(company-abort)(insert-char #10r46))
 (defun company--my-insert-comma() (interactive)(company-abort)(insert-char #10r44))
 (defun company--my-insert-equal() (interactive)(company-abort)(insert-char #10r61))
 (defun company--my-setup()
@@ -1482,11 +1481,11 @@ original line and use the absolute value."
 
 ;;-------------------------------------------------------------------------
 
-;;a minor mode that provides many features for manipulating
-;;pairs. Pair can be simple as parentheses or brackets, or can be
-;;programming tokens such as if … fi or if … end in many
-;;languages. The most basic and essential feature is automatic closing
-;;of a pair when user inserts an opening one.
+;; a minor mode that provides many features for manipulating
+;; pairs. Pair can be simple as parentheses or brackets, or can be
+;; programming tokens such as if...fi or if...end in many
+;; languages. The most basic and essential feature is automatic closing
+;; of a pair when user inserts an opening one.
 (use-package smartparens
   :commands (smartparens-mode
              smartparens-strict-mode
@@ -1852,6 +1851,7 @@ original line and use the absolute value."
   (use-package elpy
     :commands elpy-enable
     :config
+    (message "python mode: elpy config")
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
     (setq elpy-rpc-python-command "python"
@@ -1862,6 +1862,7 @@ original line and use the absolute value."
     ;;(elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
+    (message "python mode: elpy config finished")
     :bind (:map elpy-mode-map
                 ("C-<up>" . backward-paragraph)
                 ("C-<down>" . forward-paragraph)
@@ -1871,12 +1872,14 @@ original line and use the absolute value."
                 ("C-<left>" . subword-backward)
                 )
     )
+  (message "python mode: config")
   (elpy-enable)
   (use-snips)
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
   (company--my-setup)
+  (message "python mode: ready")
   )
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
