@@ -896,7 +896,7 @@
             counsel-rg-base-command
             "rg -i -M 120 --no-heading --line-number --color never %s ."
             )
-    (warn "\nWARNING: Could not find the ripgrep executable. Using counsel-grep defaults.")
+    ;;(warn "\nWARNING: Could not find the ripgrep executable. Using counsel-grep defaults.")
     )
   )
 
@@ -905,11 +905,11 @@
 ;; in the root directory of your project.
 ;; https://github.com/redguardtoo/counsel-etags
 (use-package counsel-etags
-  :defer t
+  :ensure t
   :bind (
          ;; to save grep results to a buffer, use C-c C-o
-         ("M-:" . counsel-etags-find-tag-at-point)
          ("M-G" . counsel-etags-grep-symbol-at-point)
+         ("M-+" . counsel-etags-find-tag-at-point)
          ("M-T" . counsel-etags-find-tag))
   :config
   ;; Ignore files above 800kb
