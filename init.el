@@ -871,9 +871,13 @@
 ;;          ("C-r" . swiper))
 ;;   )
 
+
+;;------------------------------------------------------------------
+
 (use-package counsel
   :ensure t
-  :bind (("M-x" . counsel-M-x)
+  :bind (
+         ;; ("M-x" . counsel-M-x) ;; using smex (see below)
          ;;("C-x C-f" . counsel-find-file)
          ("<f1> f" . counsel-describe-function)
          ("<f1> v" . counsel-describe-variable)
@@ -885,6 +889,11 @@
          ("C-c s k" . counsel-ag)
          ("C-c s r" . counsel-rg)
          ("C-c s l" . counsel-locate)
+         ;; http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
+         ("M-y" . counsel-yank-pop) ;; easily show the kill-ring (goes to ivy-minibuffer-map)
+         :map ivy-minibuffer-map
+         ("S-M-y" . ivy-previous-line)
+         ("M-y" . ivy-next-line)
          :map minibuffer-local-map
          ("C-r" . counsel-minibuffer-add)
          )
@@ -998,7 +1007,8 @@
 (use-package smex
   :config
   (smex-initialize)
-  :commands (smex smex-major-mode-commands)
+  :commands
+  (smex smex-major-mode-commands)
   :bind
   (("M-x"   . smex)
    ("M-X"   . smex-major-mode-commands)
@@ -1282,12 +1292,13 @@ If point was already at that position, move point to beginning of line."
              mc/mark-all-like-this
              )
   :bind
-  ;; When you have an active region that spans multiple lines, the following
-  ;; will add a cursor to each line:
-  (("M-m" . mc/edit-lines)
+  (
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this)
    ("C-ç a" . mc/mark-all-like-this)
+   ;; When you have an active region that spans multiple lines, the following
+   ;; will add a cursor to each line:
+   ("M-m" . mc/edit-lines)
    )
 )
 
@@ -1319,17 +1330,6 @@ If point was already at that position, move point to beginning of line."
   (("M-<up>" . drag-stuff-up)
    ("M-<down>" . drag-stuff-down))
 )
-
-;;------------------------------------------------------------------
-;;easily show the kill-ring
-
-;;http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
-(use-package counsel
-  :bind
-  (("M-y" . counsel-yank-pop)
-   :map ivy-minibuffer-map
-   ("S-M-y" . ivy-previous-line)
-   ("M-y" . ivy-next-line)))
 
 ;;-------------------------------------------------------------------------
 ;; Undo tree
