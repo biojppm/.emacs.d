@@ -1767,17 +1767,37 @@ original line and use the absolute value."
 (defun my-c++-completion-hook()
   (if this-is-windows
       (progn
-        (my-universal-tags-hook)
+        ;;(my-universal-tags-hook)
+        (my-cquery-hook)
         )
     (progn
-      (my-rtags-hook)
+      ;;(my-rtags-hook)
+      (my-cquery-hook)
       )
     )
   )
 
 (defun my-cquery-hook()
+  ;; https://github.com/cquery-project/cquery/wiki/Emacs
   (interactive)
+  (message "my-cquery-hook 0")
   (load "my-cquery-setup")
+  (message "my-cquery-hook 1")
+  (lsp)
+  (message "my-cquery-hook 2")
+  (lsp-mode)
+  (message "my-cquery-hook 3")
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
+  (add-to-list 'company-backends 'company-lsp)
+  (message "my-cquery-hook 4")
+  ;; disable client-side cache and sorting because the server does a better job
+  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
+  (message "my-cquery-hook 5")
+  ;; dont prompt for identifier on calls to xref-find-references
+  (add-to-list 'xref-prompt-for-identifier 'xref-find-references)
+  (message "my-cquery-hook --- DONE")
   )
 
 (defun my-universal-tags-hook ()
@@ -1796,6 +1816,9 @@ original line and use the absolute value."
   (add-to-list 'company-backends 'company-c-headers)
   )
 
+(defun my-lsp-hook()
+  (interactive)
+  )
 
 ;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))

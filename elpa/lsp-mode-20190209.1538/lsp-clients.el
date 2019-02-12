@@ -52,7 +52,7 @@
 
 (lsp-register-client
  (make-lsp-client :new-connection (lsp-stdio-connection '("css-languageserver" "--stdio"))
-                  :major-modes '(css-mode less-mode sass-mode scss-mode)
+                  :major-modes '(css-mode less-mode less-css-mode sass-mode scss-mode)
                   :priority -1
                   :action-handlers (lsp-ht ("_css.applyCodeAction" 'lsp-clients-css--apply-code-action))
                   :server-id 'css-ls))
@@ -182,14 +182,17 @@ the contents of FILE-NAME."
               (setq stop t)
             (backward-char))
           (cond ((or (looking-at "//+[ ]*@flow")
-                     (looking-at "/\\**[ ]*@flow"))
+                     (looking-at "/\\**[ ]*@flow")
+                     (looking-at "[ ]*\\*[ ]*@flow"))
                  (setq found t)
                  (setq stop t))
                 ((looking-at "//")
                  (forward-line))
                 ((looking-at "/\\*")
-                 (when (not (re-search-forward "*/" nil t))
-                   (setq stop t)))
+                 (save-excursion
+                   (when (not (re-search-forward "*/" nil t))
+                     (setq stop t)))
+                 (forward-line))
                 (t (setq stop t))))
         found))))
 
@@ -201,7 +204,7 @@ there is a .flowconfig file in the folder hierarchy."
 (defun lsp-clients-flow-activate-p (file-name major-mode)
   "Checks if the Flow language server should be enabled for a
 particular FILE-NAME and MAJOR-MODE."
-  (and (member major-mode '(js-mode js2-mode flow-js2-mode rjsx-mode))
+  (and (derived-mode-p 'js-mode 'web-mode 'js2-mode 'flow-js2-mode 'rjsx-mode)
        (lsp-clients-flow-project-p file-name)
        (lsp-clients-flow-tag-present-p file-name)))
 
@@ -337,7 +340,7 @@ defaults to half of your CPU cores."
   "Progress report handling.
 PARAMS progress report notification data."
   ;; Minimal implementation - we could show the progress as well.
-  (message (gethash "title" params)))
+  (lsp-log (gethash "title" params)))
 
 (lsp-register-client
  (make-lsp-client :new-connection (lsp-stdio-connection '("rls"))
