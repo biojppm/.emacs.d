@@ -1285,6 +1285,7 @@ If point was already at that position, move point to beginning of line."
   ;; When you have an active region that spans multiple lines, the following
   ;; will add a cursor to each line:
   (("M-m" . mc/edit-lines)
+   ("M-M" . mc/mark-all-in-region)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this)
    ("C-ç a" . mc/mark-all-like-this)
