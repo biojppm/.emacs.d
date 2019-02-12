@@ -9,17 +9,19 @@
 
 ;; for completing headers: Type #i" (or #include ") for quote-style includes and #i< (or #include <) for system headers.
 
-
-
 (use-package cquery
-  ;;:defer t
+  :defer t
+  :commands lsp
   :init
-  (use-package lsp-mode
-    :config
-    (lsp-cquery-enable)
-    )
-  (lsp-mode)
-  (message "CQUERY CRL")
+  (message "CQUERY INIT")
+  ;; Arch Linux aur/cquery
+  (setq cquery-executable (executable-find "cquery"))
+  (message "cquery: %s" cquery-executable)
+  ;; ;; Initialization options
+  ;; ;; Log file
+  ;; (setq cquery-extra-args '("--log-file=/tmp/cq.log"))
+  ;; ;; Cache directory, both relative and absolute paths are supported
+  ;; (setq cquery-cache-dir ".cquery_cached_index")
   (setq cquery-extra-init-params
         '(
           :index (:comments 2)
@@ -27,18 +29,22 @@
           :completion (:detailedLabel t)
           )
         )
+  (message "lsp-cquery enable 0")
+  (use-package lsp-mode)
+  (message "cquery 0")
+  (use-package lsp-ui)
+  (message "cfg 0")
+  (require 'lsp-ui-doc)
+  (message "cfg 1")
+  (use-package lsp-imenu)
+  (message "cfg 2")
+  ;; Completion:
+  (use-package company-lsp)
+  (message "cfg 3")
+  (message "CQUERY INIT --- DONE")
   :config
   (message "CQUERY CFG")
-  (require 'lsp-ui-doc)
-  (require 'lsp-imenu)
-  ;; Completion:
-  (require 'company-lsp)
-  (message "CQUERY COMPANY")
-  (add-to-list 'company-backends 'company-lsp)
-  ;; disable client-side cache and sorting because the server does a better job
-  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
-  ;; dont prompt for identifier on calls to xref-find-references
-  (add-to-list 'xref-prompt-for-identifier 'xref-find-references)
+  (message "CQUERY CFG --- DONE")
   :bind
   (:map c-mode-base-map
         ("M-<left>"  . xref-pop-marker-stack)

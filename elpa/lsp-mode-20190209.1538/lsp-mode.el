@@ -107,6 +107,11 @@
   :group 'lsp-mode
   :type 'boolean)
 
+(defcustom lsp-print-performance nil
+  "If non-nil, print performance info in the logs."
+  :group 'lsp-mode
+  :type 'boolean)
+
 (defcustom lsp-log-max message-log-max
   "Maximum number of lines to keep in the log buffer.
 If nil, disable message logging.  If t, log messages but don’t truncate
@@ -364,6 +369,7 @@ If set to `:none' neither of two will be enabled."
                                         (rust-mode . "rust")
                                         (css-mode . "css")
                                         (less-mode . "less")
+                                        (less-css-mode . "less")
                                         (sass-mode . "sass")
                                         (scss-mode . "scss")
                                         (xml-mode . "xml")
@@ -1081,7 +1087,7 @@ BUFFER-MODIFIED? determines whether the buffer is modified or not."
 
 (defun lsp--lens-keymap (command)
   (let ((map (make-sparse-keymap))
-        (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace))))
+        (server-id (lsp--client-server-id (lsp--workspace-client (or lsp--cur-workspace (first (lsp-workspaces)))))))
     (define-key map [mouse-1]
       (lambda ()
         (interactive)
@@ -1429,15 +1435,20 @@ If WORKSPACE is not provided current workspace will be used."
 (defun lsp--send-request (body &optional no-wait)
   "Send BODY as a request to the language server, get the response.
 If NO-WAIT is non-nil, don't synchronously wait for a response."
-  (let ((method (plist-get body :method)))
+  (let ((method (plist-get body :method))
+        (start-time (current-time)))
     (if-let ((target-workspaces (lsp--find-workspaces-for body)))
         (lsp--merge-results
          (--map
           (with-lsp-workspace it
-            (let* ((body (plist-put body :id (cl-incf lsp-last-id)))
+            (let* ((id (cl-incf lsp-last-id))
+                   (body (plist-put body :id id))
                    (parser (lsp--workspace-parser lsp--cur-workspace))
                    (message (lsp--make-message body))
                    (process (lsp--workspace-proc lsp--cur-workspace)))
+              (puthash id
+                       (list nil nil method start-time (current-time))
+                       (-> lsp--cur-workspace lsp--workspace-client lsp--client-response-handlers))
               (setf (lsp--parser-waiting-for-response parser) (not no-wait))
               (if no-wait
                   (lsp--send-no-wait message process)
@@ -1521,7 +1532,8 @@ callback will be executed only if the buffer was not modified.
 ERROR-CALLBACK will be called in case the request has failed.
 "
   (if-let ((target-workspaces (lsp--find-workspaces-for body)))
-      (let* ((method (plist-get body :method))
+      (let* ((start-time (current-time))
+             (method (plist-get body :method))
              (workspaces-count (length target-workspaces))
              (async-callback (lsp--create-async-callback workspaces-count
                                                          callback
@@ -1537,7 +1549,8 @@ ERROR-CALLBACK will be called in case the request has failed.
         (--each target-workspaces
           (with-lsp-workspace it
             (let ((message (lsp--make-message body)))
-              (puthash id (list async-callback error-async-callback)
+              (puthash id
+                       (list async-callback error-async-callback method start-time (current-time))
                        (-> lsp--cur-workspace
                            lsp--workspace-client
                            lsp--client-response-handlers))
@@ -1663,18 +1676,11 @@ disappearing, unset all the variables related to it."
 (defun lsp--read-from-file (file)
   "Read FILE content."
   (when (file-exists-p file)
-    (with-demoted-errors "Failed to read file with message %S"
-      (with-temp-buffer
-        (insert-file-contents-literally file)
-        (first (read-from-string
-                (buffer-substring-no-properties (point-min) (point-max))))))))
+    (first (read-from-string (f-read-text file 'utf-8)))))
 
 (defun lsp--persist (file-name to-persist)
   "Persist TO-PERSIST in FILE-NAME."
-  (with-demoted-errors "Failed to persist file: %S"
-    (with-temp-file file-name
-      (erase-buffer)
-      (insert (prin1-to-string to-persist)))))
+  (f-write-text (prin1-to-string to-persist) 'utf-8 file-name))
 
 (defun lsp-workspace-folders-add (project-root)
   "Add PROJECT-ROOT to the list of workspace folders."
@@ -3073,35 +3079,83 @@ WORKSPACE is the active workspace."
                            :null-object nil :false-object nil)
       (json-read-from-string str))))
 
+(defun lsp--log-request-time (server-id method id start-time before-send received-time after-parsed-time after-processed-time)
+  (when lsp-print-performance
+    (lsp-log "Perf> Request/Response
+  ServerId: %s
+  Request: %s (%s)
+  Serialization took: %.06f
+  ServerTime: %.06f
+  Deserialization: %.06f
+  CallbackTime: %s"
+             server-id
+             method
+             id
+             (float-time (time-subtract before-send start-time))
+             (float-time (time-subtract received-time before-send))
+             (float-time (time-subtract after-parsed-time received-time))
+             (if after-processed-time
+                 (format "%.06f" (float-time (time-subtract after-processed-time after-parsed-time)))
+               "N/A"))))
+
+(defun log--notification-performance (server-id json-data received-time after-parsed-time before-notification after-processed-time)
+  (when lsp-print-performance
+    (lsp-log "Perf> notification
+  ServerId: %s
+  Notification: %s
+  Deserialization: %.06f
+  Processing: %.06f "
+             server-id
+             (when json-data (gethash "method" json-data))
+             (float-time (time-subtract after-parsed-time received-time))
+             (float-time (time-subtract after-processed-time before-notification)))))
+
 (defun lsp--parser-on-message (p msg)
   "Called when the parser P read a complete MSG from the server."
   (with-lsp-workspace (lsp--parser-workspace p)
     (let* ((client (lsp--workspace-client lsp--cur-workspace))
+           (received-time (current-time))
+           (server-id (lsp--client-server-id client))
            (json-data (lsp--read-json msg (lsp--client-use-native-json client)))
+           (after-parsed-time (current-time))
            (id (--when-let (gethash "id" json-data)
-                 (if (stringp it) (string-to-number it) it))))
+                 (if (stringp it) (string-to-number it) it)))
+           after-processed-time)
       (pcase (lsp--get-message-type json-data)
         ('response
          (cl-assert id)
-         (if-let (callback (first (gethash id (lsp--client-response-handlers client))))
-             (progn (funcall callback (gethash "result" json-data))
-                    (remhash id (lsp--client-response-handlers client)))
-           (setf (lsp--parser-response-result p) (gethash "result" json-data)
-                 (lsp--parser-waiting-for-response p) nil)))
+         (-let [(callback _ method start-time before-send) (gethash id (lsp--client-response-handlers client))]
+           (if callback
+               (progn
+                 (funcall callback (gethash "result" json-data))
+                 (remhash id (lsp--client-response-handlers client))
+                 (setq after-processed-time (current-time)))
+             (setf (lsp--parser-response-result p) (gethash "result" json-data)
+                   (lsp--parser-waiting-for-response p) nil))
+           (lsp--log-request-time server-id method id start-time before-send
+                                  received-time after-parsed-time after-processed-time)))
         ('response-error
          (cl-assert id)
-         (if-let (callback (second (gethash id (lsp--client-response-handlers client))))
-             (progn
-               (funcall callback (gethash "error" json-data))
-               (remhash id (lsp--client-response-handlers client)))
-           (setf (lsp--parser-response-result p) nil
-                 (lsp--parser-response-error p) (gethash "error" json-data)
-                 (lsp--parser-waiting-for-response p) nil)))
-        ('notification (lsp--on-notification lsp--cur-workspace json-data))
+         (-let [(_ callback method start-time before-send) (gethash id (lsp--client-response-handlers client))]
+           (if callback
+               (progn
+                 (funcall callback (gethash "error" json-data))
+                 (remhash id (lsp--client-response-handlers client))
+                 (setq after-processed-time (current-time)))
+             (setf (lsp--parser-response-result p) nil
+                   (lsp--parser-response-error p) (gethash "error" json-data)
+                   (lsp--parser-waiting-for-response p) nil))
+           (lsp--log-request-time server-id method id start-time before-send
+                                  received-time after-parsed-time after-processed-time)))
+        ('notification
+         (let ((before-notification (current-time)))
+           (lsp--on-notification lsp--cur-workspace json-data)
+           (log--notification-performance
+            server-id json-data received-time after-parsed-time before-notification (current-time))))
         ('request      (lsp--on-request lsp--cur-workspace json-data))))))
 
 (defun lsp--parser-read (p output)
-  (cl-assert (lsp--parser-workspace p) nil "Parser workspace cannot be nil.")
+  "Handle OUTPUT using parser P."
   (let* ((messages '())
          (output (string-as-unibyte output))
          (chunk (concat (lsp--parser-leftovers p) output)))
@@ -3321,22 +3375,23 @@ Return a nested alist keyed by symbol names. e.g.
 (defun lsp-server-present? (final-command)
   "Check whether FINAL-COMMAND is present."
   ;; executable-find only gained support for remote checks after 26.1 release
-  (cond
-   ((not (file-remote-p default-directory))
-    (executable-find (nth 0 final-command)))
-   ((not (version<= emacs-version "26.1"))
-    (executable-find (nth 0 final-command) (file-remote-p default-directory)))
-   (t)))
+  (or (and (cond
+            ((not (file-remote-p default-directory))
+             (executable-find (first final-command)))
+            ((not (version<= emacs-version "26.1"))
+             (executable-find (first final-command) (file-remote-p default-directory)))
+            (t))
+           (prog1 t
+             (lsp-log "Command \"%s\" is present on the path." (s-join " " final-command))))
+      (ignore (lsp-log "Command \"%s\" is not present on the path." (s-join " " final-command)))))
 
 (defun lsp-stdio-connection (command)
   "Create LSP stdio connection named name.
-COMMAND is either list of strings, string or function which
-returns the command to execute."
+  COMMAND is either list of strings, string or function which
+  returns the command to execute."
   (list :connect (lambda (filter sentinel name)
                    (let ((final-command (lsp-resolve-final-function command))
                          (process-name (generate-new-buffer-name name)))
-                     (unless (lsp-server-present? final-command)
-                       (error (format "Couldn't find command %s" final-command)))
                      (let ((proc (make-process
                                   :name process-name
                                   :connection-type 'pipe
@@ -3353,9 +3408,9 @@ returns the command to execute."
 
 (defun lsp--open-network-stream (host port name &optional retry-count sleep-interval)
   "Open network stream to HOST:PORT.
-NAME will be passed to `open-network-stream'.
-RETRY-COUNT is the number of the retries.
-SLEEP-INTERVAL is the sleep interval between each retry."
+  NAME will be passed to `open-network-stream'.
+  RETRY-COUNT is the number of the retries.
+  SLEEP-INTERVAL is the sleep interval between each retry."
   (let ((retries 0)
         connection)
     (while (and (not connection) (< retries (or retry-count 100)))
@@ -3385,7 +3440,7 @@ SLEEP-INTERVAL is the sleep interval between each retry."
 
 (defun lsp-tcp-connection (command)
   "Create LSP TCP connection named name.
-COMMAND-FN will be called to generate Language Server command."
+  COMMAND-FN will be called to generate Language Server command."
   (list
    :connect (lambda (filter sentinel name)
               (let* ((host "localhost")
@@ -3407,8 +3462,8 @@ COMMAND-FN will be called to generate Language Server command."
 
 (defun lsp-tramp-connection (local-command)
   "Create LSP stdio connection named name.
-COMMAND is either list of strings, string or function which
-returns the command to execute."
+  COMMAND is either list of strings, string or function which
+  returns the command to execute."
   (list :connect (lambda (filter sentinel name)
                    (let* ((final-command (lsp-resolve-final-function local-command))
                           ;; wrap with stty to disable converting \r to \n
@@ -3593,15 +3648,31 @@ remote machine and vice versa."
     (--when-let (->> lsp-clients
                      hash-table-values
                      (-filter (-lambda (client)
-                                (and (or
-                                      (-some-> client lsp--client-activation-fn (funcall buffer-file-name buffer-major-mode))
-                                      (and (-contains? (lsp--client-major-modes client) buffer-major-mode)
-                                           (eq (---truthy? remote?) (---truthy? (lsp--client-remote? client)))))
+                                (and (or (-some-> client lsp--client-activation-fn (funcall buffer-file-name buffer-major-mode))
+                                         (and (-contains? (lsp--client-major-modes client) buffer-major-mode)
+                                              (eq (---truthy? remote?) (---truthy? (lsp--client-remote? client)))))
                                      (-some-> client lsp--client-new-connection (plist-get :test?) funcall)))))
-      (-let (((add-on-clients main-clients) (-separate 'lsp--client-add-on? it)))
-        ;; Pick only one client (with the highest priority) that is not declared as add-on? t.
-        (cons (and main-clients (--max-by (> (lsp--client-priority it) (lsp--client-priority other)) main-clients))
-              add-on-clients)))))
+      (lsp-log "Found the following clients for %s: %s"
+               file-name
+               (s-join ", "
+                       (-map (lambda (client)
+                               (format "(server-id %s, priority %s)"
+                                       (lsp--client-server-id client)
+                                       (lsp--client-priority client)))
+                             it)))
+      (-let* (((add-on-clients main-clients) (-separate 'lsp--client-add-on? it))
+              (selected-clients (cons (and main-clients (--max-by (> (lsp--client-priority it)
+                                                                     (lsp--client-priority other))
+                                                                  main-clients))
+                                      add-on-clients)))
+        (lsp-log "The following clients were selected based on priority: %s"
+                 (s-join ", "
+                         (-map (lambda (client)
+                                 (format "(server-id %s, priority %s)"
+                                         (lsp--client-server-id client)
+                                         (lsp--client-priority client)))
+                               selected-clients)))
+        selected-clients))))
 
 (defun lsp-register-client (client)
   "Registers LSP client CLIENT."

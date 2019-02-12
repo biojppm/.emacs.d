@@ -871,9 +871,13 @@
 ;;          ("C-r" . swiper))
 ;;   )
 
+
+;;------------------------------------------------------------------
+
 (use-package counsel
   :ensure t
-  :bind (("M-x" . counsel-M-x)
+  :bind (
+         ;; ("M-x" . counsel-M-x) ;; using smex (see below)
          ;;("C-x C-f" . counsel-find-file)
          ("<f1> f" . counsel-describe-function)
          ("<f1> v" . counsel-describe-variable)
@@ -885,6 +889,11 @@
          ("C-c s k" . counsel-ag)
          ("C-c s r" . counsel-rg)
          ("C-c s l" . counsel-locate)
+         ;; http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
+         ("M-y" . counsel-yank-pop) ;; easily show the kill-ring (goes to ivy-minibuffer-map)
+         :map ivy-minibuffer-map
+         ("S-M-y" . ivy-previous-line)
+         ("M-y" . ivy-next-line)
          :map minibuffer-local-map
          ("C-r" . counsel-minibuffer-add)
          )
@@ -998,7 +1007,8 @@
 (use-package smex
   :config
   (smex-initialize)
-  :commands (smex smex-major-mode-commands)
+  :commands
+  (smex smex-major-mode-commands)
   :bind
   (("M-x"   . smex)
    ("M-X"   . smex-major-mode-commands)
@@ -1284,7 +1294,8 @@ If point was already at that position, move point to beginning of line."
   :bind
   ;; When you have an active region that spans multiple lines, the following
   ;; will add a cursor to each line:
-  (("M-m" . mc/edit-lines)
+  (
+   ("M-m" . mc/edit-lines)
    ("M-M" . mc/mark-all-in-region)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this)
@@ -1320,17 +1331,6 @@ If point was already at that position, move point to beginning of line."
   (("M-<up>" . drag-stuff-up)
    ("M-<down>" . drag-stuff-down))
 )
-
-;;------------------------------------------------------------------
-;;easily show the kill-ring
-
-;;http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
-(use-package counsel
-  :bind
-  (("M-y" . counsel-yank-pop)
-   :map ivy-minibuffer-map
-   ("S-M-y" . ivy-previous-line)
-   ("M-y" . ivy-next-line)))
 
 ;;-------------------------------------------------------------------------
 ;; Undo tree
@@ -1768,17 +1768,37 @@ original line and use the absolute value."
 (defun my-c++-completion-hook()
   (if this-is-windows
       (progn
-        (my-universal-tags-hook)
+        ;;(my-universal-tags-hook)
+        (my-cquery-hook)
         )
     (progn
-      (my-rtags-hook)
+      ;;(my-rtags-hook)
+      (my-cquery-hook)
       )
     )
   )
 
 (defun my-cquery-hook()
+  ;; https://github.com/cquery-project/cquery/wiki/Emacs
   (interactive)
+  (message "my-cquery-hook 0")
   (load "my-cquery-setup")
+  (message "my-cquery-hook 1")
+  (lsp)
+  (message "my-cquery-hook 2")
+  (lsp-mode)
+  (message "my-cquery-hook 3")
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
+  (add-to-list 'company-backends 'company-lsp)
+  (message "my-cquery-hook 4")
+  ;; disable client-side cache and sorting because the server does a better job
+  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
+  (message "my-cquery-hook 5")
+  ;; dont prompt for identifier on calls to xref-find-references
+  (add-to-list 'xref-prompt-for-identifier 'xref-find-references)
+  (message "my-cquery-hook --- DONE")
   )
 
 (defun my-universal-tags-hook ()
@@ -1797,6 +1817,9 @@ original line and use the absolute value."
   (add-to-list 'company-backends 'company-c-headers)
   )
 
+(defun my-lsp-hook()
+  (interactive)
+  )
 
 ;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
