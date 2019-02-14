@@ -4,7 +4,7 @@
 
 ;; Author: Jorgen Schaefer <contact@jorgenschaefer.de>
 ;; URL: https://github.com/jorgenschaefer/elpy
-;; Version: 1.22.0
+;; Version: 1.28.0
 ;; Keywords: Python, IDE, Languages, Tools
 ;; Package-Requires: ((company "0.9.2") (emacs "24.4") (find-file-in-project "3.3")  (highlight-indentation "0.5.0") (pyvenv "1.3") (yasnippet "0.8.0") (s "1.11.0"))
 
@@ -53,7 +53,7 @@
 (require 'pyvenv)
 (require 'find-file-in-project)
 
-(defconst elpy-version "1.22.0"
+(defconst elpy-version "1.28.0"
   "The version of the Elpy lisp code.")
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -293,6 +293,18 @@ this feature."
                  (function :tag "Other function"))
   :group 'elpy)
 
+(defcustom elpy-get-info-from-shell nil
+  "If t, use the shell to gather docstrings and completions.
+
+Normally elpy provides completion and documentation using static code analysis (from jedi). With this option set to t, elpy will add the completion candidates and the docstrings from the associated python shell. This allows to have decent completion candidates and documentation when the static code analysis fails."
+  :type 'boolean
+  :group 'elpy)
+
+(defcustom elpy-get-info-from-shell-timeout 1
+  "Timeout (in seconds) for gathering information from the shell."
+  :type 'number
+  :group 'elpy)
+
 (defcustom elpy-eldoc-show-current-function t
   "If true, show the current function if no calltip is available.
 
@@ -431,42 +443,60 @@ option is `pdb'."
 
     (define-key map (kbd "M-TAB") 'elpy-company-backend)
 
-    ;; key bindings for elpy-shell
-    (define-key map (kbd "C-c C-y e") 'elpy-shell-send-statement)
-    (define-key map (kbd "C-c C-y E") 'elpy-shell-send-statement-and-go)
-    (define-key map (kbd "C-c C-y s") 'elpy-shell-send-top-statement)
-    (define-key map (kbd "C-c C-y S") 'elpy-shell-send-top-statement-and-go)
-    (define-key map (kbd "C-c C-y f") 'elpy-shell-send-defun)
-    (define-key map (kbd "C-c C-y F") 'elpy-shell-send-defun-and-go)
-    (define-key map (kbd "C-c C-y c") 'elpy-shell-send-defclass)
-    (define-key map (kbd "C-c C-y C") 'elpy-shell-send-defclass-and-go)
-    (define-key map (kbd "C-c C-y g") 'elpy-shell-send-group)
-    (define-key map (kbd "C-c C-y G") 'elpy-shell-send-group-and-go)
-    (define-key map (kbd "C-c C-y w") 'elpy-shell-send-codecell)
-    (define-key map (kbd "C-c C-y W") 'elpy-shell-send-codecell-and-go)
-    (define-key map (kbd "C-c C-y r") 'elpy-shell-send-region-or-buffer)
-    (define-key map (kbd "C-c C-y R") 'elpy-shell-send-region-or-buffer-and-go)
-    (define-key map (kbd "C-c C-y b") 'elpy-shell-send-buffer)
-    (define-key map (kbd "C-c C-y B") 'elpy-shell-send-buffer-and-go)
-    (define-key map (kbd "C-c C-y C-e") 'elpy-shell-send-statement-and-step)
-    (define-key map (kbd "C-c C-y C-S-E") 'elpy-shell-send-statement-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-s") 'elpy-shell-send-top-statement-and-step)
-    (define-key map (kbd "C-c C-y C-S-S") 'elpy-shell-send-top-statement-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-f") 'elpy-shell-send-defun-and-step)
-    (define-key map (kbd "C-c C-y C-S-F") 'elpy-shell-send-defun-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-c") 'elpy-shell-send-defclass-and-step)
-    (define-key map (kbd "C-c C-y C-S-C") 'elpy-shell-send-defclass-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-g") 'elpy-shell-send-group-and-step)
-    (define-key map (kbd "C-c C-y C-S-G") 'elpy-shell-send-group-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-w") 'elpy-shell-send-codecell-and-step)
-    (define-key map (kbd "C-c C-y C-S-W") 'elpy-shell-send-codecell-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-r") 'elpy-shell-send-region-or-buffer-and-step)
-    (define-key map (kbd "C-c C-y C-S-R") 'elpy-shell-send-region-or-buffer-and-step-and-go)
-    (define-key map (kbd "C-c C-y C-b") 'elpy-shell-send-buffer-and-step)
-    (define-key map (kbd "C-c C-y C-S-B") 'elpy-shell-send-buffer-and-step-and-go)
-
     map)
   "Key map for the Emacs Lisp Python Environment.")
+
+(defvar elpy-shell-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "e") 'elpy-shell-send-statement)
+    (define-key map (kbd "E") 'elpy-shell-send-statement-and-go)
+    (define-key map (kbd "s") 'elpy-shell-send-top-statement)
+    (define-key map (kbd "S") 'elpy-shell-send-top-statement-and-go)
+    (define-key map (kbd "f") 'elpy-shell-send-defun)
+    (define-key map (kbd "F") 'elpy-shell-send-defun-and-go)
+    (define-key map (kbd "c") 'elpy-shell-send-defclass)
+    (define-key map (kbd "C") 'elpy-shell-send-defclass-and-go)
+    (define-key map (kbd "o") 'elpy-shell-send-group)
+    (define-key map (kbd "O") 'elpy-shell-send-group-and-go)
+    (define-key map (kbd "w") 'elpy-shell-send-codecell)
+    (define-key map (kbd "W") 'elpy-shell-send-codecell-and-go)
+    (define-key map (kbd "r") 'elpy-shell-send-region-or-buffer)
+    (define-key map (kbd "R") 'elpy-shell-send-region-or-buffer-and-go)
+    (define-key map (kbd "b") 'elpy-shell-send-buffer)
+    (define-key map (kbd "B") 'elpy-shell-send-buffer-and-go)
+    (define-key map (kbd "C-e") 'elpy-shell-send-statement-and-step)
+    (define-key map (kbd "C-S-E") 'elpy-shell-send-statement-and-step-and-go)
+    (define-key map (kbd "C-s") 'elpy-shell-send-top-statement-and-step)
+    (define-key map (kbd "C-S-S") 'elpy-shell-send-top-statement-and-step-and-go)
+    (define-key map (kbd "C-f") 'elpy-shell-send-defun-and-step)
+    (define-key map (kbd "C-S-F") 'elpy-shell-send-defun-and-step-and-go)
+    (define-key map (kbd "C-c") 'elpy-shell-send-defclass-and-step)
+    (define-key map (kbd "C-S-C") 'elpy-shell-send-defclass-and-step-and-go)
+    (define-key map (kbd "C-o") 'elpy-shell-send-group-and-step)
+    (define-key map (kbd "C-S-O") 'elpy-shell-send-group-and-step-and-go)
+    (define-key map (kbd "C-w") 'elpy-shell-send-codecell-and-step)
+    (define-key map (kbd "C-S-W") 'elpy-shell-send-codecell-and-step-and-go)
+    (define-key map (kbd "C-r") 'elpy-shell-send-region-or-buffer-and-step)
+    (define-key map (kbd "C-S-R") 'elpy-shell-send-region-or-buffer-and-step-and-go)
+    (define-key map (kbd "C-b") 'elpy-shell-send-buffer-and-step)
+    (define-key map (kbd "C-S-B") 'elpy-shell-send-buffer-and-step-and-go)
+    map)
+  "Key map for the shell related commands")
+(fset 'elpy-shell-map elpy-shell-map)
+
+(defcustom elpy-shell-command-prefix-key "C-c C-y"
+"Prefix key used to call elpy shell related commands.
+
+This option need to bet set through `customize' or `customize-set-variable' to be taken into account."
+:type 'string
+:group 'elpy
+:set
+(lambda (var key)
+  (when (and (boundp var) (symbol-value var))
+    (define-key elpy-mode-map (kbd (symbol-value var)) nil))
+  (when key
+    (define-key elpy-mode-map (kbd key) 'elpy-shell-map)
+  (set var key))))
 
 (easy-menu-define elpy-menu elpy-mode-map
   "Elpy Mode Menu"
@@ -589,13 +619,7 @@ virtualenv.
 (defun elpy-news ()
   "Display Elpy's release notes."
   (interactive)
-  (with-current-buffer (get-buffer-create "*Elpy News*")
-    (let ((inhibit-read-only t))
-      (erase-buffer)
-      (insert-file-contents (concat (file-name-directory (locate-library "elpy"))
-                                    "NEWS.rst"))
-      (help-mode))
-    (pop-to-buffer (current-buffer))))
+  (message "The Elpy News command is deprecated and will be removed in future versions of Elpy"))
 
 ;;;;;;;;;;;;;;;
 ;;; Elpy Config
@@ -1440,7 +1464,7 @@ On an import line, it opens the file of that module.
 
 Otherwise, it opens a test file associated with the current file,
 if one exists. A test file is named test_<name>.py if the current
-file is <name>.py, and is either in the same directors or a
+file is <name>.py, and is either in the same directory or a
 \"test\" or \"tests\" subdirectory."
   (interactive "P")
   (cond
@@ -2392,7 +2416,7 @@ name."
 Also, switch to that buffer."
   (interactive)
   (let ((list-matching-lines-face nil))
-    (occur "^ *\\(def\\|class\\) "))
+    (occur "^\s*\\(\\(async\s\\|\\)def\\|class\\)\s"))
   (let ((window (get-buffer-window "*Occur*")))
     (if window
         (select-window window)
@@ -3016,6 +3040,19 @@ Returns a calltip string for the function call at point."
                        (point-min)))
               success error)))
 
+
+(defun elpy-rpc-get-oneline-docstring (&optional success error)
+  "Call the get_oneline_docstring API function.
+
+Returns a oneline docstring string for the symbol at point."
+  (when (< (buffer-size) elpy-rpc-ignored-buffer-size)
+    (elpy-rpc "get_oneline_docstring"
+              (list buffer-file-name
+                    (elpy-rpc--buffer-contents)
+                    (- (point)
+                       (point-min)))
+              success error)))
+
 (defun elpy-rpc-get-completions (&optional success error)
   "Call the get_completions API function.
 
@@ -3153,17 +3190,11 @@ Points to file FILE, at position POS."
     "Return identifier at point.
 
 Is a string, formatted as \"LINE_NUMBER: VARIABLE_NAME\".
-Try to find the identifier assignement if it is in the current buffer.
 "
     (let* ((symb  (symbol-at-point))
-           (symb-str (substring-no-properties (symbol-name symb)))
-           (assign (elpy-rpc-get-assignment)))
+           (symb-str (substring-no-properties (symbol-name symb))))
       (when symb
-        (if (and assign (string= (car assign) (buffer-file-name)))
-            (format "%s: %s"
-                    (line-number-at-pos (+ 1 (car (cdr assign))))
-                    symb-str)
-          (format "%s: %s" (line-number-at-pos) symb-str)))))
+        (format "%s: %s" (line-number-at-pos) symb-str))))
 
   (defun elpy-xref--identifier-name (id)
     "Return the identifier ID variable name."
@@ -3179,10 +3210,11 @@ Try to find the identifier assignement if it is in the current buffer.
     "Goto the identifier ID in the current buffer.
 This is needed to get information on the identifier with jedi
 \(that work only on the symbol at point\)"
-    (goto-char (point-min))
-    (forward-line (1- (elpy-xref--identifier-line id)))
-    (search-forward (elpy-xref--identifier-name id))
-    (goto-char (match-beginning 0)))
+    (let ((case-fold-search nil))
+      (goto-char (point-min))
+      (forward-line (1- (elpy-xref--identifier-line id)))
+      (search-forward (elpy-xref--identifier-name id) (line-end-position))
+      (goto-char (match-beginning 0))))
 
   ;; Find definition
   (cl-defmethod xref-backend-definitions ((_backend (eql elpy)) id)
@@ -3237,28 +3269,13 @@ This is needed to get information on the identifier with jedi
     (elpy-xref--get-completion-table))
 
   (defun elpy-xref--get-completion-table ()
-    "Return the completion table for identifiers.
-
-Try to use the identifier assignement instead of the identifier at point.
-Also ensure that variables are not represented more than once."
-    (let ((table nil)
-          (outside-assigns))
+    "Return the completion table for identifiers."
       (cl-loop
        for ref in (nreverse (elpy-rpc-get-names))
        for offset = (+ (alist-get 'offset ref) 1)
        for line = (line-number-at-pos offset)
-       ;; Use assignment line position if the assignement is in the same file
-       for assign = (save-excursion (goto-char offset) (elpy-rpc-get-assignment))
-       do (when (string= (car assign) (buffer-file-name))
-            (setq offset (+ 1 (car (cdr assign))))
-            (setq line (line-number-at-pos offset)))
        for id = (format "%s: %s" line (alist-get 'name ref))
-       ;; ensure that identifier are represented only once
-       unless (or (member id table) (member assign outside-assigns))
-       do (progn
-            (push id table)
-            (when assign (push assign outside-assigns))))
-      table))
+       collect id))
 
   ;; Apropos
   (cl-defmethod xref-backend-apropos ((_backend (eql elpy)) regex)
@@ -3367,19 +3384,25 @@ If you need your modeline, you can set the variable `elpy-remove-modeline-lighte
   (pcase command
     (`global-init
      (require 'company)
+     (require 'company-capf)
      (elpy-modules-remove-modeline-lighter 'company-mode)
      (define-key company-active-map (kbd "C-d")
        'company-show-doc-buffer)
-     ;; Workaround for company bug
-     ;; (https://github.com/company-mode/company-mode/issues/759)
      (add-hook 'inferior-python-mode-hook
-               (lambda () (setq-local company-transformers
-                                      (remove 'company-sort-by-occurrence
-                                              company-transformers)))))
+               (lambda ()
+                 ;; Workaround for company bug
+                 ;; (https://github.com/company-mode/company-mode/issues/759)
+                 (setq-local company-transformers
+                             (remove 'company-sort-by-occurrence
+                                     company-transformers))
+                 ;; Be sure to trigger completion for one character variable
+                 ;; (i.e. `a.`)
+                 (setq-local company-minimum-prefix-length 2))))
+
     (`buffer-init
      ;; We want immediate completions from company.
      (set (make-local-variable 'company-idle-delay)
-          0.01)
+          0.1)
      ;; And annotations should be right-aligned.
      (set (make-local-variable 'company-tooltip-align-annotations)
           t)
@@ -3544,6 +3567,45 @@ or unless NAME is no callable instance."
              (backward-char 1)
              (delete-char 2))))))
 
+(defun elpy-company--add-interpreter-completions-candidates (candidates)
+  "Add completions candidates from the shell to the list of candidates.
+
+Get completions candidates at point from the shell, normalize them to look
+like what elpy-company returns, merge them with the CANDIDATES list
+and return the list."
+  ;; Check if prompt available
+  (if (not (and elpy-get-info-from-shell
+                (elpy-shell--check-if-shell-available)))
+      candidates
+    ;; Completion need the cursor to be at the end of the shell buffer
+    (save-excursion
+      (with-current-buffer (process-buffer (python-shell-get-process))
+        (goto-char (point-max)))
+      ;; Try to get the info with timeout
+      (let* ((new-candidates (with-timeout (elpy-get-info-from-shell-timeout
+                                            '(nil nil nil))
+                               (python-completion-complete-at-point)))
+             (start (nth 0 new-candidates))
+             (end (nth 1 new-candidates))
+             (completion-list (nth 2 new-candidates)))
+        (if (not (and start end))
+            candidates
+          ;; Add the new candidates to the current ones
+          (let ((candidate-names (cl-map 'list
+                                         (lambda (el) (cdr (assoc 'name el)))
+                                         candidates))
+                (new-candidate-names (all-completions
+                                      (buffer-substring start end)
+                                      completion-list)))
+            (cl-loop
+             for pytel-cand in new-candidate-names
+             for pytel-cand = (replace-regexp-in-string "($" "" pytel-cand)
+             for pytel-cand = (replace-regexp-in-string "^.*\\." ""
+                                                        pytel-cand)
+             if (not (member pytel-cand candidate-names))
+             do (push (list (cons 'name pytel-cand)) candidates)))
+          candidates)))))
+
 (defun elpy-company-backend (command &optional arg &rest ignored)
   "A company-mode backend for Elpy."
   (interactive (list 'interactive))
@@ -3562,6 +3624,10 @@ or unless NAME is no callable instance."
            (lambda (callback)
              (elpy-rpc-get-completions
               (lambda (result)
+                ;; add completion candidates from python.el
+                (setq result
+                      (elpy-company--add-interpreter-completions-candidates
+                       result))
                 (elpy-company--cache-clear)
                 (funcall
                  callback
@@ -3636,10 +3702,11 @@ or unless NAME is no callable instance."
      (require 'eldoc)
      (setq eldoc-minor-mode-string nil))
     (`buffer-init
-     ;; avoid interferences between eldoc and company meta frontend
-     (when (member 'elpy-module-company elpy-modules)
-       (set (make-local-variable 'company-frontends)
-            (delq 'company-echo-metadata-frontend company-frontends)))
+     ;; avoid eldoc message flickering when using eldoc and company modules jointly
+     (eldoc-add-command-completions "company-")
+     (eldoc-add-command-completions "python-indent-dedent-line-backspace")
+     (set (make-local-variable 'company-frontends)
+          (delq 'company-echo-metadata-frontend company-frontends))
      (set (make-local-variable 'eldoc-documentation-function)
           'elpy-eldoc-documentation)
      (eldoc-mode 1))
@@ -3658,30 +3725,52 @@ display the current class and method instead."
   (let ((flymake-error (elpy-flymake-error-at-point)))
     (if flymake-error
         flymake-error
+      ;; Try getting calltip
       (elpy-rpc-get-calltip
        (lambda (calltip)
-         (eldoc-message
-          (cond
-           ((not calltip)
-            (when elpy-eldoc-show-current-function
-              (let ((current-defun (python-info-current-defun)))
-                (when current-defun
-                  (format "In: %s()" current-defun)))))
-           ((stringp calltip)
-            calltip)
-           (t
-            (let ((name (cdr (assq 'name calltip)))
-                  (index (cdr (assq 'index calltip)))
-                  (params (cdr (assq 'params calltip))))
-              (when index
-                (setf (nth index params)
-                      (propertize (nth index params)
-                                  'face
-                                  'eldoc-highlight-function-argument)))
-              (format "%s(%s)"
-                      name
-                      (mapconcat #'identity params ", "))
-              ))))))
+         (cond
+          ((stringp calltip)
+           (eldoc-message calltip))
+          (calltip
+           (let ((name (cdr (assq 'name calltip)))
+                 (index (cdr (assq 'index calltip)))
+                 (params (cdr (assq 'params calltip))))
+             (when index
+               (setf (nth index params)
+                     (propertize (nth index params)
+                                 'face
+                                 'eldoc-highlight-function-argument)))
+             (let ((prefix (propertize name 'face
+                                       'font-lock-function-name-face))
+                   (args (format "(%s)" (mapconcat #'identity params ", "))))
+               (eldoc-message
+                (if (version<= emacs-version "25")
+                    (format "%s%s" prefix args)
+                  (eldoc-docstring-format-sym-doc prefix args nil))))))
+          (t
+           ;; Try getting oneline docstring
+           (elpy-rpc-get-oneline-docstring
+            (lambda (doc)
+              (cond
+               (doc
+                 (let ((name (cdr (assq 'name doc)))
+                       (doc (cdr (assq 'doc doc))))
+                   (let ((prefix (propertize (format "%s: " name)
+                                             'face
+                                             'font-lock-function-name-face)))
+                     (eldoc-message
+                     (if (version<= emacs-version "25")
+                         (format "%s%s" prefix doc)
+                       (let ((eldoc-echo-area-use-multiline-p nil))
+                         (eldoc-docstring-format-sym-doc
+                                         prefix doc nil)))
+                     ))))
+               ;; Give the current definition
+               (elpy-eldoc-show-current-function
+                (let ((current-defun (python-info-current-defun)))
+                  (when current-defun
+                    (eldoc-message
+                     (format "In: %s()" current-defun))))))))))))
       ;; Return the last message until we're done
       eldoc-last-message)))
 
@@ -3693,7 +3782,9 @@ display the current class and method instead."
   (pcase command
     (`global-init
      (require 'flymake)
-     (elpy-modules-remove-modeline-lighter 'flymake-mode)
+     ;; flymake modeline is quite useful for emacs > 26.1
+     (when (version< emacs-version "26.1")
+       (elpy-modules-remove-modeline-lighter 'flymake-mode))
      ;; Add our initializer function.
      (when (not (version<= "26.1" emacs-version))
        (add-to-list 'flymake-allowed-file-name-masks
@@ -3706,9 +3797,12 @@ display the current class and method instead."
      ;; so we just tell python.el to use the wanted syntax checker
      (when (version<= "26.1" emacs-version)
        (setq-local python-flymake-command
-                   (if (string= elpy-syntax-check-command "pyflakes")
-                       '("pyflakes")
-                     `(,elpy-syntax-check-command "-"))))
+                   (let ((command (split-string elpy-syntax-check-command)))
+                     (if (string= (file-name-nondirectory (car command))
+                                  "flake8")
+                         (append command '("-"))
+                       command))))
+
      ;; `flymake-no-changes-timeout': The original value of 0.5 is too
      ;; short for Python code, as that will result in the current line
      ;; to be highlighted most of the time, and that's annoying. This
