@@ -998,6 +998,29 @@
         )
   )
 
+
+;;-------------------------------------------------------------------------
+
+(setq -my-grep--pattern nil)
+(setq -my-grep--target nil)
+(defun my-grep()
+  (interactive)
+  (let* ((pattern (read-string "grep pattern: "
+                               (if -my-grep--pattern -my-grep--pattern "")))
+         (_target (if -my-grep--target -my-grep--target buffer-file-name))
+         (dn (file-name-directory _target))
+         (bn (file-name-base _target))
+         (target (ido-read-file-name
+                  "grep target: " dn bn nil bn))
+         )
+    (message "grepping for pattern: '%s' at target '%s'" pattern target)
+    (setq -my-grep--pattern pattern)
+    (setq -my-grep--target target)
+    (grep (format "grep -rnH --null '%s' %s" pattern target))
+    )
+  )
+
+
 ;;-------------------------------------------------------------------------
 ;; smex
 ;; https://github.com/nonsequitur/smex
