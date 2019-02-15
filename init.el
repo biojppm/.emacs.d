@@ -1135,16 +1135,28 @@
   (ido-save-history))
 
 
+(setq --my-tramp-open--user "")
+(setq --my-tramp-open--host "")
+(setq --my-tramp-open--port "22")
+(setq --my-tramp-open--file "~")
 (defun my-tramp-open (user host port file)
   "interactively open a file on another host"
   (interactive (list
-                (read-string "user: ")
-                (read-string "host: ")
-                (read-string "port: " "22")
-                (read-string "file: " "~")))
-  (setq fn (concat "/" tramp-default-method ":" user "@" host "#" port ":" file))
-  (find-file fn)
+                (read-string "user: " --my-tramp-open--user)
+                (read-string "host: " --my-tramp-open--host)
+                (read-string "port: " --my-tramp-open--port)
+                (read-string "file: " --my-tramp-open--file)))
+  (let* ((method "ssh") ;; (method (if tramp-default-method tramp-default-method "ssh"))
+         (fn (concat "/" method ":" user "@" host "#" port ":" file)))
+    (message "my-tramp-open: opening file: %s" fn)
+    (setq --my-tramp-open--user user)
+    (setq --my-tramp-open--host host)
+    (setq --my-tramp-open--port port)
+    (setq --my-tramp-open--file file)
+    (find-file fn)
+    )
   )
+
 
 
 ;;=========================================================================
