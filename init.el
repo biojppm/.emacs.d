@@ -1001,22 +1001,21 @@
 
 ;;-------------------------------------------------------------------------
 
-(setq -my-grep--pattern nil)
-(setq -my-grep--target nil)
+(setq --my-grep--pattern "")
+(setq --my-grep--target nil)
 (defun my-grep()
   (interactive)
-  (let* ((pattern (read-string "grep pattern: "
-                               (if -my-grep--pattern -my-grep--pattern "")))
-         (_target (if -my-grep--target -my-grep--target buffer-file-name))
+  (let* ((pattern (read-string "grep pattern: " --my-grep--pattern))
+         (_target (if --my-grep--target --my-grep--target buffer-file-name))
          (dn (file-name-directory _target))
          (bn (file-name-base _target))
          (target (ido-read-file-name
                   "grep target: " dn bn nil bn))
-         )
+         )                              ;
     (message "grepping for pattern: '%s' at target '%s'" pattern target)
-    (setq -my-grep--pattern pattern)
-    (setq -my-grep--target target)
-    (grep (format "grep -rnH --null '%s' %s" pattern target))
+    (setq --my-grep--pattern pattern)
+    (setq --my-grep--target target)
+    (grep (format "grep -rnH '%s' %s" pattern target))
     )
   )
 
@@ -1101,20 +1100,31 @@
 
 ;;-------------------------------------------------------------------------
 
+(setq tramp-terminal-type "dumb")
 (use-package tramp
   :defer t
   :commands tramp
   :config
-  ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html
-  (setenv "ESHELL" "bash")
-  (setq tramp-default-method "ssh")
   ;;(setq tramp-auto-save-directory (expand-file-name "~/.emacs.d/auto-save-list"))
-
-  ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
-  ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
-  (setq tramp-shell-prompt-pattern
-        "\\(?:^\\|
-\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
+  ;; # https://emacs.stackexchange.com/questions/24159/tramp-waiting-for-prompts-from-remote-shell
+  ;; # fix for the error: Tramp: Waiting for prompts from remote shell:
+  ;; # paste this into your local ~/.bashrc:
+  ;;
+  ;; case "$TERM" in
+  ;;     "dumb")
+  ;;         export PS1="> "
+  ;;         ;;
+  ;; esac
+  ;;"
+  (setq tramp-terminal-type "dumb")
+  ;; ;; https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html
+  ;; (setenv "ESHELL" "bash")
+  ;; (setq tramp-default-method "ssh")
+  ;; ;; setting tramp-shell-prompt-pattern may be needed so that tramp understands
+  ;; ;; the shell prompt; see https://www.emacswiki.org/emacs/TrampMode
+  ;; (setq tramp-shell-prompt-pattern
+  ;;       "\\(?:^\\|
+  ;; \\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[0-9;]*[a-zA-Z] *\\)*")
   )
 
 ;; prevent TRAMP from connecting to hosts on startup
@@ -1130,6 +1140,7 @@
            (string-match "/\\(rsh\\|ssh\\|telnet\\|su\\|sudo\\|sshx\\|krlogin\\|ksu\\|rcp\\|scp\\|rsync\\|scpx\\|fcp\\|nc\\|ftp\\|smb\\|adb\\):" (car x)))
          ido-dir-file-cache)))
 ;; redefine `ido-kill-emacs-hook' so that cache is cleaned before being saved
+
 (defun ido-kill-emacs-hook ()
   (ido-remove-tramp-from-cache)
   (ido-save-history))
