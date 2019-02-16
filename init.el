@@ -2798,6 +2798,7 @@ original line and use the absolute value."
      syntax-subword
      tango-plus-theme
      term-run
+     transient
      undo-tree
      use-package
      vlf
