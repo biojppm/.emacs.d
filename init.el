@@ -601,6 +601,18 @@
 (global-set-key (kbd "C-<f6>") 'myide)
 
 
+(defun my-three-windows()
+  "split the frame into three horizontal windows of equal size"
+  (interactive)
+  (when (eq 1 (length (window-list)))
+    (split-window-right)
+    (split-window-right)
+    (balance-windows)
+    )
+  )
+(global-set-key (kbd "C-<f3>") 'my-three-windows)
+
+
 ;;-------------------------------------------
 ;;COLOR-THEME
 
