@@ -16,7 +16,7 @@
   (message "CQUERY INIT")
   ;; Arch Linux aur/cquery
   (setq cquery-executable (executable-find "cquery"))
-  (message "cquery: %s" cquery-executable)
+  (message "cquery executable: %s" cquery-executable)
   ;; ;; Initialization options
   ;; ;; Log file
   ;; (setq cquery-extra-args '("--log-file=/tmp/cq.log"))

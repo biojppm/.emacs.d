@@ -604,10 +604,15 @@
 (defun my-three-windows()
   "split the frame into three horizontal windows of equal size"
   (interactive)
-  (when (eq 1 (length (window-list)))
-    (split-window-right)
-    (split-window-right)
-    (balance-windows)
+  (if (eq 1 (length (window-list)))
+      (progn
+        (split-window-right)
+        (split-window-right)
+        (balance-windows)
+        )
+    (progn
+      (message "not single window ; will not split")
+      )
     )
   )
 (global-set-key (kbd "C-<f3>") 'my-three-windows)
