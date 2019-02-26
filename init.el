@@ -261,6 +261,9 @@
 ;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
 
+;; C-h b
+;; F1 b
+;;    describe bindings (all current keybindings)
 ;; C-h k
 ;; F1 k
 ;;    describe the command which is bound to a shortcut
@@ -1832,11 +1835,12 @@ original line and use the absolute value."
   (if this-is-windows
       (progn
         ;;(my-universal-tags-hook)
-        (my-cquery-hook)
+        ;;(my-cquery-hook)
         )
     (progn
       ;;(my-rtags-hook)
-      (my-cquery-hook)
+      ;;(my-cquery-hook)
+      ()
       )
     )
   )
@@ -2756,78 +2760,7 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (
-     anzu
-     arduino-mode
-     babel
-     babel-repl
-     clang-format
-     clean-aindent-mode
-     cmake-mode
-     company-c-headers
-     company-lsp
-     company-rtags
-     company-ycmd
-     counsel-etags
-     counsel-projectile
-     cquery
-     csharp-mode
-     cython-mode
-     dirtree
-     drag-stuff
-     dtrt-indent
-     elisp-slime-nav
-     elpy
-     elpygen
-     ess
-     firebelly-theme
-     flx-ido
-     git-timemachine
-     glsl-mode
-     help-fns+
-     hemisu-theme
-     highlight-symbol
-     hungry-delete
-     ido-ubiquitous
-     ido-vertical-mode
-     iedit
-     levenshtein
-     lsp-mode
-     lsp-ui
-     magit
-     markdown-mode
-     modern-cpp-font-lock
-     monokai-theme
-     multiple-cursors
-     org-babel-eval-in-repl
-     pdb-mode
-     persp-mode
-     persp-projectile
-     php-mode
-     realgud
-     rg
-     seq
-     slime
-     smart-mode-line
-     smartparens
-     smex
-     solarized-theme
-     syntax-subword
-     tango-plus-theme
-     term-run
-     transient
-     undo-tree
-     use-package
-     vlf
-     volatile-highlights
-     web-mode
-     wgrep-ag
-     window-number
-     ws-butler
-     yaml-mode
-     yasnippet-classic-snippets
-     zenburn-theme
-     )))
+    (ccls paradox anzu arduino-mode babel babel-repl clang-format clean-aindent-mode cmake-mode company-c-headers company-lsp company-rtags company-ycmd counsel-etags counsel-projectile cquery csharp-mode cython-mode dirtree drag-stuff dtrt-indent elisp-slime-nav elpy elpygen ess firebelly-theme flx-ido git-timemachine glsl-mode help-fns+ hemisu-theme highlight-symbol hungry-delete ido-ubiquitous ido-vertical-mode iedit levenshtein lsp-mode lsp-ui magit markdown-mode modern-cpp-font-lock monokai-theme multiple-cursors org-babel-eval-in-repl pdb-mode persp-mode persp-projectile php-mode realgud rg seq slime smart-mode-line smartparens smex solarized-theme syntax-subword tango-plus-theme term-run transient undo-tree use-package vlf volatile-highlights web-mode wgrep-ag window-number ws-butler yaml-mode yasnippet-classic-snippets zenburn-theme)))
  '(safe-local-variable-values
    (quote
     ((eval load-file
