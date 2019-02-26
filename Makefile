@@ -10,7 +10,8 @@ PIP ?= pip
 CMANY_COMPILER ?= -c vs2017
 
 CLANG_REPO ?= https://github.com/llvm/llvm-project
-CLANG_BRANCH ?= llvmorg-7.0.1  # may also be a tag
+#CLANG_BRANCH ?= llvmorg-7.0.1  # may also be a tag
+CLANG_BRANCH ?= master
 CLANG_DIR ?= $(UTIL_DIR)/llvm
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/build
@@ -18,10 +19,7 @@ CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/install
 CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	--build-dir $(CLANG_BUILD_DIR) \
 	--install-dir $(CLANG_INSTALL_DIR) \
-	-V LLVM_TOOL_LLD_BUILD=ON \
-	-V LLVM_TOOL_LLDB_BUILD=ON \
-	-V LLVM_TOOL_CLANG_BUILD=ON \
-	$(CLANG_SRC_DIR)/llvm
+	$(CLANG_SRC_DIR)
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
 CCLS_BRANCH ?= master  # may also be a tag
@@ -52,7 +50,7 @@ all: ccls_install clang_install
 
 .PHONY: cmany
 cmany:
-	# install cmany if needed
+	 # install cmany if needed
 	if [ -z "$(shell pip list | grep cmany)" ] ; then \
 	    $(PIP) install cmany ; \
 	fi
@@ -104,10 +102,14 @@ $(CCLS_SRC_DIR): $(CCLS_DIR)
 	fi
 
 $(CLANG_SRC_DIR): $(CLANG_DIR)
-	@#cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/llvm.git
-	@#cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git llvm/tools/clang
+	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
+	 #    cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
+	 #fi
 	if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
-	    cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
+	    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/llvm.git $(CLANG_SRC_DIR) ; \
+	fi
+	if [ ! -d "$(CLANG_SRC_DIR)/tools/clang" ] ; then \
+	    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git $(CLANG_SRC_DIR)/tools/clang ; \
 	fi
 
 $(CCLS_DIR):
