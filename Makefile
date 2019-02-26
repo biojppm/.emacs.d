@@ -10,7 +10,7 @@ PIP ?= pip
 CMANY_COMPILER ?= -c vs2017
 
 CLANG_REPO ?= https://github.com/llvm/llvm-project
-CLANG_BRANCH ?= llvmorg-7.0.1
+CLANG_BRANCH ?= llvmorg-7.0.1  # may also be a tag
 CLANG_DIR ?= $(UTIL_DIR)/llvm
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/build
@@ -24,7 +24,7 @@ CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	$(CLANG_SRC_DIR)/llvm
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
-CCLS_BRANCH ?= master
+CCLS_BRANCH ?= master  # may also be a tag
 CCLS_DIR ?= $(UTIL_DIR)/ccls
 CCLS_SRC_DIR ?= $(CCLS_DIR)/src
 CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
@@ -41,7 +41,7 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 
 # define a function to copy file trees
 # usage: $(call copy_tree,dst,src,pattern(s))
-copy_tree = cd $2 && (tar cfp - $3 | (cd $1 ; tar xvf -))
+copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
 #----------------------------------------------------------------------
 
@@ -76,12 +76,12 @@ clang_clone: $(CLANG_SRC_DIR)
 ccls_install: $(LOCAL_DIR) #$(CCLS_INSTALL_DIR)
 	@bd=$(shell cmany show_build_names $(CCLS_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
-	$(call copy_tree,$(LOCAL_DIR),$(CLANG_INSTALL_DIR)/$$bd,*)
+	$(call copy_tree,$(CCLS_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 clang_install: $(LOCAL_DIR) #$(CLANG_INSTALL_DIR)
 	@bd=$(shell cmany show_build_names $(CLANG_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
-	$(call copy_tree,$(LOCAL_DIR),$(CLANG_INSTALL_DIR)/$$bd,*)
+	$(call copy_tree,$(CLANG_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 
 $(CCLS_INSTALL_DIR): $(CCLS_BUILD_DIR)
