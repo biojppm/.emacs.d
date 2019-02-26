@@ -9,13 +9,11 @@ PIP ?= pip
 
 CMANY_COMPILER ?= -c vs2017
 
-CLANG_REPO ?= https://github.com/llvm/llvm-project
-#CLANG_BRANCH ?= llvmorg-7.0.1  # may also be a tag
-CLANG_BRANCH ?= master
-CLANG_DIR ?= $(UTIL_DIR)/llvm
-CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/src
-CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/build
-CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_BRANCH)/install
+CLANG_VERSION ?= 7.0.1
+CLANG_DIR ?= $(UTIL_DIR)/clang
+CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
+CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
+CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
 CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	--build-dir $(CLANG_BUILD_DIR) \
 	--install-dir $(CLANG_INSTALL_DIR) \
@@ -38,7 +36,7 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 #----------------------------------------------------------------------
 
 # define a function to copy file trees
-# usage: $(call copy_tree,dst,src,pattern(s))
+# usage: $(call copy_tree,src_root,pattern(s),dst_root)
 copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
 #----------------------------------------------------------------------
@@ -68,7 +66,7 @@ ccls_clone: $(CCLS_SRC_DIR)
 clang: $(CLANG_INSTALL_DIR)
 clang_build: $(CLANG_INSTALL_DIR)
 clang_config: $(CLANG_BUILD_DIR)
-clang_clone: $(CLANG_SRC_DIR)
+clang_download: $(CLANG_SRC_DIR)
 
 
 ccls_install: $(LOCAL_DIR) #$(CCLS_INSTALL_DIR)
@@ -105,11 +103,14 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
 	 #    cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
 	 #fi
+	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
+	 #    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/llvm.git $(CLANG_SRC_DIR) ; \
+	 #fi
+	@#if [ ! -d "$(CLANG_SRC_DIR)/tools/clang" ] ; then \
+	 #    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git $(CLANG_SRC_DIR)/tools/clang ; \
+	 #fi
 	if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
-	    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/llvm.git $(CLANG_SRC_DIR) ; \
-	fi
-	if [ ! -d "$(CLANG_SRC_DIR)/tools/clang" ] ; then \
-	    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git $(CLANG_SRC_DIR)/tools/clang ; \
+	    git clone --recursive https://github.com/biojppm/clang-build $(CLANG_SRC_DIR) ; \
 	fi
 
 $(CCLS_DIR):
