@@ -29,7 +29,6 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	--build-dir $(CCLS_BUILD_DIR) \
 	--install-dir $(CCLS_INSTALL_DIR) \
 	$(CCLS_SRC_DIR) \
-	-V CMAKE_CXX_COMPILER=clang-cl \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
 
@@ -75,8 +74,13 @@ ccls_install: $(LOCAL_DIR) #$(CCLS_INSTALL_DIR)
 	$(call copy_tree,$(CCLS_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 clang_install: $(LOCAL_DIR) #$(CLANG_INSTALL_DIR)
-	@bd=$(shell cmany show_build_names $(CLANG_CMANY_ARGS)) ; \
+	@echo "CLANG_INSTALL_DIR=$(CLANG_INSTALL_DIR)"
+	 #cmany show_build_names $(CLANG_CMANY_ARGS)
+	bd=$(shell cmany show_build_names $(CLANG_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
+	echo "Build dir $(CLANG_INSTALL_DIR)/$$bd" ; \
+	echo "Local dir $(LOCAL_DIR)" ; \
+	(cd $(CLANG_INSTALL_DIR)/$$bd ; ls -l *) ; \
 	$(call copy_tree,$(CLANG_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 
@@ -100,6 +104,9 @@ $(CCLS_SRC_DIR): $(CCLS_DIR)
 	fi
 
 $(CLANG_SRC_DIR): $(CLANG_DIR)
+	if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
+	    git clone --recursive https://github.com/biojppm/clang-build $(CLANG_SRC_DIR) ; \
+	fi
 	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
 	 #    cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
 	 #fi
@@ -109,9 +116,6 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 	@#if [ ! -d "$(CLANG_SRC_DIR)/tools/clang" ] ; then \
 	 #    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git $(CLANG_SRC_DIR)/tools/clang ; \
 	 #fi
-	if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
-	    git clone --recursive https://github.com/biojppm/clang-build $(CLANG_SRC_DIR) ; \
-	fi
 
 $(CCLS_DIR):
 	if [ ! -d $(CCLS_DIR) ] ; then mkdir -p $(CCLS_DIR) ; fi
