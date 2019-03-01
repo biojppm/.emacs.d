@@ -2788,3 +2788,4 @@ original line and use the absolute value."
 (set-face-attribute 'ido-vertical-first-match-face nil :background "#777777" :foreground "orange")
 (set-face-attribute 'ido-vertical-only-match-face nil :background nil :foreground nil)
 (set-face-attribute 'ido-vertical-match-face nil :foreground nil)
+(put 'downcase-region 'disabled nil)
