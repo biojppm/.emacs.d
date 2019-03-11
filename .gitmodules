@@ -4,3 +4,6 @@
 [submodule "cmany.el"]
 	path = cmany.el
 	url = https://github.com/biojppm/cmany.el.git
+[submodule "clang-build"]
+	path = clang-build
+	url = https://github.com/biojppm/clang-build
