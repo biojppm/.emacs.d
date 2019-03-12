@@ -13,6 +13,7 @@ cmany.save
 ede-projects.el
 history
 ido.last
+local/
 persp-confs/
 projectile-bookmarks.eld
 projectile.cache
@@ -21,4 +22,3 @@ semanticdb/
 server
 smex-items
 tramp
-util/

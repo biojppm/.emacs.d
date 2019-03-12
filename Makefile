@@ -2,15 +2,15 @@
 # https://gist.github.com/evanwill/0207876c3243bbb6863e65ec5dc3f058
 
 EMACS_DIR ?= $(shell pwd)
-UTIL_DIR ?= $(EMACS_DIR)/util
-LOCAL_DIR ?= $(EMACS_DIR)/util/local
+LOCAL_DIR ?= $(EMACS_DIR)/local
+LOCAL_SRC_DIR ?= $(EMACS_DIR)/local/src
 
 PIP ?= pip
 
-CMANY_COMPILER ?= -c vs2017
+CMANY_COMPILER ?=
 
 CLANG_VERSION ?= 7.0.1
-CLANG_DIR ?= $(UTIL_DIR)/clang
+CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
 CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
@@ -21,7 +21,7 @@ CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
 CCLS_BRANCH ?= master  # may also be a tag
-CCLS_DIR ?= $(UTIL_DIR)/ccls
+CCLS_DIR ?= $(LOCAL_SRC_DIR)/ccls
 CCLS_SRC_DIR ?= $(CCLS_DIR)/src
 CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
 CCLS_INSTALL_DIR ?= $(CCLS_DIR)/install
@@ -40,7 +40,7 @@ copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
 #----------------------------------------------------------------------
 
-all: ccls_install clang_install
+all: clang_install ccls_install
 
 
 #----------------------------------------------------------------------
@@ -100,7 +100,7 @@ $(CLANG_BUILD_DIR): cmany $(CLANG_SRC_DIR)
 
 $(CCLS_SRC_DIR): $(CCLS_DIR)
 	if [ ! -d "$(CCLS_SRC_DIR)" ] ; then \
-	    cd $(UTIL_DIR) && git clone --recursive --branch=$(CCLS_BRANCH) $(CCLS_REPO) $(CCLS_SRC_DIR) ; \
+	    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(CCLS_BRANCH) $(CCLS_REPO) $(CCLS_SRC_DIR) ; \
 	fi
 
 $(CLANG_SRC_DIR): $(CLANG_DIR)
@@ -108,7 +108,7 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 	    git clone --recursive https://github.com/biojppm/clang-build $(CLANG_SRC_DIR) ; \
 	fi
 	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
-	 #    cd $(UTIL_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
+	 #    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(CLANG_BRANCH) $(CLANG_REPO) $(CLANG_SRC_DIR) ; \
 	 #fi
 	@#if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
 	 #    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/llvm.git $(CLANG_SRC_DIR) ; \
@@ -123,8 +123,8 @@ $(CCLS_DIR):
 $(CLANG_DIR):
 	if [ ! -d $(CLANG_DIR) ] ; then mkdir -p $(CLANG_DIR) ; fi
 
-$(UTIL_DIR):
-	if [ ! -d $(UTIL_DIR) ] ; then mkdir -p $(UTIL_DIR) ; fi
+$(LOCAL_SRC_DIR):
+	if [ ! -d $(LOCAL_SRC_DIR) ] ; then mkdir -p $(LOCAL_SRC_DIR) ; fi
 
 $(LOCAL_DIR):
 	if [ ! -d $(LOCAL_DIR) ] ; then mkdir -p $(LOCAL_DIR) ; fi
