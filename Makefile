@@ -3,7 +3,7 @@
 
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(EMACS_DIR)/local
-LOCAL_SRC_DIR ?= $(EMACS_DIR)/local/src
+LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
 
 PIP ?= pip
 
@@ -68,13 +68,14 @@ clang_config: $(CLANG_BUILD_DIR)
 clang_download: $(CLANG_SRC_DIR)
 
 
-ccls_install: $(LOCAL_DIR) #$(CCLS_INSTALL_DIR)
+ccls_install: $(LOCAL_DIR) $(CCLS_INSTALL_DIR)
+	@echo "ccls_install: $(CCLS_INSTALL_DIR) ---> $(LOCAL_DIR)"
 	@bd=$(shell cmany show_build_names $(CCLS_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
 	$(call copy_tree,$(CCLS_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
-clang_install: $(LOCAL_DIR) #$(CLANG_INSTALL_DIR)
-	@echo "CLANG_INSTALL_DIR=$(CLANG_INSTALL_DIR)"
+clang_install: $(LOCAL_DIR) $(CLANG_INSTALL_DIR)
+	@echo "clang_install: $(CLANG_INSTALL_DIR) ---> $(LOCAL_DIR)"
 	 #cmany show_build_names $(CLANG_CMANY_ARGS)
 	bd=$(shell cmany show_build_names $(CLANG_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
@@ -85,25 +86,31 @@ clang_install: $(LOCAL_DIR) #$(CLANG_INSTALL_DIR)
 
 
 $(CCLS_INSTALL_DIR): $(CCLS_BUILD_DIR)
+	@echo "ccls_install_dir: $(CCLS_INSTALL_DIR)"
 	cmany i $(CCLS_CMANY_ARGS)
 
 $(CLANG_INSTALL_DIR): $(CLANG_BUILD_DIR)
+	@echo "clang_install_dir: $(CLANG_INSTALL_DIR)"
 	cmany i $(CLANG_CMANY_ARGS)
 
 
 $(CCLS_BUILD_DIR): cmany $(CCLS_SRC_DIR)
+	@echo "ccls_build_dir: $(CCLS_INSTALL_DIR)"
 	cmany c $(CCLS_CMANY_ARGS)
 
 $(CLANG_BUILD_DIR): cmany $(CLANG_SRC_DIR)
+	@echo "clang_build_dir: $(CLANG_INSTALL_DIR)"
 	cmany c $(CLANG_CMANY_ARGS)
 
 
 $(CCLS_SRC_DIR): $(CCLS_DIR)
+	@echo "ccls_src_dir: $(CCLS_SRC_DIR)"
 	if [ ! -d "$(CCLS_SRC_DIR)" ] ; then \
 	    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(CCLS_BRANCH) $(CCLS_REPO) $(CCLS_SRC_DIR) ; \
 	fi
 
 $(CLANG_SRC_DIR): $(CLANG_DIR)
+	@echo "clang_src_dir: $(CLANG_SRC_DIR)"
 	if [ ! -d "$(CLANG_SRC_DIR)" ] ; then \
 	    git clone --recursive https://github.com/biojppm/clang-build $(CLANG_SRC_DIR) ; \
 	fi
