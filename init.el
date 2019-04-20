@@ -2760,7 +2760,83 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (mc-extras ccls paradox anzu arduino-mode babel babel-repl clang-format clean-aindent-mode cmake-mode company-c-headers company-lsp company-rtags company-ycmd counsel-etags counsel-projectile cquery csharp-mode cython-mode dirtree drag-stuff dtrt-indent elisp-slime-nav elpy elpygen ess firebelly-theme flx-ido git-timemachine glsl-mode help-fns+ hemisu-theme highlight-symbol hungry-delete ido-ubiquitous ido-vertical-mode iedit levenshtein lsp-mode lsp-ui magit markdown-mode modern-cpp-font-lock monokai-theme multiple-cursors org-babel-eval-in-repl pdb-mode persp-mode persp-projectile php-mode realgud rg seq slime smart-mode-line smartparens smex solarized-theme syntax-subword tango-plus-theme term-run transient undo-tree use-package vlf volatile-highlights web-mode wgrep-ag window-number ws-butler yaml-mode yasnippet-classic-snippets zenburn-theme)))
+    (
+     anzu
+     arduino-mode
+     babel
+     babel-repl
+     ccls
+     clang-format
+     clean-aindent-mode
+     cmake-mode
+     company-c-headers
+     counsel-etags
+     company-lsp
+     company-rtags
+     company-ycmd
+     counsel-projectile
+     cquery
+     csharp-mode
+     cython-mode
+     dirtree
+     drag-stuff
+     dtrt-indent
+     elisp-slime-nav
+     elpy
+     elpygen
+     ess
+     firebelly-theme
+     flx-ido
+     git-timemachine
+     glsl-mode
+     help-fns+
+     hemisu-theme
+     highlight-symbol
+     hungry-delete
+     ido-ubiquitous
+     ido-vertical-mode
+     iedit
+     levenshtein
+     lsp-mode
+     lsp-ui
+     magit
+     markdown-mode
+     mc-extras
+     modern-cpp-font-lock
+     monokai-theme
+     multiple-cursors
+     org-babel-eval-in-repl
+     paradox
+     pdb-mode
+     persp-mode
+     persp-projectile
+     php-mode
+     realgud
+     rg
+     seq
+     slime
+     smart-mode-line
+     smartparens
+     smex
+     solarized-theme
+     syntax-subword
+     tango-plus-theme
+     term-run
+     transient
+     undo-tree
+     use-package
+     vlf
+     volatile-highlights
+     web-mode
+     wgrep-ag
+     window-number
+     ws-butler
+     yaml-mode
+     yasnippet-classic-snippets
+     zenburn-theme
+     )
+    )
+   )
  '(safe-local-variable-values
    (quote
     ((eval load-file
@@ -2788,3 +2864,4 @@ original line and use the absolute value."
 (set-face-attribute 'ido-vertical-first-match-face nil :background "#777777" :foreground "orange")
 (set-face-attribute 'ido-vertical-only-match-face nil :background nil :foreground nil)
 (set-face-attribute 'ido-vertical-match-face nil :foreground nil)
+(put 'downcase-region 'disabled nil)
