@@ -18,6 +18,7 @@
         hungry-delete-forward
         indent-for-tab-command
         kill-region
+        markdown-outdent-or-delete
         my-open-init-el
         nuke-line
         overwrite-mode
