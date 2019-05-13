@@ -2737,9 +2737,32 @@ original line and use the absolute value."
   (setq magit-refresh-status-buffer nil)
   :commands (magit-status)
   :bind
-  (("C-x g" . magit-status)
+  (
+   ("C-x g" . magit-status)
+   ("C-x C-g" . my-magit-status)
    ("C-x M-g" . magit-dispatch-popup))
   )
+
+(defun my-magit-status ()
+  (interactive)
+  (let* ((prompt "repo root: ")
+         (rd (shell-command-to-string "git rev-parse --show-toplevel"))
+         (.. (message "repodir=%s" rd))
+         (dn (file-name-directory rd))
+         (.. (message "repodirname=%s" dn))
+         (bn (file-name-base rd))
+         (.. (message "repobasename=%s" bn))
+         (r (ido-read-directory-name prompt dn bn nil bn))
+         (.. (message "read=%s" r))
+         (r (file-truename r))
+         (.. (message "truename=%s" r))
+         (r (file-name-as-directory r))
+         (.. (message "finalname=%s" r))
+         )
+    (magit-status r)
+    )
+  )
+
 
 ;;-----------------------------------------------------------------------------
 (if this-is-windows
