@@ -2765,6 +2765,33 @@ original line and use the absolute value."
 
 
 ;;-----------------------------------------------------------------------------
+;; google-this
+;; http://pragmaticemacs.com/emacs/google-search-from-inside-emacs/
+
+;; C-c / SPC 	google-this-region
+;; C-c / a 	google-this-ray
+;; C-c / c 	google-this-translate-query-or-region
+;; C-c / e 	google-this-error
+;; C-c / f 	google-this-forecast
+;; C-c / g 	google-this-lucky-search
+;; C-c / i 	google-this-lucky-and-insert-url
+;; C-c / l 	google-this-line
+;; C-c / m 	google-maps
+;; C-c / n 	google-this-noconfirm
+;; C-c / r 	google-this-cpp-reference
+;; C-c / s 	google-this-symbol
+;; C-c / t 	google-this
+;; C-c / w 	google-this-word
+;; C-c / <return> 	google-this-search
+
+(use-package google-this
+  :commands google-this
+  ;; :config
+  ;; (google-this-mode 1)
+  )
+
+
+;;-----------------------------------------------------------------------------
 (if this-is-windows
   (progn
     ;;if in Windows run this block
@@ -2828,6 +2855,7 @@ original line and use the absolute value."
      flx-ido
      git-timemachine
      glsl-mode
+     google-this
      help-fns+
      hemisu-theme
      highlight-symbol
