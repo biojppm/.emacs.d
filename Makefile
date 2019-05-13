@@ -2,7 +2,7 @@
 # https://gist.github.com/evanwill/0207876c3243bbb6863e65ec5dc3f058
 
 EMACS_DIR ?= $(shell pwd)
-LOCAL_DIR ?= $(EMACS_DIR)/local
+LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
 
 PIP ?= pip

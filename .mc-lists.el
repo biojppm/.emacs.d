@@ -21,6 +21,7 @@
         markdown-outdent-or-delete
         my-open-init-el
         nuke-line
+        org-self-insert-command
         overwrite-mode
         smart-beginning-of-line
         yaml-electric-backspace

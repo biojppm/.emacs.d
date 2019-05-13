@@ -1849,13 +1849,31 @@ original line and use the absolute value."
       (progn
         ;;(my-universal-tags-hook)
         ;;(my-cquery-hook)
+        (my-lsp-hook)
         )
     (progn
       ;;(my-rtags-hook)
       ;;(my-cquery-hook)
+      (my-lsp-hook)
       ()
       )
     )
+  )
+
+(defun my-universal-tags-hook ()
+  (interactive)
+  (load "my-ycmd-setup")
+  )
+
+(defun my-rtags-hook ()
+  (interactive)
+  (load "my-rtags-setup")
+  (rtags-start-process-unless-running)
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
+  (add-to-list 'company-backends 'company-rtags)
+  (add-to-list 'company-backends 'company-c-headers)
   )
 
 (defun my-cquery-hook()
@@ -1881,24 +1899,9 @@ original line and use the absolute value."
   (message "my-cquery-hook --- DONE")
   )
 
-(defun my-universal-tags-hook ()
-  (interactive)
-  (load "my-ycmd-setup")
-  )
-
-(defun my-rtags-hook ()
-  (interactive)
-  (load "my-rtags-setup")
-  (rtags-start-process-unless-running)
-  (when (not (boundp 'company-backends))
-    (setq company-backends ())
-    )
-  (add-to-list 'company-backends 'company-rtags)
-  (add-to-list 'company-backends 'company-c-headers)
-  )
-
 (defun my-lsp-hook()
   (interactive)
+  (lsp)
   )
 
 ;; cmany
