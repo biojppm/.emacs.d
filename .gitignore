@@ -14,7 +14,7 @@ ede-projects.el
 history
 ido.last
 .local
-.local.el
+local.el
 local/
 persp-confs/
 projectile-bookmarks.eld

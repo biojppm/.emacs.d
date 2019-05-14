@@ -2814,7 +2814,19 @@ original line and use the absolute value."
 )
 
 
+;;-----------------------------------------------------------------------------
 
+(let ((fn (concat emacs-dir "local.el")))
+  (if (file-exists-p fn)
+      (progn
+        (message "loading local config file: %s" fn)
+        (load-file fn)
+        )
+      )
+  )
+
+
+;;-----------------------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
