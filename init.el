@@ -230,16 +230,16 @@
 
 ;; http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
 
-;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
-;; super: left Windows key
-(setq w32-pass-lwindow-to-system nil)
-(setq w32-lwindow-modifier 'super) ; Left Windows key
-;; super: right Windows key
-(setq w32-pass-rwindow-to-system nil)
-(setq w32-rwindow-modifier 'super) ; Right Windows key
-;; make the menu/app key the hyper key
-(setq w32-pass-apps-to-system nil)
-(setq w32-apps-modifier 'hyper) ; Menu/App key
+;; ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+;; ;; super: left Windows key
+;; (setq w32-pass-lwindow-to-system nil)
+;; (setq w32-lwindow-modifier 'super) ; Left Windows key
+;; ;; super: right Windows key
+;; (setq w32-pass-rwindow-to-system nil)
+;; (setq w32-rwindow-modifier 'super) ; Right Windows key
+;; ;; make the menu/app key the hyper key
+;; (setq w32-pass-apps-to-system nil)
+;; (setq w32-apps-modifier 'hyper) ; Menu/App key
 
 ;; Mac OS X
 ;; set keys for Apple keyboard, for emacs in OS X
@@ -2890,6 +2890,7 @@ original line and use the absolute value."
      persp-mode
      persp-projectile
      php-mode
+     protobuf-mode
      realgud
      rg
      seq
