@@ -2731,6 +2731,9 @@ original line and use the absolute value."
 ;;
 ;;     P u to do a git push
 ;;     F u to do a git pull
+;;
+;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+;;
 
 (use-package magit
   :init

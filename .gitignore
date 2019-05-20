@@ -16,6 +16,7 @@ ido.last
 .local
 local.el
 local/
+org-clock-save.el
 persp-confs/
 projectile-bookmarks.eld
 projectile.cache
