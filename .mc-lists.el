@@ -18,6 +18,7 @@
         hungry-delete-forward
         indent-for-tab-command
         kill-region
+        markdown-outdent-or-delete
         my-open-init-el
         nuke-line
         overwrite-mode
@@ -30,6 +31,7 @@
       '(
         compile-goto-error
         counsel-yank-pop
+        duplicate-line-or-region
         gud-tooltip-mouse-motion
         help-for-help
         mouse-set-region
