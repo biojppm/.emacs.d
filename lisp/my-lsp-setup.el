@@ -5,9 +5,9 @@
   :commands lsp
   :init
   (message "lsp-mode INIT")
-  (use-package lsp-ui)
+  (use-package lsp-ui :commands lsp-ui-mode)
   (message "lsp-mode 1")
-  (use-package company-lsp)
+  (use-package company-lsp :commands company-lsp)
   )
 
 (use-package ccls

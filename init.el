@@ -230,16 +230,16 @@
 
 ;; http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
 
-;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
-;; super: left Windows key
-(setq w32-pass-lwindow-to-system nil)
-(setq w32-lwindow-modifier 'super) ; Left Windows key
-;; super: right Windows key
-(setq w32-pass-rwindow-to-system nil)
-(setq w32-rwindow-modifier 'super) ; Right Windows key
-;; make the menu/app key the hyper key
-(setq w32-pass-apps-to-system nil)
-(setq w32-apps-modifier 'hyper) ; Menu/App key
+;; ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+;; ;; super: left Windows key
+;; (setq w32-pass-lwindow-to-system nil)
+;; (setq w32-lwindow-modifier 'super) ; Left Windows key
+;; ;; super: right Windows key
+;; (setq w32-pass-rwindow-to-system nil)
+;; (setq w32-rwindow-modifier 'super) ; Right Windows key
+;; ;; make the menu/app key the hyper key
+;; (setq w32-pass-apps-to-system nil)
+;; (setq w32-apps-modifier 'hyper) ; Menu/App key
 
 ;; Mac OS X
 ;; set keys for Apple keyboard, for emacs in OS X
@@ -549,6 +549,19 @@
 ;; O / X       Stop/cancel the previously started clock.
 ;; J           Jump to the running clock in another window.
 
+
+;; https://emacs.stackexchange.com/questions/9528/is-it-possible-to-remove-emsp-from-clock-report-but-preserve-indentation
+(defun my-org-clocktable-indent-string (level)
+    (if (= level 1)
+        ""
+      (let ((str "`"))
+        (while (> level 2)
+          (setq level (1- level)
+                str (concat str "--")))
+        (concat str "-> "))))
+
+(advice-add 'org-clocktable-indent-string
+            :override #'my-org-clocktable-indent-string)
 
 ;;-------------------------------------------
 ;; DIRTREE: https://github.com/zk/emacs-dirtree
@@ -1836,13 +1849,31 @@ original line and use the absolute value."
       (progn
         ;;(my-universal-tags-hook)
         ;;(my-cquery-hook)
+        (my-lsp-hook)
         )
     (progn
       ;;(my-rtags-hook)
       ;;(my-cquery-hook)
+      (my-lsp-hook)
       ()
       )
     )
+  )
+
+(defun my-universal-tags-hook ()
+  (interactive)
+  (load "my-ycmd-setup")
+  )
+
+(defun my-rtags-hook ()
+  (interactive)
+  (load "my-rtags-setup")
+  (rtags-start-process-unless-running)
+  (when (not (boundp 'company-backends))
+    (setq company-backends ())
+    )
+  (add-to-list 'company-backends 'company-rtags)
+  (add-to-list 'company-backends 'company-c-headers)
   )
 
 (defun my-cquery-hook()
@@ -1868,24 +1899,9 @@ original line and use the absolute value."
   (message "my-cquery-hook --- DONE")
   )
 
-(defun my-universal-tags-hook ()
-  (interactive)
-  (load "my-ycmd-setup")
-  )
-
-(defun my-rtags-hook ()
-  (interactive)
-  (load "my-rtags-setup")
-  (rtags-start-process-unless-running)
-  (when (not (boundp 'company-backends))
-    (setq company-backends ())
-    )
-  (add-to-list 'company-backends 'company-rtags)
-  (add-to-list 'company-backends 'company-c-headers)
-  )
-
 (defun my-lsp-hook()
   (interactive)
+  (lsp)
   )
 
 ;; cmany
@@ -2715,15 +2731,68 @@ original line and use the absolute value."
 ;;
 ;;     P u to do a git push
 ;;     F u to do a git pull
+;;
+;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+;;
 
 (use-package magit
   :init
   (setq magit-refresh-status-buffer nil)
   :commands (magit-status)
   :bind
-  (("C-x g" . magit-status)
+  (
+   ("C-x g" . magit-status)
+   ("C-x C-g" . my-magit-status)
    ("C-x M-g" . magit-dispatch-popup))
   )
+
+(defun my-magit-status ()
+  (interactive)
+  (let* ((prompt "repo root: ")
+         (rd (shell-command-to-string "git rev-parse --show-toplevel"))
+         (.. (message "repodir=%s" rd))
+         (dn (file-name-directory rd))
+         (.. (message "repodirname=%s" dn))
+         (bn (file-name-base rd))
+         (.. (message "repobasename=%s" bn))
+         (r (ido-read-directory-name prompt dn bn nil bn))
+         (.. (message "read=%s" r))
+         (r (file-truename r))
+         (.. (message "truename=%s" r))
+         (r (file-name-as-directory r))
+         (.. (message "finalname=%s" r))
+         )
+    (magit-status r)
+    )
+  )
+
+
+;;-----------------------------------------------------------------------------
+;; google-this
+;; http://pragmaticemacs.com/emacs/google-search-from-inside-emacs/
+
+;; C-c / SPC 	google-this-region
+;; C-c / a 	google-this-ray
+;; C-c / c 	google-this-translate-query-or-region
+;; C-c / e 	google-this-error
+;; C-c / f 	google-this-forecast
+;; C-c / g 	google-this-lucky-search
+;; C-c / i 	google-this-lucky-and-insert-url
+;; C-c / l 	google-this-line
+;; C-c / m 	google-maps
+;; C-c / n 	google-this-noconfirm
+;; C-c / r 	google-this-cpp-reference
+;; C-c / s 	google-this-symbol
+;; C-c / t 	google-this
+;; C-c / w 	google-this-word
+;; C-c / <return> 	google-this-search
+
+(use-package google-this
+  :commands google-this
+  ;; :config
+  ;; (google-this-mode 1)
+  )
+
 
 ;;-----------------------------------------------------------------------------
 (if this-is-windows
@@ -2748,7 +2817,19 @@ original line and use the absolute value."
 )
 
 
+;;-----------------------------------------------------------------------------
 
+(let ((fn (concat emacs-dir "local.el")))
+  (if (file-exists-p fn)
+      (progn
+        (message "loading local config file: %s" fn)
+        (load-file fn)
+        )
+      )
+  )
+
+
+;;-----------------------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -2789,6 +2870,7 @@ original line and use the absolute value."
      flx-ido
      git-timemachine
      glsl-mode
+     google-this
      help-fns+
      hemisu-theme
      highlight-symbol
@@ -2801,6 +2883,7 @@ original line and use the absolute value."
      lsp-ui
      magit
      markdown-mode
+     mc-extras
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
@@ -2810,6 +2893,7 @@ original line and use the absolute value."
      persp-mode
      persp-projectile
      php-mode
+     protobuf-mode
      realgud
      rg
      seq

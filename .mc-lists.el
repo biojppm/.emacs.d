@@ -18,9 +18,12 @@
         hungry-delete-forward
         indent-for-tab-command
         kill-region
+        kmacro-end-or-call-macro
         markdown-outdent-or-delete
         my-open-init-el
         nuke-line
+        org-self-insert-command
+        org-yank
         overwrite-mode
         smart-beginning-of-line
         yaml-electric-backspace
