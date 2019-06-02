@@ -2887,6 +2887,7 @@ original line and use the absolute value."
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
+     open-in-msvs
      org-babel-eval-in-repl
      paradox
      pdb-mode
