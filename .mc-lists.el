@@ -11,6 +11,7 @@
         c-electric-slash
         c-electric-star
         c-hungry-delete-forward
+        c-indent-line-or-region
         drag-stuff-down
         gcm-scroll-down
         gcm-scroll-up
