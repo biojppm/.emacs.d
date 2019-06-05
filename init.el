@@ -1802,6 +1802,9 @@ original line and use the absolute value."
   :init (add-hook 'prog-mode-hook #'ws-butler-mode)
   )
 
+(use-package open-in-msvs
+  :defer t
+  :commands open-in-msvs)
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup

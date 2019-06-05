@@ -40,7 +40,9 @@ MSVS_versions = Array _
     "VisualStudio.DTE.10.0", _
     "VisualStudio.DTE.11.0", _
     "VisualStudio.DTE.12.0", _
-    "VisualStudio.DTE.14.0" _
+    "VisualStudio.DTE.14.0", _
+    "VisualStudio.DTE.15.0", _
+    "VisualStudio.DTE.16.0" _
 )
 
 For each version in MSVS_versions
