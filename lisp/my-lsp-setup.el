@@ -16,6 +16,7 @@
   :custom
   (ccls-args nil)
   (ccls-executable (executable-find "ccls"))
+  (message "ccls-executable: %s" ccls-executable)
   ;; https://github.com/MaskRay/ccls/wiki/Project-Setup
   (projectile-project-root-files-top-down-recurring
    (append '("compile_commands.json" ".ccls")

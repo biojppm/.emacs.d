@@ -1622,7 +1622,8 @@ original line and use the absolute value."
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   ;; bind yas-expand to C-S-tab
-  (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)
+  (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)  ;; this doesn't work in windows
+  (define-key yas-minor-mode-map (kbd "<C-s-tab>") 'yas-expand)  ;; ... so use this with the windows key
   (yas-minor-mode-on)
   (message "enabling YASnippet: done")
 )
