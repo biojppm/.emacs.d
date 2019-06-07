@@ -230,16 +230,16 @@
 
 ;; http://ergoemacs.org/emacs/emacs_hyper_super_keys.html
 
-;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
-;; super: left Windows key
-(setq w32-pass-lwindow-to-system nil)
-(setq w32-lwindow-modifier 'super) ; Left Windows key
-;; super: right Windows key
-(setq w32-pass-rwindow-to-system nil)
-(setq w32-rwindow-modifier 'super) ; Right Windows key
-;; make the menu/app key the hyper key
-(setq w32-pass-apps-to-system nil)
-(setq w32-apps-modifier 'hyper) ; Menu/App key
+;; ;; make PC keyboard's Win key or other to type Super or Hyper, for emacs running on Windows.
+;; ;; super: left Windows key
+;; (setq w32-pass-lwindow-to-system nil)
+;; (setq w32-lwindow-modifier 'super) ; Left Windows key
+;; ;; super: right Windows key
+;; (setq w32-pass-rwindow-to-system nil)
+;; (setq w32-rwindow-modifier 'super) ; Right Windows key
+;; ;; make the menu/app key the hyper key
+;; (setq w32-pass-apps-to-system nil)
+;; (setq w32-apps-modifier 'hyper) ; Menu/App key
 
 ;; Mac OS X
 ;; set keys for Apple keyboard, for emacs in OS X
@@ -1803,6 +1803,9 @@ original line and use the absolute value."
   :init (add-hook 'prog-mode-hook #'ws-butler-mode)
   )
 
+(use-package open-in-msvs
+  :defer t
+  :commands open-in-msvs)
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
@@ -2732,6 +2735,9 @@ original line and use the absolute value."
 ;;
 ;;     P u to do a git push
 ;;     F u to do a git pull
+;;
+;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+;;
 
 (use-package magit
   :init
@@ -2815,7 +2821,19 @@ original line and use the absolute value."
 )
 
 
+;;-----------------------------------------------------------------------------
 
+(let ((fn (concat emacs-dir "local.el")))
+  (if (file-exists-p fn)
+      (progn
+        (message "loading local config file: %s" fn)
+        (load-file fn)
+        )
+      )
+  )
+
+
+;;-----------------------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -2873,12 +2891,14 @@ original line and use the absolute value."
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
+     open-in-msvs
      org-babel-eval-in-repl
      paradox
      pdb-mode
      persp-mode
      persp-projectile
      php-mode
+     protobuf-mode
      realgud
      rg
      seq

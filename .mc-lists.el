@@ -11,6 +11,7 @@
         c-electric-slash
         c-electric-star
         c-hungry-delete-forward
+        c-indent-line-or-region
         drag-stuff-down
         gcm-scroll-down
         gcm-scroll-up
@@ -18,10 +19,12 @@
         hungry-delete-forward
         indent-for-tab-command
         kill-region
+        kmacro-end-or-call-macro
         markdown-outdent-or-delete
         my-open-init-el
         nuke-line
         org-self-insert-command
+        org-yank
         overwrite-mode
         smart-beginning-of-line
         yaml-electric-backspace
@@ -32,6 +35,7 @@
       '(
         compile-goto-error
         counsel-yank-pop
+        duplicate-line-or-region
         gud-tooltip-mouse-motion
         help-for-help
         mouse-set-region
