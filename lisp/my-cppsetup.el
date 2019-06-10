@@ -115,6 +115,7 @@
   (local-set-key (kbd "C-c o") 'ff-find-other-file)
   (local-set-key (kbd "C-c {") 'my-cc-curly-brackets)
   (local-set-key (kbd "M-q") 'c-fill-paragraph)
+  (local-set-key (kbd "C-d") 'duplicate-line-or-region)
 
   ; Turn off tab character
   (setq-default indent-tabs-mode nil)

@@ -1625,6 +1625,7 @@ original line and use the absolute value."
   ;; bind yas-expand to C-S-tab
   (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)  ;; this doesn't work in windows
   (define-key yas-minor-mode-map (kbd "<C-s-tab>") 'yas-expand)  ;; ... so use this with the windows key
+  (define-key yas-minor-mode-map (kbd "C-+") 'yas-expand)
   (yas-minor-mode-on)
   (message "enabling YASnippet: done")
 )
@@ -1823,7 +1824,7 @@ original line and use the absolute value."
   (add-hook 'c-mode-common-hook #'my-c++-completion-hook)
   :bind
   (:map c-mode-base-map
-        ("C-d" . duplicate-line-or-region)
+        ;; ("C-d" . duplicate-line-or-region)
         )
   )
 
@@ -1836,7 +1837,7 @@ original line and use the absolute value."
   (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
   :bind
   (:map c-mode-base-map
-        ("C-d" . duplicate-line-or-region)
+        ;; ("C-d" . duplicate-line-or-region)
         )
   )
 
@@ -1904,9 +1905,12 @@ original line and use the absolute value."
   (message "my-cquery-hook --- DONE")
   )
 
+(load "my-lsp-setup")
 (defun my-lsp-hook()
   (interactive)
+  (message "my-lsp-hook 0")
   (lsp)
+  (message "my-lsp-hook 1")
   )
 
 ;; cmany
