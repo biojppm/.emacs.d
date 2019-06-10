@@ -56,6 +56,7 @@
 ;;http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
 
+(setq scroll-preserve-screen-position t) ;; make PageUp+PageDown return to the departing pos
 (setq visible-bell t)       ; Disable bell
 (setq inhibit-startup-screen t) ; Disable startup screen
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)) ; remove toolbar
