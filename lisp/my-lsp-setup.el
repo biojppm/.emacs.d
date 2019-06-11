@@ -4,25 +4,10 @@
 (use-package lsp-mode
   :defer t
   :commands lsp
-  :init
+  :config
   (message "lsp-mode INIT")
-  (use-package lsp-ui
-    :defer t
-    :commands lsp-ui-mode
-    :init
-    (message "lsp-ui INIT")
-    ;; https://github.com/emacs-lsp/lsp-ui/blob/master/lsp-ui-sideline.el
-    (setq lsp-ui-sideline-delay 5.0)
-    :bind
-    ("C-c C-?" . lsp-ui-sideline-toggle-symbols-info)
-    (message "lsp-ui INIT")
-    )
-  (message "lsp-mode 1")
-  (use-package company-lsp
-    :defer t
-    :commands company-lsp)
-  (message "lsp-mode 2")
   (setq lsp-enable-on-type-formatting nil)
+  (message "lsp-mode 1")
   ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
   (setq xref-prompt-for-identifier
         '(not xref-find-definitions
@@ -31,8 +16,29 @@
               xref-find-references
               )
         )
+  (message "lsp-mode 2")
+  (use-package company-lsp
+    :defer t
+    :commands company-lsp
+    :init
+    (message "company-lsp INIT")
+    (message "company-lsp DONE")
+    )
+  (message "lsp-mode 3")
+  (use-package lsp-ui
+    :defer t
+    :commands lsp-ui-mode
+    :init
+    (message "lsp-ui INIT")
+    ;; https://github.com/emacs-lsp/lsp-ui/blob/master/lsp-ui-sideline.el
+    (setq lsp-ui-sideline-delay 5.0)
+    (message "lsp-ui DONE")
+    :bind
+    ("C-c C-?" . lsp-ui-sideline-toggle-symbols-info)
+    )
   (message "lsp-mode DONE")
   )
+
 
 (use-package ccls
   :defer t
