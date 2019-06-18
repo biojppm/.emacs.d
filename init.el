@@ -1935,6 +1935,13 @@ original line and use the absolute value."
   :mode (("\\.cs\\'" . csharp-mode)
          ("\\.CS\\'" . csharp-mode)))
 
+;;; F#
+(use-package fsharp-mode
+  :config (c-set-offset 'substatement-open 0)
+  (use-snips)(add-hook 'fsharp-mode-hook #'hook-snips)
+  :mode (("\\.fs\\'" . fsharp-mode)
+         ("\\.fS\\'" . fsharp-mode)))
+
 
 ;;; Python
 ;;https://elpy.readthedocs.io/en/
@@ -2128,11 +2135,21 @@ original line and use the absolute value."
   (if (eq window-system 'x)
       (font-lock-mode 1))
   :config
+  (use-snips)
+  (add-hook 'octave-mode-hook #'hook-snips)
   (setq inferior-octave-program "octave-cli")
-  (use-snips)(add-hook 'octave-mode-hook #'hook-snips)
   :mode ("\\.m$" . octave-mode)
   )
 
+;;; AutoHotKey
+(use-package xahk-mode
+  :mode ("\\.ahk$" . xahk-mode)
+  )
+
+;;; PowerShell
+(use-package powershell
+  :mode ("\\.ps1$" . powershell-mode)
+  )
 
 ;;; Lisp
 ;(use-package lisp-mode
@@ -2877,6 +2894,7 @@ original line and use the absolute value."
      ess
      firebelly-theme
      flx-ido
+     fsharp-mode
      git-timemachine
      glsl-mode
      google-this
@@ -2903,6 +2921,7 @@ original line and use the absolute value."
      persp-mode
      persp-projectile
      php-mode
+     powershell
      protobuf-mode
      realgud
      rg
@@ -2924,6 +2943,7 @@ original line and use the absolute value."
      wgrep-ag
      window-number
      ws-butler
+     xahk-mode
      yaml-mode
      yasnippet-classic-snippets
      zenburn-theme
