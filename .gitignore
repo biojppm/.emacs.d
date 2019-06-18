@@ -11,6 +11,7 @@ bookmarks
 cmake-ide-build-dir.save
 cmany.save
 ede-projects.el
+eshell/
 history
 ido.last
 .local
