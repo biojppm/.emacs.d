@@ -1,3 +1,5 @@
+;; see https://github.com/chrisdone/elisp-guide
+;; see http://lisperati.com/casting.html
 ;; see http://ergoemacs.org/emacs/elisp_basics.html
 ;; see http://ergoemacs.org/emacs/emacs_make_modern.html for lots of goodies
 ;; see http://stackoverflow.com/questions/5795451/how-to-detect-that-emacs-is-in-terminal-mode
@@ -907,6 +909,44 @@
 
 
 ;;------------------------------------------------------------------
+;; wgrep
+;; wgrep allows you to edit a grep buffer and apply those changes to the file buffer.
+;; You can edit the text in the *grep* buffer after typing `C-c C-p` .
+;; After that the changed text is highlighted.
+;; The following keybindings are defined:
+;;
+;; * `C-c C-e`: Apply the changes to file buffers.
+;; * `C-c C-u`: All changes are unmarked and ignored.
+;; * `C-c C-d`: Mark as delete to current line (including newline).
+;; * `C-c C-r`: Remove the changes in the region (these changes are not
+;;   applied to the files. Of course, the remaining
+;;   changes can still be applied to the files.)
+;; * `C-c C-p`: Toggle read-only area.
+;; * `C-c C-k`: Discard all changes and exit.
+;; * `C-x C-q`: Exit wgrep mode.
+;;
+;; * To save all buffers that wgrep has changed, run
+;;
+;;     M-x wgrep-save-all-buffers
+;;
+;; * To save buffer automatically when `wgrep-finish-edit'.
+;;
+;;     (setq wgrep-auto-save-buffer t)
+;;
+;; * You can change the default key binding to switch to wgrep.
+;;
+;;     (setq wgrep-enable-key "r")
+;;
+;; * To apply all changes wheather or not buffer is read-only.
+;;
+;;     (setq wgrep-change-readonly-file t)
+
+(use-package wgrep
+  )
+
+
+;;------------------------------------------------------------------
+;; counsel
 
 (use-package counsel
   :ensure t
@@ -2940,6 +2980,7 @@ original line and use the absolute value."
      vlf
      volatile-highlights
      web-mode
+     wgrep
      wgrep-ag
      window-number
      ws-butler
@@ -2970,7 +3011,7 @@ original line and use the absolute value."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(flymake-errline ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))) t)
+ '(flymake-error ((t (:background nil :foreground nil :inverse-video nil :underline nil :slant normal :weight normal))))
  '(highlight-indentation-face ((t (:background "gray24")))))
 
 

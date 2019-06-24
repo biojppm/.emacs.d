@@ -41,10 +41,14 @@
 
 
 (use-package ccls
-  :defer t
-  :after projectile
+  ;;:defer t
+  ;;:after projectile
   ;;:ensure-system-package ccls ;; https://github.com/jwiegley/use-package/issues/698
-  :custom
+  :init
+  (message "ccls INIT")
+  (message "ccls INIT DONE")
+  :config
+  (message "ccls CUSTOM")
   (ccls-args nil)
   (ccls-executable (executable-find "ccls"))
   (message "ccls-executable: %s" ccls-executable)
@@ -52,6 +56,6 @@
   (projectile-project-root-files-top-down-recurring
    (append '("compile_commands.json" ".ccls")
            projectile-project-root-files-top-down-recurring))
-  :config
   (push ".ccls-cache" projectile-globally-ignored-directories)
+  (message "ccls custom DONE")
   )
