@@ -23,6 +23,7 @@
         markdown-outdent-or-delete
         my-open-init-el
         nuke-line
+        nxml-electric-slash
         org-self-insert-command
         org-yank
         overwrite-mode
