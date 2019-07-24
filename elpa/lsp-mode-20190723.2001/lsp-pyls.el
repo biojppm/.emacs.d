@@ -256,7 +256,7 @@ dot."
   :group 'lsp-pyls
   :package-version '(lsp-mode . "6.1"))
 
-(defcustom lsp-pyls-plugins-rope-completion-enabled t
+(defcustom lsp-pyls-plugins-rope-completion-enabled nil
   "Enable or disable the plugin."
   :type 'boolean
   :group 'lsp-pyls
@@ -333,7 +333,8 @@ at all."
                                       (lsp--set-configuration (lsp-configuration-section "pyls")))
                                     (puthash
                                      "textDocumentSync"
-                                     (ht ("save" t))
+                                     (ht ("save" t)
+                                         ("change" 2))
                                      (lsp--workspace-server-capabilities workspace)))))
 
 (provide 'lsp-pyls)
