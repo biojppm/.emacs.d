@@ -19,6 +19,7 @@
         hungry-delete-forward
         indent-for-tab-command
         kill-region
+        kill-visual-line
         kmacro-end-or-call-macro
         markdown-outdent-or-delete
         my-open-init-el

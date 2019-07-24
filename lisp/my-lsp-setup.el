@@ -49,13 +49,13 @@
   (message "ccls INIT DONE")
   :config
   (message "ccls CUSTOM")
-  (ccls-args nil)
-  (ccls-executable (executable-find "ccls"))
+  ;;(ccls-args nil)
+  (setq ccls-executable (executable-find "ccls"))
   (message "ccls-executable: %s" ccls-executable)
   ;; https://github.com/MaskRay/ccls/wiki/Project-Setup
-  (projectile-project-root-files-top-down-recurring
-   (append '("compile_commands.json" ".ccls")
-           projectile-project-root-files-top-down-recurring))
+  ;;(projectile-project-root-files-top-down-recurring
+  ;; (append '("compile_commands.json" ".ccls")
+  ;;         projectile-project-root-files-top-down-recurring))
   (push ".ccls-cache" projectile-globally-ignored-directories)
   (message "ccls custom DONE")
   )
