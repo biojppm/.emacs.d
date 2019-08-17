@@ -31,27 +31,68 @@
   :group 'lsp-mode
   :link '(url-link "https://github.com/elm-tooling/elm-language-server"))
 
-(defcustom lsp-elm-server-install-dir
-  (locate-user-emacs-file "elm-language-server")
-  "Install directory for elm-language-server. This directory should contain a clone of elm-tooling/elm-language-server from github."
+(defcustom lsp-elm-elm-language-server-path
+  "elm-language-server"
+  "Path for elm-language-server.
+Can be installed globally with npm -i -g @elm-tooling/elm-language-server,
+or manually by cloning the repo and following the installing instructions."
   :group 'lsp-elm
   :risky t
-  :type 'directory)
+  :type 'file)
 
-(defun lsp-elm--elm-command ()
+(defcustom lsp-elm-trace-server
+  nil
+  "Enable/disable trace logging of client and server communication."
+  :type 'boolean
+  :group 'lsp-elm)
+
+(defcustom lsp-elm-elm-path
+  "elm"
+  "Path to your elm executable."
+  :type 'file
+  :group 'lsp-elm)
+
+(defcustom lsp-elm-elm-format-path
+  "elm-format"
+  "Path to your elm executable."
+  :type 'file
+  :group 'lsp-elm)
+
+(defcustom lsp-elm-elm-test-path
+  "elm-test"
+  "Path to your elm executable."
+  :type 'file
+  :group 'lsp-elm)
+
+(defcustom lsp-elm-diagnostics-on-save-only
+  nil
+  "Determines whether or not diagnostic updates are triggered only on save."
+  :type 'boolean
+  :group 'lsp-elm)
+
+(defcustom lsp-elm-server-args
+  '("--stdio")
+  "Arguments to pass to the server."
+  :type '(repeat string)
+  :group 'lsp-elm)
+
+(defun lsp-elm--elm-language-server-command ()
   "Generate LSP startup command for the Elm Language Server."
-  `("node" ,(f-join (file-truename lsp-elm-server-install-dir)
-                    "out/index.js")
-    "--stdio"))
+  (cons
+   lsp-elm-elm-language-server-path
+   lsp-elm-server-args))
 
 (defun lsp-clients-elm--make-init-options ()
   "Init options for elm-language-server."
-  '(
-    :runtime "node" ;; Runtime for tree-sitter module, can be either node or electron
-    ))
+  `(
+    :elmPath ,lsp-elm-elm-path
+    :elmFormatPath ,lsp-elm-elm-format-path
+    :elmTestPath ,lsp-elm-elm-test-path
+    :diagnosticsOnSaveOnly ,(lsp-json-bool lsp-elm-diagnostics-on-save-only)
+    :trace.server ,(lsp-json-bool lsp-elm-trace-server)))
 
 (lsp-register-client
- (make-lsp-client :new-connection (lsp-stdio-connection #'lsp-elm--elm-command)
+ (make-lsp-client :new-connection (lsp-stdio-connection #'lsp-elm--elm-language-server-command)
                   :major-modes '(elm-mode)
                   :priority -1
                   :initialization-options #'lsp-clients-elm--make-init-options

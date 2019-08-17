@@ -151,6 +151,13 @@ complexity."
   :group 'lsp-pyls
   :package-version '(lsp-mode . "6.1"))
 
+(defcustom lsp-pyls-plugins-pylint-args []
+  "Arguments, passed to pylint"
+  :risky t
+  :type '(repeat string)
+  :group 'lsp-pyls
+  :package-version '(lsp-mode . "6.1"))
+
 (defcustom lsp-pyls-plugins-pycodestyle-enabled t
   "Enable or disable the plugin."
   :type 'boolean
@@ -256,7 +263,7 @@ dot."
   :group 'lsp-pyls
   :package-version '(lsp-mode . "6.1"))
 
-(defcustom lsp-pyls-plugins-rope-completion-enabled t
+(defcustom lsp-pyls-plugins-rope-completion-enabled nil
   "Enable or disable the plugin."
   :type 'boolean
   :group 'lsp-pyls
@@ -305,6 +312,7 @@ at all."
    ("pyls.plugins.pycodestyle.exclude" lsp-pyls-plugins-pycodestyle-exclude)
    ("pyls.plugins.pycodestyle.enabled" lsp-pyls-plugins-pycodestyle-enabled t)
    ("pyls.plugins.pylint.enabled" lsp-pyls-plugins-pylint-enabled t)
+   ("pyls.plugins.pylint.args" lsp-pyls-plugins-pylint-args)
    ("pyls.plugins.preload.modules" lsp-pyls-plugins-preload-modules)
    ("pyls.plugins.preload.enabled" lsp-pyls-plugins-preload-enabled t)
    ("pyls.plugins.mccabe.threshold" lsp-pyls-plugins-mccabe-threshold)
@@ -333,7 +341,8 @@ at all."
                                       (lsp--set-configuration (lsp-configuration-section "pyls")))
                                     (puthash
                                      "textDocumentSync"
-                                     (ht ("save" t))
+                                     (ht ("save" t)
+                                         ("change" 2))
                                      (lsp--workspace-server-capabilities workspace)))))
 
 (provide 'lsp-pyls)
