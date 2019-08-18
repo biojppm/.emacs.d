@@ -38,6 +38,9 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 # usage: $(call copy_tree,src_root,pattern(s),dst_root)
 copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
+# define a function to make a directory and parents
+makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
+
 #----------------------------------------------------------------------
 
 all: clang_install ccls_install
@@ -125,13 +128,13 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 	 #fi
 
 $(CCLS_DIR):
-	if [ ! -d $(CCLS_DIR) ] ; then mkdir -p $(CCLS_DIR) ; fi
+	$(call makedirs, $(CCLS_DIR))
 
 $(CLANG_DIR):
-	if [ ! -d $(CLANG_DIR) ] ; then mkdir -p $(CLANG_DIR) ; fi
+	$(call makedirs, $(CLANG_DIR))
 
 $(LOCAL_SRC_DIR):
-	if [ ! -d $(LOCAL_SRC_DIR) ] ; then mkdir -p $(LOCAL_SRC_DIR) ; fi
+	$(call makedirs, $(LOCAL_SRC_DIR))
 
 $(LOCAL_DIR):
-	if [ ! -d $(LOCAL_DIR) ] ; then mkdir -p $(LOCAL_DIR) ; fi
+	$(call makedirs, $(LOCAL_DIR))

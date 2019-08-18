@@ -41,8 +41,8 @@
 
 
 (use-package ccls
-  ;;:defer t
-  ;;:after projectile
+  :defer t
+  :after projectile
   ;;:ensure-system-package ccls ;; https://github.com/jwiegley/use-package/issues/698
   :init
   (message "ccls INIT")
