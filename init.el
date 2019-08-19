@@ -2191,6 +2191,14 @@ original line and use the absolute value."
   :mode ("\\.ps1$" . powershell-mode)
   )
 
+;;; Robot Frameework
+(use-package robot-mode
+  :defer t
+  :init (message "robot framework init!!")
+  :config (message "robot framework config!!")
+  :mode ("\\.robot$" . robot-mode)
+  )
+
 ;;; Lisp
 ;(use-package lisp-mode
 ;; :config
