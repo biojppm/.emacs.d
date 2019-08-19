@@ -45,6 +45,17 @@
 
 (defvar open-in-msvs--path-to-vbs (concat (file-name-directory load-file-name) "open-in-msvs.vbs"))
 
+(defun -open-in-msvs--get-full-path (filename)
+  (let* (
+         ;;(a (message "filename: %s" filename))
+         (qfilename filename);;(shell-quote-argument filename))
+         ;;(a (message "qfilename: %s" qfilename))
+         (wfilename (replace-regexp-in-string "/" "\\\\" qfilename t t))
+         ;;(a (message "wfilename: %s" wfilename))
+         )
+    wfilename
+  )
+  )
 
 ;; Main function
 ;;;###autoload
@@ -53,13 +64,24 @@
   (interactive)
   (save-restriction
     (widen)
-    (call-process-shell-command
-     (format "%s %s %d %d"
-             (shell-quote-argument open-in-msvs--path-to-vbs)
-             (shell-quote-argument (buffer-file-name))
-             (line-number-at-pos)
-             (current-column))
-     nil nil nil)))
+    (let* (
+          (script (-open-in-msvs--get-full-path open-in-msvs--path-to-vbs))
+          (file (-open-in-msvs--get-full-path (buffer-file-name)))
+          (line (line-number-at-pos))
+          (column (current-column))
+          ;; note the double slash -- it's because of this:
+          ;; https://stackoverflow.com/questions/21357813/bash-in-git-for-windows-weirdness-when-running-a-command-with-cmd-exe-c-with-a
+          (cmd (format "cmd //C %s %s %d %d" script file line column))
+          )
+      ;;(message "cmd: %s" cmd)
+      (call-process-shell-command
+       cmd
+       nil ;; INFILE
+       nil ;; BUFFER
+       nil ;; DISPLAY
+       )
+      )
+    ))
 
 
 (provide 'open-in-msvs)

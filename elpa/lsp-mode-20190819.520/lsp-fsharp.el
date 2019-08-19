@@ -87,12 +87,12 @@ To use the mono/.Net framework version, set this to \"https://ci.appveyor.com/ap
     fsac))
 
 (defun lsp-fsharp--fsac-install ()
-  "Downloads the latest version of fsautocomplete, and set `lsp-fsharp-server-path'."
+  "Download the latest version of fsautocomplete and extract it to `lsp-fsharp-server-install-dir'."
   (let* ((temp-file (make-temp-file "fsautocomplete" nil ".zip"))
          (install-dir-full (expand-file-name lsp-fsharp-server-install-dir))
          (unzip-script (cond ((executable-find "unzip") (format "mkdir -p %s && unzip -qq %s -d %s" install-dir-full temp-file install-dir-full))
                              ((executable-find "powershell") (format "powershell -noprofile -noninteractive -nologo -ex bypass Expand-Archive -path '%s' -dest '%s'" temp-file install-dir-full))
-                             (t (user-error (format "Unable to unzip server - file %s cannot be extracted, please extract it manually") temp-file)))))
+                             (t (user-error (format "Unable to unzip server - file %s cannot be extracted, please extract it manually" temp-file))))))
     (url-copy-file lsp-fsharp-server-download-url temp-file t)
     (shell-command unzip-script)
     (shell-command (format "%s %s --version" (lsp-fsharp--fsac-runtime-cmd) (lsp-fsharp--fsac-cmd)))))
