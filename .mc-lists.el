@@ -17,6 +17,7 @@
         gcm-scroll-up
         hungry-delete-backward
         hungry-delete-forward
+        ignore
         indent-for-tab-command
         kill-region
         kill-visual-line
@@ -29,6 +30,7 @@
         org-yank
         overwrite-mode
         smart-beginning-of-line
+        xref-pop-marker-stack
         yaml-electric-backspace
         yaml-electric-dash-and-dot
         ))
