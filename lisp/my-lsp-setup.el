@@ -48,7 +48,7 @@
   (message "ccls INIT")
   (message "ccls INIT DONE")
   :config
-  (message "ccls CUSTOM")
+  (message "ccls CONFIG")
   ;;(ccls-args nil)
   (setq ccls-executable (executable-find "ccls"))
   (message "ccls-executable: %s" ccls-executable)
@@ -57,5 +57,5 @@
   ;; (append '("compile_commands.json" ".ccls")
   ;;         projectile-project-root-files-top-down-recurring))
   (push ".ccls-cache" projectile-globally-ignored-directories)
-  (message "ccls custom DONE")
+  (message "ccls CONFIG DONE")
   )
