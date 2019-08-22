@@ -2226,46 +2226,62 @@ original line and use the absolute value."
 ;; (setq inferior-lisp-program "sbcl --dynamic-space-size 1024"))
 
 ;;-------------------------------------------------------------------------
-;;Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
-;
-;;M-x compile
-;;    Run a compiler asynchronously under Emacs, with error messages going to the *compilation* buffer.
-;;M-x recompile
-;;    Invoke a compiler with the same command as in the last invocation of M-x compile.
-;;M-x kill-compilation
-;;    Kill the running compilation subprocess.
+;; Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
+;;
+;; M-x compile
+;;     Run a compiler asynchronously under Emacs, with error messages going to the *compilation* buffer.
+;; M-x recompile
+;;     Invoke a compiler with the same command as in the last invocation of M-x compile.
+;; M-x kill-compilation
+;;     Kill the running compilation subprocess.
 
-;;Compilation mode commands: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode
-;
-;;M-g M-n
-;;M-g n
-;;C-x `
-;;    Visit the locus of the next error message or match (next-error).
-;;M-g M-p
-;;M-g p
-;;    Visit the locus of the previous error message or match (previous-error).
-;;M-n
-;;    Move point to the next error message or match, without visiting its locus (compilation-next-error).
-;;M-p
-;;    Move point to the previous error message or match, without visiting its locus (compilation-previous-error).
-;;M-}
-;;    Move point to the next error message or match occurring in a different file (compilation-next-file).
-;;M-{
-;;    Move point to the previous error message or match occurring in a different file (compilation-previous-file).
-;;C-c C-f
-;;    Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
-;
+;; Compilation mode commands: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode
+;;
+;; M-g M-n
+;; M-g n
+;; C-x `
+;;     Visit the locus of the next error message or match (next-error).
+;; M-g M-p
+;; M-g p
+;;     Visit the locus of the previous error message or match (previous-error).
+;; M-n
+;;     Move point to the next error message or match, without visiting its locus (compilation-next-error).
+;; M-p
+;;     Move point to the previous error message or match, without visiting its locus (compilation-previous-error).
+;; M-}
+;;     Move point to the next error message or match occurring in a different file (compilation-next-file).
+;; M-{
+;;     Move point to the previous error message or match occurring in a different file (compilation-previous-file).
+;; C-c C-f
+;;     Toggle Next Error Follow minor mode, which makes cursor motion in the compilation buffer produce automatic source display.
 
+(require 'compile)
 ;;; Shut up compile saves
 (setq compilation-ask-about-save nil)
 ;;; Don't save *anything*
 (setq compilation-save-buffers-predicate '(lambda () nil))
 ;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 (setq compilation-scroll-output 'first-error)
+;; add visual studio error regexes
+(add-to-list 'compilation-error-regexp-alist 'visual_studio)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(visual_studio
+               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. ]+\\)(\\([0-9]+\\),\\([0-9]+\\))+: +\\(error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
+               1 2)
+             )
 
 ;; always kill compile buffer http://user42.tuxfamily.org/compilation-always-kill/index.html
 (autoload 'compilation-always-kill-mode "compilation-always-kill" nil t)
 (eval-after-load "compile" '(compilation-always-kill-mode 1))
+(defun my-compilation-mode-hook()
+  (company-mode -1)
+  (ivy-mode -1)
+  (undo-tree-mode -1)
+  (linum-mode 0)
+  (disable-line-wrapping)
+  (local-set-key (kbd "w") 'visual-line-mode)
+  )
+(add-hook 'compilation-mode-hook 'my-compilation-mode-hook)
 
 (defvar my-compilation-exit-code nil)
 (defun my-compilation-exit-message-function (status_ code message)
@@ -2294,10 +2310,8 @@ original line and use the absolute value."
   (setq my-compilation-comp-window (get-buffer-window "*compilation*"))
   (select-window my-compilation-comp-window)
   ;;(when (not my-compilation-buffer-exists)
-  (disable-line-wrapping)
-  (linum-mode 0)
-    ;;(setq h (window-height w))
-    ;;(shrink-window (- h 10))
+  ;;  (setq h (window-height w))
+  ;;  (shrink-window (- h 10))
   ;;)
   (previous-buffer)
   (setq my-compilation-comp-buffer (current-buffer))
@@ -2359,6 +2373,7 @@ original line and use the absolute value."
   (ansi-color-apply-on-region compilation-filter-start (point))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
 
 ;;-------------------------------------------------------------------------
 ;; Debugging https://www.gnu.org/software/emacs/manual/html_node/emacs/GDB-Graphical-Interface.html#GDB-Graphical-Interface
