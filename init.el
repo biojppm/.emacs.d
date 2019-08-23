@@ -2266,7 +2266,7 @@ original line and use the absolute value."
 (add-to-list 'compilation-error-regexp-alist 'visual_studio)
 (add-to-list 'compilation-error-regexp-alist-alist
              '(visual_studio
-               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. ]+\\)(\\([0-9]+\\),\\([0-9]+\\))+: +\\(error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
+               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
                1 2)
              )
 
