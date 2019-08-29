@@ -1968,24 +1968,36 @@ original line and use the absolute value."
 )
 
 
-;;; C#
-(use-package csharp-mode
-  :config (c-set-offset 'substatement-open 0)
+;; C#
+;; https://github.com/OmniSharp/omnisharp-emacs
+(defun my-csharp-mode-setup()
+  (flycheck-mode)
+  (csharp-mode 1)
+  (c-set-offset 'substatement-open 0)
+  (add-to-list 'company-backends 'company-omnisharp)
+  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
+  )
+(use-package omnisharp-mode
+  :config
+  (use-package csharp-mode)
   (use-snips)(add-hook 'csharp-mode-hook #'hook-snips)
-  :mode (("\\.cs\\'" . csharp-mode)
-         ("\\.CS\\'" . csharp-mode)))
+  (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
+  :mode (("\\.cs\\'" . omnisharp-mode)
+         ("\\.CS\\'" . omnisharp-mode)))
 
-;;; F#
+;; F#
 (use-package fsharp-mode
-  :config (c-set-offset 'substatement-open 0)
-  (use-snips)(add-hook 'fsharp-mode-hook #'hook-snips)
+  :config
+  (c-set-offset 'substatement-open 0)
+  (use-snips)
+  (add-hook 'fsharp-mode-hook #'hook-snips)
   :mode (("\\.fs\\'" . fsharp-mode)
-         ("\\.fS\\'" . fsharp-mode)))
+         ("\\.FS\\'" . fsharp-mode)))
 
 
-;;; Python
-;;https://elpy.readthedocs.io/en/
-;;https://github.com/jorgenschaefer/elpy
+;; Python
+;; https://elpy.readthedocs.io/en/
+;; https://github.com/jorgenschaefer/elpy
 (defun my-pdb-send-cmd (cmd)
   (interactive (list (read-string "command to send to pdb: " "")))
   (let ((b (current-buffer)))
@@ -2099,7 +2111,10 @@ original line and use the absolute value."
          ("\\.xslt\\'" . nxml-mode)
          ("\\.xsl\\'" . nxml-mode)
          ("\\.rng\\'" . nxml-mode)
-         ("\\.dtllp\\'" . nxml-mode)))
+         ("\\.dtllp\\'" . nxml-mode)
+         ("\\.xaml\\'" . nxml-mode)
+         )
+  )
 (defun unhtml (start end)
   "escape html characters: &, <, >, \".
   taken from: http://shallowsky.com/blog/linux/editors/emacs-escape-html.html"
@@ -2948,90 +2963,7 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (
-     anzu
-     arduino-mode
-     babel
-     babel-repl
-     ccls
-     clang-format
-     clean-aindent-mode
-     cmake-mode
-     company-c-headers
-     counsel-etags
-     company-lsp
-     company-rtags
-     company-ycmd
-     counsel-projectile
-     cquery
-     csharp-mode
-     cython-mode
-     dirtree
-     drag-stuff
-     dtrt-indent
-     elisp-slime-nav
-     elpy
-     elpygen
-     ess
-     firebelly-theme
-     flx-ido
-     fsharp-mode
-     git-timemachine
-     glsl-mode
-     google-this
-     help-fns+
-     hemisu-theme
-     highlight-symbol
-     hungry-delete
-     ido-ubiquitous
-     ido-vertical-mode
-     iedit
-     levenshtein
-     lsp-mode
-     lsp-ui
-     magit
-     markdown-mode
-     mc-extras
-     modern-cpp-font-lock
-     monokai-theme
-     multiple-cursors
-     open-in-msvs
-     org-babel-eval-in-repl
-     paradox
-     pdb-mode
-     persp-mode
-     persp-projectile
-     php-mode
-     powershell
-     protobuf-mode
-     realgud
-     rg
-     seq
-     slime
-     smart-mode-line
-     smartparens
-     smex
-     solarized-theme
-     syntax-subword
-     tango-plus-theme
-     term-run
-     transient
-     undo-tree
-     use-package
-     vlf
-     volatile-highlights
-     web-mode
-     wgrep
-     wgrep-ag
-     window-number
-     ws-butler
-     xahk-mode
-     yaml-mode
-     yasnippet-classic-snippets
-     zenburn-theme
-     )
-    )
-   )
+    (omnisharp anzu arduino-mode babel babel-repl ccls clang-format clean-aindent-mode cmake-mode company-c-headers counsel-etags company-lsp company-rtags company-ycmd counsel-projectile cquery csharp-mode cython-mode dirtree drag-stuff dtrt-indent elisp-slime-nav elpy elpygen ess firebelly-theme flx-ido fsharp-mode git-timemachine glsl-mode google-this help-fns+ hemisu-theme highlight-symbol hungry-delete ido-ubiquitous ido-vertical-mode iedit levenshtein lsp-mode lsp-ui magit markdown-mode mc-extras modern-cpp-font-lock monokai-theme multiple-cursors open-in-msvs org-babel-eval-in-repl paradox pdb-mode persp-mode persp-projectile php-mode powershell protobuf-mode realgud rg seq slime smart-mode-line smartparens smex solarized-theme syntax-subword tango-plus-theme term-run transient undo-tree use-package vlf volatile-highlights web-mode wgrep wgrep-ag window-number ws-butler xahk-mode yaml-mode yasnippet-classic-snippets zenburn-theme)))
  '(safe-local-variable-values
    (quote
     ((eval load-file
