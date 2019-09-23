@@ -2059,6 +2059,15 @@ original line and use the absolute value."
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
 
+;;; Haskell
+;; http://www.mew.org/~kazu/proj/ghc-mod/en/preparation.html
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+(add-hook 'haskell-mode-hook
+          (lambda ()
+            (ghc-init))
+          )
+
 ;;; GNU R
 ;;  instructions on ESS: http://ess.r-project.org/Manual/ess.html
 ;;  http://cran.r-project.org/doc/FAQ/R-FAQ.html#R-and-Emacs
@@ -2963,7 +2972,90 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (omnisharp anzu arduino-mode babel babel-repl ccls clang-format clean-aindent-mode cmake-mode company-c-headers counsel-etags company-lsp company-rtags company-ycmd counsel-projectile cquery csharp-mode cython-mode dirtree drag-stuff dtrt-indent elisp-slime-nav elpy elpygen ess firebelly-theme flx-ido fsharp-mode git-timemachine glsl-mode google-this help-fns+ hemisu-theme highlight-symbol hungry-delete ido-ubiquitous ido-vertical-mode iedit levenshtein lsp-mode lsp-ui magit markdown-mode mc-extras modern-cpp-font-lock monokai-theme multiple-cursors open-in-msvs org-babel-eval-in-repl paradox pdb-mode persp-mode persp-projectile php-mode powershell protobuf-mode realgud rg seq slime smart-mode-line smartparens smex solarized-theme syntax-subword tango-plus-theme term-run transient undo-tree use-package vlf volatile-highlights web-mode wgrep wgrep-ag window-number ws-butler xahk-mode yaml-mode yasnippet-classic-snippets zenburn-theme)))
+    (
+     anzu
+     arduino-mode
+     babel
+     babel-repl
+     ccls
+     clang-format
+     clean-aindent-mode
+     cmake-mode
+     company-c-headers
+     counsel-etags
+     company-lsp
+     company-rtags
+     company-ycmd
+     counsel-projectile
+     cquery
+     csharp-mode
+     cython-mode
+     dirtree
+     drag-stuff
+     dtrt-indent
+     elisp-slime-nav
+     elpy
+     elpygen
+     ess
+     firebelly-theme
+     flx-ido
+     fsharp-mode
+     git-timemachine
+     glsl-mode
+     ghc
+     google-this
+     help-fns+
+     hemisu-theme
+     highlight-symbol
+     hungry-delete
+     ido-ubiquitous
+     ido-vertical-mode
+     iedit
+     levenshtein
+     lsp-mode
+     lsp-ui
+     magit
+     markdown-mode
+     mc-extras
+     modern-cpp-font-lock
+     monokai-theme
+     multiple-cursors
+     omnisharp
+     open-in-msvs
+     org-babel-eval-in-repl
+     paradox
+     pdb-mode
+     persp-mode
+     persp-projectile
+     php-mode
+     powershell
+     protobuf-mode
+     realgud
+     rg
+     seq
+     slime
+     smart-mode-line
+     smartparens
+     smex
+     solarized-theme
+     syntax-subword
+     tango-plus-theme
+     term-run
+     transient
+     undo-tree
+     use-package
+     vlf
+     volatile-highlights
+     web-mode
+     wgrep
+     wgrep-ag
+     window-number
+     ws-butler
+     xahk-mode
+     yaml-mode
+     yasnippet-classic-snippets
+     zenburn-theme
+     )))
  '(safe-local-variable-values
    (quote
     ((eval load-file
