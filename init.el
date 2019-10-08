@@ -2039,6 +2039,7 @@ original line and use the absolute value."
     (add-hook 'gud-mode-hook #'my-pdb-hook)
     (message "python mode: elpy config finished")
     :bind (:map elpy-mode-map
+                ("M-." . elpy-goto-definition)
                 ("C-<up>" . backward-paragraph)
                 ("C-<down>" . forward-paragraph)
                 ("M-<up>" . drag-stuff-up)
@@ -2972,90 +2973,7 @@ original line and use the absolute value."
  '(ecb-options-version "2.40")
  '(package-selected-packages
    (quote
-    (
-     anzu
-     arduino-mode
-     babel
-     babel-repl
-     ccls
-     clang-format
-     clean-aindent-mode
-     cmake-mode
-     company-c-headers
-     counsel-etags
-     company-lsp
-     company-rtags
-     company-ycmd
-     counsel-projectile
-     cquery
-     csharp-mode
-     cython-mode
-     dirtree
-     drag-stuff
-     dtrt-indent
-     elisp-slime-nav
-     elpy
-     elpygen
-     ess
-     firebelly-theme
-     flx-ido
-     fsharp-mode
-     git-timemachine
-     glsl-mode
-     ghc
-     google-this
-     help-fns+
-     hemisu-theme
-     highlight-symbol
-     hungry-delete
-     ido-ubiquitous
-     ido-vertical-mode
-     iedit
-     levenshtein
-     lsp-mode
-     lsp-ui
-     magit
-     markdown-mode
-     mc-extras
-     modern-cpp-font-lock
-     monokai-theme
-     multiple-cursors
-     omnisharp
-     open-in-msvs
-     org-babel-eval-in-repl
-     paradox
-     pdb-mode
-     persp-mode
-     persp-projectile
-     php-mode
-     powershell
-     protobuf-mode
-     realgud
-     rg
-     seq
-     slime
-     smart-mode-line
-     smartparens
-     smex
-     solarized-theme
-     syntax-subword
-     tango-plus-theme
-     term-run
-     transient
-     undo-tree
-     use-package
-     vlf
-     volatile-highlights
-     web-mode
-     wgrep
-     wgrep-ag
-     window-number
-     ws-butler
-     xahk-mode
-     yaml-mode
-     yasnippet-classic-snippets
-     zenburn-theme
-     )))
+    (flymake-cppcheck flycheck anzu arduino-mode babel babel-repl ccls clang-format clean-aindent-mode cmake-mode company-c-headers counsel-etags company-lsp company-rtags company-ycmd counsel-projectile cquery csharp-mode cython-mode dirtree drag-stuff dtrt-indent elisp-slime-nav elpy elpygen ess firebelly-theme flx-ido fsharp-mode git-timemachine glsl-mode ghc google-this help-fns+ hemisu-theme highlight-symbol hungry-delete ido-ubiquitous ido-vertical-mode iedit levenshtein lsp-mode lsp-ui magit markdown-mode mc-extras modern-cpp-font-lock monokai-theme multiple-cursors omnisharp open-in-msvs org-babel-eval-in-repl paradox pdb-mode persp-mode persp-projectile php-mode powershell protobuf-mode realgud rg seq slime smart-mode-line smartparens smex solarized-theme syntax-subword tango-plus-theme term-run transient undo-tree use-package vlf volatile-highlights web-mode wgrep wgrep-ag window-number ws-butler xahk-mode yaml-mode yasnippet-classic-snippets zenburn-theme)))
  '(safe-local-variable-values
    (quote
     ((eval load-file

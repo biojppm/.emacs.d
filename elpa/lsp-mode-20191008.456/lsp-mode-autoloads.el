@@ -93,6 +93,8 @@
 
 ;;;### (autoloads nil "lsp-mode" "lsp-mode.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-mode.el
+(put 'lsp-enable-file-watchers 'safe-local-variable #'booleanp)
+(put 'lsp-file-watch-threshold 'safe-local-variable (lambda (i) (or (numberp i) (not i))))
 
 (autoload 'lsp "lsp-mode" "\
 Entry point for the server startup.
@@ -141,6 +143,13 @@ This avoids overloading the server with many files when starting Emacs.
 ;;; Generated autoloads from lsp-vetur.el
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vetur" '("lsp-")))
+
+;;;***
+
+;;;### (autoloads nil "lsp-vhdl" "lsp-vhdl.el" (0 0 0 0))
+;;; Generated autoloads from lsp-vhdl.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vhdl" '("lsp-vhdl-")))
 
 ;;;***
 
