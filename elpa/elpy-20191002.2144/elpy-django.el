@@ -144,6 +144,13 @@ test arguments in `elpy-django-test-runner-args'."
           (expand-file-name (concat (locate-dominating-file default-directory "manage.py") "manage.py")))
     (elpy-django 1)))
 
+(defun elpy-project-find-django-root ()
+  "Return the current Django project root, if any.
+
+This is marked with 'manage.py' or 'django-admin.py'."
+  (or (locate-dominating-file default-directory "django-admin.py")
+      (locate-dominating-file default-directory "manage.py")))
+
 (defun elpy-django--get-commands ()
   "Return list of django commands."
   (let ((dj-commands-str nil)
@@ -259,7 +266,18 @@ it will prompt for other flags/arguments to run."
             elpy-django-always-prompt
             (member cmd elpy-django-commands-with-req-arg))
     (setq cmd (concat cmd " " (read-shell-command (concat cmd ": ") "--noinput"))))
-  (compile (concat elpy-django-command " " cmd)))
+  ;;
+  (cond ((string= cmd "shell")
+         (run-python (concat elpy-django-command " shell -i python") t t))
+        (t
+         (let* ((program (car (split-string elpy-django-command)))
+                (args (cdr (split-string elpy-django-command)))
+                (buffer-name (format "django-%s" (car (split-string cmd)))))
+           (when (get-buffer (format "*%s*" buffer-name))
+             (kill-buffer (format "*%s*" buffer-name)))
+           (pop-to-buffer
+            (apply 'make-comint buffer-name program nil
+                   (append args (split-string cmd))))))))
 
 (defun elpy-django-runserver (arg)
   "Start the server and automatically add the ipaddr and port.
@@ -269,7 +287,12 @@ servers running per project.
 When called with a prefix (C-u), it will prompt for additional args."
   (interactive "P")
   (let* ((cmd (concat elpy-django-command " " elpy-django-server-command))
-         (proj-root (file-name-base (directory-file-name (elpy-project-root))))
+         (proj-root (if (elpy-project-root)
+                        (file-name-base (directory-file-name
+                                         (elpy-project-root)))
+                      (message "Elpy cannot find the root of the current django project. Starting the server in the current directory: '%s'."
+                               default-directory)
+                      default-directory))
          (buff-name (format "*runserver[%s]*" proj-root)))
     ;; Kill any previous instance of runserver since we might be doing something new
     (when (get-buffer buff-name)

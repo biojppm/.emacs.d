@@ -169,7 +169,9 @@ These will be checked in turn. The first directory found is used."
               (const :tag "Mercurial project root (.hg)"
                      elpy-project-find-hg-root)
               (const :tag "Subversion project root (.svn)"
-                     elpy-project-find-svn-root))
+                     elpy-project-find-svn-root)
+              (const :tag "Django project root (manage.py, django-admin.py)"
+                     elpy-project-find-django-root))
   :group 'elpy)
 
 (make-obsolete-variable 'elpy-company-hide-modeline
@@ -954,8 +956,8 @@ elpy_version
 python_interactive
 python_interactive_version
 python_interactive_executable
-rpc_venv
-rpc_venv_short
+rpc_virtualenv
+rpc_virtualenv_short
 rpc_python
 rpc_python_version
 rpc_python_executable
@@ -966,13 +968,14 @@ virtual_env_short"
   (with-temp-buffer
     (let ((config (make-hash-table :test #'equal)))
       (puthash "emacs_version" emacs-version config)
-      (let ((rpc-venv (elpy-rpc-get-or-create-venv)))
-        (puthash "rpc_venv" rpc-venv config)
+      (let ((rpc-venv (elpy-rpc-get-or-create-virtualenv)))
+        (puthash "rpc_virtualenv" rpc-venv config)
         (if rpc-venv
-            (puthash "rpc_venv_short"
-                     (file-name-nondirectory rpc-venv) config)
-          (puthash "rpc_venv_short" nil config)))
-      (with-elpy-rpc-venv-activated
+            (puthash "rpc_virtualenv_short"
+                     (file-name-nondirectory (directory-file-name rpc-venv))
+                       config)
+          (puthash "rpc_virtualenv_short" nil config)))
+      (with-elpy-rpc-virtualenv-activated
        (puthash "rpc_python" elpy-rpc-python-command config)
        (puthash "rpc_python_executable"
                 (executable-find elpy-rpc-python-command)
@@ -998,7 +1001,7 @@ virtual_env_short"
         (if venv
             (puthash "virtual_env_short" (file-name-nondirectory venv) config)
           (puthash "virtual_env_short" nil config)))
-      (with-elpy-rpc-venv-activated
+      (with-elpy-rpc-virtualenv-activated
        (let ((return-value (ignore-errors
                              (let ((process-environment
                                     (elpy-rpc--environment))
@@ -1037,8 +1040,8 @@ virtual_env_short"
         (rpc-python (gethash "rpc_python" config))
         (rpc-python-executable (gethash "rpc_python_executable" config))
         (rpc-python-version (gethash "rpc_python_version" config))
-        (rpc-venv (gethash "rpc_venv" config))
-        (rpc-venv-short (gethash "rpc_venv_short" config))
+        (rpc-virtualenv (gethash "rpc_virtualenv" config))
+        (rpc-virtualenv-short (gethash "rpc_virtualenv_short" config))
         (jedi-version (gethash "jedi_version" config))
         (jedi-latest (gethash "jedi_latest" config))
         (rope-version (gethash "rope_version" config))
@@ -1086,9 +1089,12 @@ virtual_env_short"
                  (t
                   "Not configured")))
             ("RPC virtualenv"
-              . ,(format "%s (%s)"
-                      rpc-venv-short
-                      rpc-venv))
+             . ,(format "%s (%s)"
+                        (if (or (eq elpy-rpc-virtualenv-path 'system)
+                                (eq elpy-rpc-virtualenv-path 'global))  ;; for backward compatibility
+                            "system"
+                          rpc-virtualenv-short)
+                        rpc-virtualenv))
             ((" Python" (lambda ()
                              (customize-variable
                               'elpy-rpc-python-command)))
@@ -1174,13 +1180,6 @@ PyPI, or nil if that's VERSION."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Elpy Formatted Insertion
 
-(defmacro elpy-insert--popup (buffer-name &rest body)
-  "Pop up a help buffer named BUFFER-NAME and execute BODY in it."
-  (declare (indent 1))
-  `(with-help-window ,buffer-name
-     (with-current-buffer standard-output
-       ,@body)))
-
 (defun elpy-insert--para (&rest messages)
   "Insert MESSAGES, a list of strings, and then fill it."
   (let ((start (point)))
@@ -1251,7 +1250,7 @@ PyPI, or nil if that's VERSION."
 
 (defun elpy-insert--pip-button-action (widget &optional _event)
   "The :action option for the pip button widget."
-  (with-elpy-rpc-venv-activated
+  (with-elpy-rpc-virtualenv-activated
    (async-shell-command (widget-get widget :command))))
 
 ;;;;;;;;;;;;
@@ -1284,7 +1283,7 @@ this."
 (defun elpy-project-find-python-root ()
   "Return the current Python project root, if any.
 
-This is marked with setup.py, setup.cfg or pyproject.toml."
+This is marked with 'setup.py', 'setup.cfg' or 'pyproject.toml'."
   (or (locate-dominating-file default-directory "setup.py")
       (locate-dominating-file default-directory "setup.cfg")
       (locate-dominating-file default-directory "pyproject.toml")))
@@ -3245,6 +3244,13 @@ display the current class and method instead."
 (defun elpy-module-django (command &rest _args)
   "Module to provide Django support."
   (pcase command
+    (`global-init
+     (add-to-list 'elpy-project-root-finder-functions
+                  'elpy-project-find-django-root t))
+    (`global-stop
+     (setq elpy-project-root-finder-functions
+           (remove 'elpy-project-find-django-root
+                   elpy-project-root-finder-functions)))
     (`buffer-init
      (elpy-django-setup))
     (`buffer-stop

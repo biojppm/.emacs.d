@@ -67,7 +67,7 @@ Display the version of Elpy.
 ;;;### (autoloads nil "elpy-rpc" "elpy-rpc.el" (0 0 0 0))
 ;;; Generated autoloads from elpy-rpc.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "elpy-rpc" '("elpy-" "with-elpy-rpc-venv-activated")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "elpy-rpc" '("elpy-" "with-elpy-rpc-virtualenv-activated")))
 
 ;;;***
 
