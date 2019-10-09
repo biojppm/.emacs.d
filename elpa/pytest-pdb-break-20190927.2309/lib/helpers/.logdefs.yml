@@ -1,0 +1,121 @@
+---
+# Logger was removed in 0.0.4; now at https://github.com/poppyschmo/knotty-logger
+? !!python/name:knotty_logger.LoggingHelper
+:
+  init:
+    LOGFILE: PDBBRK_LOGFILE
+    LEVEL: DEBUG
+    HANDLER_NAME: PDB BREAK (DEBUG)
+  filters:
+    input:
+      frame:
+        type: frame
+        exp: >
+          dict(file=v_.f_code.co_filename, line=v_.f_lineno, name=v_.f_code.co_name)
+      bl:
+        type: BreakLoc
+        exp: >
+          non_none(attr.asdict(v_))
+      bls:
+        type: list
+        cond: all(isinstance(i, BreakLoc) for i in v_)
+        exp: >
+          [non_none(attr.asdict(i)) for i in v_]
+      syscap:
+        type: SysCapture
+        exp: vars(v_)
+      textio:
+        type: TextIOWrapper
+        exp: >
+          dict(type=type(v_).__name__, name=v_.name,
+               mode=v_.mode, addr=hex(id(v_)))
+      capio:
+        type: CaptureIO
+        exp: >
+          dict(type=type(v_).__name__, addr=hex(id(v_)))
+      encoded_file:
+        type: EncodedFile
+        exp: >
+          dict(type=type(v_).__name__, buffer=v_.name)
+    output:
+      tmpdir:
+        pat: !!python/object/new:re.compile ["/tmp/pytest-of[^/]+/pytest-\\d+"]
+        new: "$T"
+        method: sub
+  exec: |
+    def non_none(d):
+        return {k: v for k, v in d.items() if v is not None}
+
+pytest_internalerror:
+  1:
+    args:
+      - excinfo.type
+      - excinfo.value
+
+pytest_runtestloop:
+  enter:
+    args:
+      - self.wanted
+      - locs
+  fortified:
+    args:
+      - self.wanted.func_name
+  rewrite:
+    args:
+      - inferred
+  targets:
+    args:
+      - self.targets
+
+runcall_until:
+  with_enter_pdb:
+    assertions:
+      - self.last_pdb
+  pre_capfix:
+    args:
+      - func
+      - testargs
+  cap_top:
+    kwargs:
+      "global_cap": >
+        {k: vars(v) if hasattr(v, '__dict__') else v
+         for k, v in vars(capman._global_capturing).items()}
+      "sys.stdout (before)": sys.stdout
+  cap_bot:
+    args:
+      - capman._method
+    kwargs:
+      "capfix": capfix and vars(capfix._capture)
+      "sys.stdout (after)": type(sys.stdout)
+  post_capfix:
+    args:
+      - inst.botframe
+
+pytest_pyfunc_call:
+  1:
+    assertions:
+      - not pyfuncitem._isyieldedfunction()
+    args:
+      - pyfuncitem.name
+      - pyfuncitem.location
+      - pyfuncitem.funcargs
+    kwargs:
+      "loc equals target": >
+        self.targets and BreakLoc.from_pytest_item(pyfuncitem) == self.targets[0]
+  2:
+    args:
+      - self.targets
+
+find_breakable_line:
+  1:
+    args:
+      - lineno
+      - line
+
+add_completion:
+  1:
+    assertions:
+      - >
+        pytestPDB._pdb_cls is sys.modules["_pytest.debugging"].pdb.Pdb
+      - >
+        "complete" not in pytestPDB._pdb_cls.__dict__
