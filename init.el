@@ -264,6 +264,13 @@
 ;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
 
+;; TODO: start using which-key: https://github.com/justbur/emacs-which-key
+
+;; C-h m
+;; F1 m
+;;    describe current buffer's mode
+;; C-h M-k
+;;    describe-keymap
 ;; C-h b
 ;; F1 b
 ;;    describe bindings (all current keybindings)
@@ -282,8 +289,6 @@
 ;; C-h ?
 ;;    get help on getting help
 
-;; C-h M-k
-;;    describe-keymap
 (use-package help-fns+) ;; provides describe-keymap http://stackoverflow.com/a/7135736/5875572
 
 
