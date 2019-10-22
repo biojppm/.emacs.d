@@ -3033,6 +3033,7 @@ original line and use the absolute value."
      php-mode
      powershell
      protobuf-mode
+     pylint
      pytest-pdb-break
      realgud
      realgud-ipdb

@@ -238,33 +238,45 @@ needed packages from `elpy-rpc--get-package-list'."
 (defmacro with-elpy-rpc-virtualenv-activated (&rest body)
   "Run BODY with Elpy's RPC virtualenv activated.
 
-The current virtualenv name is bounded to the
-`deactivated-environment' variable during the execution of
-BODY."
+During the execution of BODY the following variables are available:
+- `current-environment': current environment path.
+- `current-environment-binaries': current environment python binaries path.
+- `current-environment-is-deactivated': non-nil if the current
+  environment has been deactivated (it is not if the RPC environment and
+  the current environment are the same)."
   `(if (not (executable-find elpy-rpc-python-command))
        (error "Cannot find executable '%s', please set 'elpy-rpc-python-command' to an existing executable." elpy-rpc-python-command)
-     (let ((venv-was-activated pyvenv-virtual-env)
-           (pyvenv-post-activate-hooks (remq 'elpy-rpc--disconnect
-                                             pyvenv-post-activate-hooks))
-           (pyvenv-post-deactivate-hooks (remq 'elpy-rpc--disconnect
-                                               pyvenv-post-deactivate-hooks))
-           (deactivated-environment
-            (or pyvenv-virtual-env
-                ;; global env
-                (directory-file-name
-                 (file-name-directory
-                  (directory-file-name
-                   (file-name-directory
-                    (executable-find elpy-rpc-python-command))))))))
-       (pyvenv-activate (elpy-rpc-get-or-create-virtualenv))
+     (let* ((venv-was-activated pyvenv-virtual-env)
+            (pyvenv-post-activate-hooks (remq 'elpy-rpc--disconnect
+                                              pyvenv-post-activate-hooks))
+            (pyvenv-post-deactivate-hooks (remq 'elpy-rpc--disconnect
+                                                pyvenv-post-deactivate-hooks))
+            (current-environment-binaries (executable-find
+                                           elpy-rpc-python-command))
+            (current-environment
+             (directory-file-name
+              (file-name-directory
+               (directory-file-name
+                (file-name-directory
+                 current-environment-binaries)))))
+            ;; No need to change of venv if they are the same
+            (same-venv (or (string= current-environment
+                                     (elpy-rpc-get-virtualenv-path))
+                           (file-equal-p current-environment
+                                         (elpy-rpc-get-virtualenv-path))))
+            current-environment-is-deactivated)
+       (unless same-venv
+         (pyvenv-activate (elpy-rpc-get-or-create-virtualenv))
+         (setq current-environment-is-deactivated t))
        (let (venv-err result)
          (condition-case err
              (setq result (progn ,@body))
-           (error (setq venv-err (car (cdr err)))))
-         (if venv-was-activated
-             (pyvenv-activate (directory-file-name
-                               deactivated-environment))
-           (pyvenv-deactivate))
+           (error (setq venv-err (format "%s" err))))
+         (unless same-venv
+           (if venv-was-activated
+               (pyvenv-activate (directory-file-name
+                                 current-environment))
+             (pyvenv-deactivate)))
          (when venv-err
            (error venv-err))
          result))))
@@ -302,7 +314,7 @@ binaries used to create the virtualenv."
           (and (or (not is-venv-exist) venv-need-update)
                (or is-default-rpc-venv
                    (y-or-n-p
-                    (format "`elpy-rpc-virtualenv-path' was set to '%s', but this virtualenv does not exist, create it ?" rpc-venv-path))))))
+                    (format "`elpy-rpc-virtualenv-path' was set to '%s', but this virtualenv does not exist, create it ? " rpc-venv-path))))))
     ;; Delete the rpc virtualenv if obsolete
     (when venv-need-update
       (delete-directory rpc-venv-path t)
@@ -315,7 +327,7 @@ binaries used to create the virtualenv."
           (message "Elpy is %s the RPC virtualenv ('%s')"
                    (if venv-need-update "updating" "creating")
                    rpc-venv-path)
-          (elpy-rpc--create-virtualenv rpc-venv-path venv-need-update)
+          (elpy-rpc--create-virtualenv rpc-venv-path)
           (pyvenv-activate rpc-venv-path)
           ;; Add a file to keep track of the `elpy-rpc-python-command` used
           (with-temp-file venv-python-path-command-file
@@ -323,28 +335,30 @@ binaries used to create the virtualenv."
           ;; safeguard to be sure we don't install stuff in the wrong venv
           (when (file-equal-p pyvenv-virtual-env rpc-venv-path)
             (elpy-rpc--install-dependencies))
+          (elpy-rpc-restart)
           ;; Deactivate the rpc venv
           (if deact-venv
               (pyvenv-activate (directory-file-name deact-venv))
             (pyvenv-deactivate)))))
     rpc-venv-path))
 
-(defun elpy-rpc--create-virtualenv (rpc-venv-path venv-need-update)
-  "Create a virtualenv for the RPC in RPC-VENV-PATH.
-
-if VENV-NEED-UPDATE is not nil, update the virtualenv."
-  (cond
-   ((= 0 (call-process elpy-rpc-python-command nil nil nil
-                       "-m" "venv" "-h"))
-    (with-current-buffer (generate-new-buffer "*venv*")
-      (call-process elpy-rpc-python-command nil t t
-                    "-m" "venv" rpc-venv-path)))
-   ((executable-find "virtualenv")
-    (with-current-buffer (generate-new-buffer "*virtualenv*")
-      (call-process "virtualenv" nil t t
-                    "-p" elpy-rpc-python-command rpc-venv-path)))
-   (t
-    (error "Elpy necessitates the 'virtualenv' python package, please install it with `pip install virtualenv`"))))
+(defun elpy-rpc--create-virtualenv (rpc-venv-path)
+  "Create a virtualenv for the RPC in RPC-VENV-PATH."
+  ;; venv cannot create a proper virtualenv from inside another virtualenv
+  (let ((elpy-rpc-virtualenv-path 'global))
+    (with-elpy-rpc-virtualenv-activated
+     (cond
+      ((= 0 (call-process elpy-rpc-python-command nil nil nil
+                          "-m" "venv" "-h"))
+       (with-current-buffer (generate-new-buffer "*venv*")
+         (call-process elpy-rpc-python-command nil t t
+                       "-m" "venv" rpc-venv-path)))
+      ((executable-find "virtualenv")
+       (with-current-buffer (generate-new-buffer "*virtualenv*")
+         (call-process "virtualenv" nil t t
+                       "-p" elpy-rpc-python-command rpc-venv-path)))
+      (t
+       (error "Elpy necessitates the 'virtualenv' python package, please install it with `pip install virtualenv`"))))))
 
 (defun elpy-rpc--install-dependencies ()
   "Install the RPC dependencies in the current virtualenv."
@@ -358,6 +372,22 @@ if VENV-NEED-UPDATE is not nil, update the virtualenv."
                   0)
           (message "Elpy failed to install some of the RPC dependencies, please use `elpy-config' to install them.")))
     (message "Some of Elpy's functionnalities will not work, please use `elpy-config' to install the needed python dependencies.")))
+
+(defun elpy-rpc-reinstall-virtualenv ()
+  "Re-install the RPC virtualenv."
+  (interactive)
+  (let ((rpc-venv-path (elpy-rpc-get-virtualenv-path)))
+    (when
+        (cond
+         ((or (eq elpy-rpc-virtualenv-path 'system)
+              (eq elpy-rpc-virtualenv-path 'global)) ;; backward compatibility
+          (error "Cannot reinstall the system environment, please reinstall the necessary packages manually"))
+         ((string= (elpy-rpc-default-virtualenv-path) rpc-venv-path)
+          t)
+         (t
+          (y-or-n-p (format "Are you sure you want to reinstall the virtualenv in '%s' (every manual modifications will be lost) ? " rpc-venv-path))))
+      (delete-directory rpc-venv-path t)
+      (elpy-rpc-get-or-create-virtualenv))))
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Promise objects
@@ -412,7 +442,7 @@ not exist anymore."
 
 (defun elpy-promise-resolve (promise value)
   "Resolve PROMISE with VALUE."
-  (when (not (elpy-promise-resolved-p promise))
+  (unless (elpy-promise-resolved-p promise)
     (unwind-protect
         (let ((success-callback (elpy-promise-success-callback promise)))
           (when success-callback
@@ -425,7 +455,7 @@ not exist anymore."
 
 (defun elpy-promise-reject (promise reason)
   "Reject PROMISE because of REASON."
-  (when (not (elpy-promise-resolved-p promise))
+  (unless (elpy-promise-resolved-p promise)
     (unwind-protect
         (let ((error-callback (elpy-promise-error-callback promise)))
           (when error-callback
@@ -465,7 +495,7 @@ See http://debbugs.gnu.org/cgi/bugreport.cgi?bug=17647"
 If SUCCESS and optionally ERROR is given, return immediately and
 call those when a result is available. Otherwise, wait for a
 result and return that."
-  (when (not error)
+  (unless error
     (setq error #'elpy-rpc--default-error-callback))
   (if success
       (elpy-rpc--call method params success error)
@@ -522,16 +552,16 @@ Returns a PROMISE object."
   "Register for PROMISE to be called when CALL-ID returns.
 
 Must be called in an elpy-rpc buffer."
-  (when (not elpy-rpc--buffer-p)
+  (unless elpy-rpc--buffer-p
     (error "Must be called in RPC buffer"))
-  (when (not elpy-rpc--backend-callbacks)
+  (unless elpy-rpc--backend-callbacks
     (setq elpy-rpc--backend-callbacks (make-hash-table :test #'equal)))
   (puthash call-id promise elpy-rpc--backend-callbacks))
 
 (defun elpy-rpc--get-rpc-buffer ()
   "Return the RPC buffer associated with the current buffer,
 creating one if necessary."
-  (when (not (elpy-rpc--process-buffer-p elpy-rpc--buffer))
+  (unless (elpy-rpc--process-buffer-p elpy-rpc--buffer)
     (setq elpy-rpc--buffer
           (or (elpy-rpc--find-buffer (elpy-library-root)
                                      elpy-rpc-python-command)
@@ -582,11 +612,10 @@ died, this will kill the process and buffer."
    (let* ((full-python-command (executable-find python-command))
           (name (format " *elpy-rpc [project:%s environment:%s]*"
                         library-root
-                        (or deactivated-environment
-                            "system")))
+                        current-environment))
           (new-elpy-rpc-buffer (generate-new-buffer name))
           (proc nil))
-     (when (not full-python-command)
+     (unless full-python-command
        (error "Can't find Python command, configure `elpy-rpc-python-command'"))
      (with-current-buffer new-elpy-rpc-buffer
        (setq elpy-rpc--buffer-p t
@@ -609,7 +638,9 @@ died, this will kill the process and buffer."
        (set-process-query-on-exit-flag proc nil)
        (set-process-sentinel proc #'elpy-rpc--sentinel)
        (set-process-filter proc #'elpy-rpc--filter)
-       (elpy-rpc-init library-root deactivated-environment
+       (elpy-rpc-init library-root
+                      (when current-environment-is-deactivated
+                        current-environment-binaries)
                       (lambda (result)
                         (setq elpy-rpc--jedi-available
                               (cdr (assq 'jedi_available result))))))
@@ -704,7 +735,7 @@ RPC calls with the event."
 
 (defun elpy-rpc--check-backend-version (rpc-version)
   "Check that we are using the right version."
-  (when (not (equal rpc-version elpy-version))
+  (unless (equal rpc-version elpy-version)
     (elpy-insert--popup "*Elpy Version Mismatch*"
       (elpy-insert--header "Elpy Version Mismatch")
       (elpy-insert--para
@@ -726,7 +757,7 @@ RPC calls with the event."
 
 This is usually an error or backtrace."
   (let ((buf (get-buffer "*Elpy Output*")))
-    (when (not buf)
+    (unless buf
       (elpy-insert--popup "*Elpy Output*"
         (elpy-insert--header "Output from Backend")
         (elpy-insert--para
@@ -748,7 +779,7 @@ This is usually an error or backtrace."
         (error-object (cdr (assq 'error json)))
         (result (cdr (assq 'result json))))
     (let ((promise (gethash call-id elpy-rpc--backend-callbacks)))
-      (when (not promise)
+      (unless promise
         (error "Received a response for unknown call-id %s" call-id))
       (remhash call-id elpy-rpc--backend-callbacks)
       (if error-object
@@ -861,7 +892,7 @@ This is usually an error or backtrace."
                           ")\n")
                   (insert (format "%s(\n    %s\n)\n"
                                   function-name function-args)))))
-            (when (not (= 0 (current-column)))
+            (unless (= 0 (current-column))
               (insert "\n"))
             (insert "```"))
           (setq elpy-rpc--last-error-popup (float-time))))))))
@@ -928,17 +959,22 @@ protocol if the buffer is larger than
       (ignore-errors
         (kill-buffer buffer)))))
 
-(defun elpy-rpc-init (library-root environment &optional success error)
+(defun elpy-rpc-init (library-root environment-binaries &optional success error)
   "Initialize the backend.
 
 This has to be called as the first method, else Elpy won't be
-able to respond to other calls."
+able to respond to other calls.
+
++LIBRARY-ROOT is the current project root,
++ENVIRONMENT-BINARIES is the path to the python binaries of the environment to work in."
   (elpy-rpc "init"
             ;; This uses a vector because otherwise, json-encode in
             ;; older Emacsen gets seriously confused, especially when
             ;; backend is nil.
             (vector `((project_root . ,(expand-file-name library-root))
-                      (environment . ,(when environment (expand-file-name environment)))))
+                      (environment . ,(when environment-binaries
+                                        (expand-file-name
+                                         environment-binaries)))))
             success error))
 
 
