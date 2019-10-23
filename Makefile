@@ -4,6 +4,8 @@
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
+RIPGREP_VERSION = 11.0.2
+AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
 
 PIP ?= pip
 
@@ -31,6 +33,20 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	$(CCLS_SRC_DIR) \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
+# https://stackoverflow.com/questions/714100/os-detecting-makefile
+ifeq ($(OS),Windows_NT)
+    OS = Windows
+    WIN_DL_DIR = "$(SYSTEMDRIVE)/Users/$(USERNAME)/Downloads"
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        OS = Linux
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        OS = Darwin
+    endif
+endif
+
 
 #----------------------------------------------------------------------
 
@@ -43,7 +59,7 @@ makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 
 #----------------------------------------------------------------------
 
-all: clang_install ccls_install
+all: clang_install ccls_install ripgrep ag
 
 
 #----------------------------------------------------------------------
@@ -53,6 +69,32 @@ cmany:
 	 # install cmany if needed
 	if [ -z "$(shell pip list | grep cmany)" ] ; then \
 	    $(PIP) install cmany ; \
+	fi
+
+
+.PHONY: ripgrep
+ripgrep: $(LOCAL_DIR)/bin
+	set -x ; \
+        if [ "$(OS)" == "Windows" ] ; then \
+	   fn="ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc" && \
+	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/$$fn.zip" && \
+	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
+	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	else \
+	   aaaaaaaa not done ; \
+	fi
+
+
+.PHONY: ag
+ag: $(LOCAL_DIR)/bin
+	set -x ; \
+        if [ "$(OS)" == "Windows" ] ; then \
+	   fn=`basename $(AG_VERSION_URL) | sed 's:\.zip$$::g'` && \
+	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$(AG_VERSION_URL)" && \
+	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
+	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	else \
+	   aaaaaaaa not done ; \
 	fi
 
 
@@ -138,3 +180,6 @@ $(LOCAL_SRC_DIR):
 
 $(LOCAL_DIR):
 	$(call makedirs, $(LOCAL_DIR))
+
+$(LOCAL_DIR)/bin:
+	$(call makedirs, $(LOCAL_DIR)/bin)

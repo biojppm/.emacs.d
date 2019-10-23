@@ -953,6 +953,9 @@
 ;;------------------------------------------------------------------
 ;; counsel
 
+;; using counsel-ag: very good:
+;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
+
 (use-package counsel
   :ensure t
   :bind (
@@ -2979,6 +2982,7 @@ original line and use the absolute value."
  '(package-selected-packages
    (quote
     (
+     ag
      anzu
      arduino-mode
      babel
@@ -3041,6 +3045,7 @@ original line and use the absolute value."
      pytest-pdb-break
      realgud
      realgud-ipdb
+     ripgrep
      rg
      seq
      slime
