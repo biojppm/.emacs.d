@@ -2310,11 +2310,11 @@ original line and use the absolute value."
 (setq compilation-save-buffers-predicate '(lambda () nil))
 ;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 (setq compilation-scroll-output 'first-error)
-;; add visual studio error regexes
+;; add VS error regexes
 (add-to-list 'compilation-error-regexp-alist 'visual_studio)
 (add-to-list 'compilation-error-regexp-alist-alist
              '(visual_studio
-               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
+               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(fatal error +C[0-9]+\\|error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
                1 2)
              )
 
