@@ -1999,8 +1999,23 @@ original line and use the absolute value."
   (c-set-offset 'substatement-open 0)
   (use-snips)
   (add-hook 'fsharp-mode-hook #'hook-snips)
+  ;; https://github.com/fsharp/emacs-fsharp-mode
+  (when this-is-windows
+    (let* ((pat "C:/Program Files (x86)/Microsoft Visual Studio/%d/Community/Common7/IDE/CommonExtensions/Microsoft/FSharp/")
+           (fsvs2017 (format pat 2017))
+           (fsvs2019 (format pat 2019))
+           (fsdir (if (file-directory-p fsvs2019) fsvs2019 fsvs2017))
+          )
+      (setq inferior-fsharp-program (concat fsdir "fsi.exe"))
+      (setq fsharp-compiler         (concat fsdir "fsc.exe"))
+      )
+    )
   :mode (("\\.fs\\'" . fsharp-mode)
-         ("\\.FS\\'" . fsharp-mode)))
+         ("\\.FS\\'" . fsharp-mode)
+         ("\\.fsx\\'" . fsharp-mode)
+         ("\\.FSX\\'" . fsharp-mode)
+         )
+  )
 
 
 ;; Python
