@@ -43,6 +43,7 @@
         gud-tooltip-mouse-motion
         help-for-help
         mouse-set-region
+        my-compile
         my-open-cmany-el
         my-open-init-el
         my-recompile
