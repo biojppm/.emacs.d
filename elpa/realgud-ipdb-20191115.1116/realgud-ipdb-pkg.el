@@ -1,4 +1,4 @@
-(define-package "realgud-ipdb" "20190604.209" "Realgud front-end to ipdb"
+(define-package "realgud-ipdb" "20191115.1116" "Realgud front-end to ipdb"
   '((realgud "1.5.0")
     (load-relative "1.3.1")
     (emacs "25"))

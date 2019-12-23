@@ -1,4 +1,4 @@
-(define-package "realgud" "20190912.744" "A modular front-end for interacting with external debuggers"
+(define-package "realgud" "20191123.1341" "A modular front-end for interacting with external debuggers"
   '((load-relative "1.3.1")
     (loc-changes "1.2")
     (test-simple "1.3.0")

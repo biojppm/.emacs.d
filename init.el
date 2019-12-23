@@ -3022,6 +3022,7 @@ original line and use the absolute value."
      elpy
      elpygen
      ess
+     find-file-in-repository
      firebelly-theme
      flycheck
      flymake-cppcheck
