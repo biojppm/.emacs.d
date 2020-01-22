@@ -953,6 +953,9 @@
 ;;------------------------------------------------------------------
 ;; counsel
 
+;; nice intro:
+;; https://truthseekers.io/lessons/how-to-use-ivy-swiper-counsel-in-emacs-for-noobs/
+
 ;; using counsel-ag: very good:
 ;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
 
@@ -968,8 +971,8 @@
          ;;("<f2> u" . counsel-unicode-char)
          ("C-c s g" . counsel-git-grep)
          ("C-c s j" . counsel-git)
-         ("C-c s k" . counsel-ag)
-         ("C-c s r" . counsel-rg)
+         ("C-c s k" . counsel-ag) ;; https://truthseekers.io/lessons/how-to-use-ivy-swiper-counsel-in-emacs-for-noobs/
+         ("C-c s r" . counsel-rg) ;; https://truthseekers.io/lessons/how-to-use-ivy-swiper-counsel-in-emacs-for-noobs/
          ("C-c s l" . counsel-locate)
          ;; http://pragmaticemacs.com/emacs/counsel-yank-pop-with-a-tweak/
          ("M-y" . counsel-yank-pop) ;; easily show the kill-ring (goes to ivy-minibuffer-map)
@@ -2893,6 +2896,18 @@ original line and use the absolute value."
 (use-package magit
   :init
   (setq magit-refresh-status-buffer nil)
+  ;; https://magit.vc/manual/magit/Listing-Submodules.html
+  ;; https://emacs.stackexchange.com/questions/13659/displaying-branch-descriptions-in-magit
+  (setq magit-module-sections-nested t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-overview
+                          nil t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpulled-from-upstream
+                          nil t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-upstream(setq magit-module-sections-nested t)
+                          nil t)
   :commands (magit-status)
   :bind
   (

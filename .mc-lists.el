@@ -47,4 +47,5 @@
         my-open-cmany-el
         my-open-init-el
         my-recompile
+        smex
         ))
