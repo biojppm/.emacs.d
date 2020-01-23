@@ -26,6 +26,7 @@
         my-open-init-el
         nuke-line
         nxml-electric-slash
+        org-kill-line
         org-self-insert-command
         org-yank
         overwrite-mode
