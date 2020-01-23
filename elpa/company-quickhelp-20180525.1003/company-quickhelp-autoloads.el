@@ -13,7 +13,14 @@
 (autoload 'company-quickhelp-local-mode "company-quickhelp" "\
 Provides documentation popups for `company-mode' using `pos-tip'.
 
+If called interactively, enable Company-Quickhelp-Local mode if
+ARG is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
+
 \(fn &optional ARG)" t nil)
+
+(put 'company-quickhelp-mode 'globalized-minor-mode t)
 
 (defvar company-quickhelp-mode nil "\
 Non-nil if Company-Quickhelp mode is enabled.
