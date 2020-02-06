@@ -11,7 +11,7 @@ PIP ?= pip
 
 CMANY_COMPILER ?=
 
-CLANG_VERSION ?= 7.1.0
+CLANG_VERSION ?= 9.0.1
 CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
@@ -19,7 +19,8 @@ CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
 CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	--build-dir $(CLANG_BUILD_DIR) \
 	--install-dir $(CLANG_INSTALL_DIR) \
-	$(CLANG_SRC_DIR)
+	$(CLANG_SRC_DIR) \
+        -V CLANG_VERSION=$(CLANG_VERSION)
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
 CCLS_BRANCH ?= master  # may also be a tag
@@ -59,7 +60,7 @@ makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 
 #----------------------------------------------------------------------
 
-all: clang_install ccls_install ripgrep ag
+all: ripgrep ag clang_install ccls_install
 
 
 #----------------------------------------------------------------------
