@@ -6,7 +6,7 @@ LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DI
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
 RIPGREP_VERSION = 11.0.2
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
-
+MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -58,9 +58,13 @@ copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 # define a function to make a directory and parents
 makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 
+# download a url $1 to a destination file $2
+download = curl -o "$2" -L -s "$1"
+
+
 #----------------------------------------------------------------------
 
-all: ripgrep ag clang_install ccls_install
+all: ripgrep ag markdown_toc clang_install ccls_install
 
 
 #----------------------------------------------------------------------
@@ -97,6 +101,11 @@ ag: $(LOCAL_DIR)/bin
 	else \
 	   aaaaaaaa not done ; \
 	fi
+
+
+.PHONY: markdown_toc
+markdown_toc: $(LOCAL_DIR)/bin
+	$(call download,$(MARKDOWN_TOC),$(LOCAL_DIR)/bin/gh-md-toc)
 
 
 #----------------------------------------------------------------------
