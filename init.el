@@ -1435,6 +1435,22 @@ If point was already at that position, move point to beginning of line."
 )
 
 ;;------------------------------------------------------------------
+;; bicycle. https://github.com/tarsius/bicycle
+;; code folding
+
+(use-package bicycle
+  :after outline
+  :bind (:map outline-minor-mode-map
+              ("C-c <C-return>" . bicycle-cycle)
+              ("C-c <C-S-return>" . bicycle-cycle-global)))
+
+(use-package prog-mode
+  :config
+  (add-hook 'prog-mode-hook 'outline-minor-mode)
+  (add-hook 'prog-mode-hook 'hs-minor-mode))
+
+
+;;------------------------------------------------------------------
 ;; https://github.com/k-talo/volatile-highlights.el
 ;; brings visual feedback to some operations by highlighting portions
 ;; relating to the operations.
@@ -3016,6 +3032,7 @@ original line and use the absolute value."
      arduino-mode
      babel
      babel-repl
+     bicycle
      ccls
      clang-format
      clean-aindent-mode
