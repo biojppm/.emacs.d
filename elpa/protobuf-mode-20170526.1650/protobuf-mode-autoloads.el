@@ -17,7 +17,9 @@ The hook `c-mode-common-hook' is run with no argument at mode
 initialization, then `protobuf-mode-hook'.
 
 Key bindings:
-\\{protobuf-mode-map}" t nil)
+\\{protobuf-mode-map}
+
+\(fn)" t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "protobuf-mode" '("protobuf-")))
 
