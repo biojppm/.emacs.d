@@ -43,6 +43,7 @@
         duplicate-line-or-region
         gud-tooltip-mouse-motion
         help-for-help
+        ido-find-file
         mouse-set-region
         my-compile
         my-open-cmany-el

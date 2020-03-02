@@ -28,29 +28,6 @@
 (require 'dash)
 (require 'dash-functional)
 (require 'rx)
-(require 'lsp-pyls)
-(require 'lsp-rust)
-(require 'lsp-solargraph)
-(require 'lsp-vetur)
-(require 'lsp-intelephense)
-(require 'lsp-css)
-(require 'lsp-xml)
-(require 'lsp-go)
-(require 'lsp-clojure)
-(require 'lsp-dart)
-(require 'lsp-elm)
-(require 'lsp-metals)
-(require 'lsp-fsharp)
-(require 'lsp-erlang)
-(require 'lsp-haxe)
-(require 'lsp-vhdl)
-(require 'lsp-yaml)
-(require 'lsp-terraform)
-(require 'lsp-pwsh)
-(require 'lsp-csharp)
-(require 'lsp-json)
-(require 'lsp-verilog)
-(require 'lsp-eslint)
 
 ;;; Ada
 (defgroup lsp-ada nil
@@ -150,10 +127,10 @@ See instructions at https://marketplace.visualstudio.com/items?itemName=mads-har
 
 ;;; TypeScript/JavaScript
 
-(lsp-dependency javascript-typescript-langserver
-  (:system "javascript-typescript-stdio")
-  (:npm :package "javascript-typescript-langserver"
-        :path "javascript-typescript-stdio"))
+(lsp-dependency 'javascript-typescript-langserver
+                '(:system "javascript-typescript-stdio")
+                '(:npm :package "javascript-typescript-langserver"
+                       :path "javascript-typescript-stdio"))
 
 (defgroup lsp-typescript-javascript nil
   "Support for TypeScript/JavaScript, using Sourcegraph's JavaScript/TypeScript language server."
@@ -221,15 +198,15 @@ directory containing the package. Example:
                                                   (and name location))
                                                 xs)))))
 
-(lsp-dependency typescript-language-server
-  (:system "typescript-language-server")
-  (:npm :package "typescript-language-server"
-        :path "typescript-language-server"))
+(lsp-dependency 'typescript-language-server
+                '(:system "typescript-language-server")
+                '(:npm :package "typescript-language-server"
+                       :path "typescript-language-server"))
 
-(lsp-dependency typescript
-  (:system "tsserver")
-  (:npm :package "typescript"
-        :path "tsserver"))
+(lsp-dependency 'typescript
+                '(:system "tsserver")
+                '  (:npm :package "typescript"
+                         :path "tsserver"))
 
 (lsp-register-client
  (make-lsp-client :new-connection (lsp-stdio-connection (lambda ()
@@ -542,7 +519,7 @@ finding the executable with `exec-path'."
 
 (defcustom lsp-kotlin-linting-debounce-time 250
   "[DEBUG] Specifies the debounce time limit. Lower to increase
-responsiveness at the cost of possibile stability issues."
+responsiveness at the cost of possible stability issues."
   :type 'number
   :group 'lsp-kotlin
   :package-version '(lsp-mode . "6.1"))
@@ -807,6 +784,30 @@ responsiveness at the cost of possibile stability issues."
                   :major-modes '(nim-mode)
                   :priority -1
                   :server-id 'nimls))
+
+;; Dhall
+(defgroup lsp-dhall nil
+  "LSP support for Dhall, using dhall-lsp-server."
+  :group 'lsp-mode
+  :link '(url-link "https://github.com/dhall-lang/dhall-haskell"))
+
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "dhall-lsp-server")
+                  :major-modes '(dhall-mode)
+                  :priority -1
+                  :server-id 'dhallls))
+
+;; CMake
+(defgroup lsp-cmake nil
+  "LSP support for CMake, using cmake-language-server."
+  :group 'lsp-mode
+  :link '(url-link "https://github.com/regen100/cmake-language-server"))
+
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "cmake-language-server")
+                  :major-modes '(cmake-mode)
+                  :priority -1
+                  :server-id 'cmakels))
 
 (provide 'lsp-clients)
 ;;; lsp-clients.el ends here
