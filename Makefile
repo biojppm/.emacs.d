@@ -34,14 +34,30 @@ CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	$(CCLS_SRC_DIR) \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
+RTAGS_REPO ?= https://github.com/Andersbakken/rtags
+RTAGS_BRANCH ?= master  # may also be a tag
+RTAGS_DIR ?= $(LOCAL_SRC_DIR)/rtags
+RTAGS_SRC_DIR ?= $(RTAGS_DIR)/src
+RTAGS_BUILD_DIR ?= $(RTAGS_DIR)/build
+RTAGS_INSTALL_DIR ?= $(RTAGS_DIR)/install
+RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(RTAGS_BUILD_DIR) \
+	--install-dir $(RTAGS_INSTALL_DIR) \
+	$(RTAGS_SRC_DIR) \
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
+
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
     OS = Windows
     WIN_DL_DIR = "$(SYSTEMDRIVE)/Users/$(USERNAME)/Downloads"
 else
     UNAME_S := $(shell uname -s)
+    # https://askubuntu.com/questions/279168/detect-if-its-ubuntu-linux-os-in-makefile
     ifeq ($(UNAME_S),Linux)
         OS = Linux
+	ifeq ($(shell lsb_release -si),ManjaroLinux)
+	    DISTRO = Manjaro
+        endif
     endif
     ifeq ($(UNAME_S),Darwin)
         OS = Darwin
@@ -64,7 +80,7 @@ download = curl -o "$2" -L -s "$1"
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag markdown_toc clang_install ccls_install
+all: ripgrep ag markdown_toc clang_install ccls_install rtags_install
 
 
 #----------------------------------------------------------------------
@@ -79,27 +95,39 @@ cmany:
 
 .PHONY: ripgrep
 ripgrep: $(LOCAL_DIR)/bin
-	set -x ; \
-        if [ "$(OS)" == "Windows" ] ; then \
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
 	   fn="ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc" && \
 	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/$$fn.zip" && \
 	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
 	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S ripgrep ; \
+	   else \
+	      aaaaaaaa not done ; \
+	   fi ; \
 	else \
-	   aaaaaaaa not done ; \
+	   bbbbbbbb not done ; \
 	fi
 
 
 .PHONY: ag
 ag: $(LOCAL_DIR)/bin
-	set -x ; \
-        if [ "$(OS)" == "Windows" ] ; then \
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
 	   fn=`basename $(AG_VERSION_URL) | sed 's:\.zip$$::g'` && \
 	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$(AG_VERSION_URL)" && \
 	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
 	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S the_silver_searcher ; \
+	   else \
+	      aaaaaaaa not done ; \
+	   fi ; \
 	else \
-	   aaaaaaaa not done ; \
+	   bbbbbbbb not done ; \
 	fi
 
 
@@ -109,6 +137,12 @@ markdown_toc: $(LOCAL_DIR)/bin
 
 
 #----------------------------------------------------------------------
+
+.PHONY: rtags rtags_install rtags_build rtags_config rtags_clone
+rtags: $(RTAGS_INSTALL_DIR)
+rtags_build: $(RTAGS_INSTALL_DIR)
+rtags_config: $(RTAGS_BUILD_DIR)
+rtags_clone: $(RTAGS_SRC_DIR)
 
 .PHONY: ccls ccls_install ccls_build ccls_config ccls_clone
 ccls: $(CCLS_INSTALL_DIR)
@@ -122,6 +156,12 @@ clang_build: $(CLANG_INSTALL_DIR)
 clang_config: $(CLANG_BUILD_DIR)
 clang_download: $(CLANG_SRC_DIR)
 
+
+rtags_install: $(LOCAL_DIR) $(RTAGS_INSTALL_DIR)
+	@echo "rtags_install: $(RTAGS_INSTALL_DIR) ---> $(LOCAL_DIR)"
+	@bd=$(shell cmany show_build_names $(RTAGS_CMANY_ARGS)) ; \
+	echo "Build name: $$bd" ; \
+	$(call copy_tree,$(RTAGS_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 ccls_install: $(LOCAL_DIR) $(CCLS_INSTALL_DIR)
 	@echo "ccls_install: $(CCLS_INSTALL_DIR) ---> $(LOCAL_DIR)"
@@ -140,6 +180,10 @@ clang_install: $(LOCAL_DIR) $(CLANG_INSTALL_DIR)
 	$(call copy_tree,$(CLANG_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 
+$(RTAGS_INSTALL_DIR): $(RTAGS_BUILD_DIR)
+	@echo "rtags_install_dir: $(RTAGS_INSTALL_DIR)"
+	cmany i $(RTAGS_CMANY_ARGS)
+
 $(CCLS_INSTALL_DIR): $(CCLS_BUILD_DIR)
 	@echo "ccls_install_dir: $(CCLS_INSTALL_DIR)"
 	cmany i $(CCLS_CMANY_ARGS)
@@ -149,6 +193,10 @@ $(CLANG_INSTALL_DIR): $(CLANG_BUILD_DIR)
 	cmany b $(CLANG_CMANY_ARGS)
 
 
+$(RTAGS_BUILD_DIR): cmany $(RTAGS_SRC_DIR)
+	@echo "rtags_build_dir: $(RTAGS_INSTALL_DIR)"
+	cmany c $(RTAGS_CMANY_ARGS)
+
 $(CCLS_BUILD_DIR): cmany $(CCLS_SRC_DIR)
 	@echo "ccls_build_dir: $(CCLS_INSTALL_DIR)"
 	cmany c $(CCLS_CMANY_ARGS)
@@ -157,6 +205,12 @@ $(CLANG_BUILD_DIR): cmany $(CLANG_SRC_DIR)
 	@echo "clang_build_dir: $(CLANG_INSTALL_DIR)"
 	cmany c $(CLANG_CMANY_ARGS)
 
+
+$(RTAGS_SRC_DIR): $(RTAGS_DIR)
+	@echo "rtags_src_dir: $(RTAGS_SRC_DIR)"
+	if [ ! -d "$(RTAGS_SRC_DIR)" ] ; then \
+	    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(RTAGS_BRANCH) $(RTAGS_REPO) $(RTAGS_SRC_DIR) ; \
+	fi
 
 $(CCLS_SRC_DIR): $(CCLS_DIR)
 	@echo "ccls_src_dir: $(CCLS_SRC_DIR)"
@@ -178,6 +232,9 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 	@#if [ ! -d "$(CLANG_SRC_DIR)/tools/clang" ] ; then \
 	 #    git clone --recursive --branch=$(CLANG_BRANCH) https://git.llvm.org/git/clang.git $(CLANG_SRC_DIR)/tools/clang ; \
 	 #fi
+
+$(RTAGS_DIR):
+	$(call makedirs, $(RTAGS_DIR))
 
 $(CCLS_DIR):
 	$(call makedirs, $(CCLS_DIR))
