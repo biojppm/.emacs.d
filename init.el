@@ -2885,6 +2885,14 @@ original line and use the absolute value."
   (add-hook 'markdown-mode-hook 'my-text-hook)
   )
 
+;; TODO save image from clipboard:
+;; https://github.com/robinchenyu/image-paste/blob/master/bin/imagepaste.py
+;; https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
+;; https://emacs.stackexchange.com/questions/41016/how-can-i-yank-images-from-emacs
+;; https://github.com/dnxbjyj/pasteex-mode
+;; https://github.com/mooreryan/markdown-dnd-images
+
+
 ;;-----------------------------------------------------------------------------
 ;;Step through historic versions of git controlled file
 ;;https://github.com/pidu/git-timemachine
