@@ -77,20 +77,24 @@ makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 # download a url $1 to a destination file $2
 download = curl -o "$2" -L -s "$1"
 
+# install a pip package
+pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) install $1 ; fi
+
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag markdown_toc clang_install ccls_install rtags_install
+all: ripgrep ag cmany pip_packages markdown_toc clang_install ccls_install rtags_install
 
 
 #----------------------------------------------------------------------
 
 .PHONY: cmany
 cmany:
-	 # install cmany if needed
-	if [ -z "$(shell pip list | grep cmany)" ] ; then \
-	    $(PIP) install cmany ; \
-	fi
+	$(call pipinstall, cmany)
+
+.PHONY: pip_packages
+pip_packages:
+	$(call pipinstall, pillow)
 
 
 .PHONY: ripgrep
