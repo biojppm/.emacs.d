@@ -2881,6 +2881,14 @@ original line and use the absolute value."
 (add-hook 'tex-mode-hook 'my-latex-hook)
 (add-hook 'latex-mode-hook 'my-latex-hook)
 
+;; save image from clipboard:
+(load-file (concat emacs-dir "imgsave/imgsave.el"))
+;; https://github.com/robinchenyu/image-paste/blob/master/bin/imagepaste.py
+;; https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
+;; https://emacs.stackexchange.com/questions/41016/how-can-i-yank-images-from-emacs
+;; https://github.com/dnxbjyj/pasteex-mode
+;; https://github.com/mooreryan/markdown-dnd-images
+
 
 ;;; Restructured Text
 ;;see http://docutils.sourceforge.net/docs/user/emacs.html
@@ -2902,19 +2910,18 @@ original line and use the absolute value."
 )
 
 ;; Markdown
+;; https://jblevins.org/projects/markdown-mode/
 (use-package markdown-mode
   :defer t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
   :config
   (add-hook 'markdown-mode-hook 'my-text-hook)
+  (add-hook 'gfm-mode-hook 'my-text-hook)
   )
-
-;; save image from clipboard:
-(load-file (concat emacs-dir "imgsave/imgsave.el"))
-;; https://github.com/robinchenyu/image-paste/blob/master/bin/imagepaste.py
-;; https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
-;; https://emacs.stackexchange.com/questions/41016/how-can-i-yank-images-from-emacs
-;; https://github.com/dnxbjyj/pasteex-mode
-;; https://github.com/mooreryan/markdown-dnd-images
 
 
 ;;-----------------------------------------------------------------------------
