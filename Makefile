@@ -6,6 +6,8 @@ LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DI
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
 RIPGREP_VERSION = 11.0.2
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
+PANDOC_VERSION = 2.9.2
+PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
 MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
 PIP ?= pip
 
@@ -46,6 +48,19 @@ RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
 	$(RTAGS_SRC_DIR) \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
+CQUERY_REPO ?= https://github.com/cquery-project/cquery
+CQUERY_BRANCH ?= master  # may also be a tag
+CQUERY_DIR ?= $(LOCAL_SRC_DIR)/
+CQUERY_SRC_DIR ?= $(CQUERY_DIR)/cquery
+CQUERY_BUILD_DIR ?= $(CQUERY_DIR)/build
+CQUERY_INSTALL_DIR ?= $(CQUERY_DIR)/install
+CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(CQUERY_BUILD_DIR) \
+	--install-dir $(CQUERY_INSTALL_DIR) \
+	$(CQUERY_SRC_DIR) \
+	-V SYSTEM_CLANG=ON \
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
+
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
     OS = Windows
@@ -83,8 +98,15 @@ pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) inst
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag cmany pip_packages markdown_toc clang_install ccls_install rtags_install
+all: ripgrep ag cmany pip_packages markdown_toc clang_install cquery_install ccls_install system_only
 
+ifeq ($(OS),Windows_NT)
+system_only: windows_only
+else
+system_only: linux_only
+endif
+windows_only:
+linux_only: rtags_install
 
 #----------------------------------------------------------------------
 
@@ -135,6 +157,25 @@ ag: $(LOCAL_DIR)/bin
 	fi
 
 
+.PHONY: pandoc
+pandoc: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   fn=`basename $(PANDOC_VERSION_URL) | sed 's:\.zip$$::g'` && \
+	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$(PANDOC_VERSION_URL)" && \
+	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
+	   cp -favr $(WIN_DL_DIR)/$$fn/pandoc-$(PANDOC_VERSION)/*.exe $(LOCAL_DIR)/bin/ ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S pandoc ; \
+	   else \
+	      aaaaaaaa not done ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
 .PHONY: markdown_toc
 markdown_toc: $(LOCAL_DIR)/bin
 	$(call download,$(MARKDOWN_TOC),$(LOCAL_DIR)/bin/gh-md-toc)
@@ -147,6 +188,12 @@ rtags: $(RTAGS_INSTALL_DIR)
 rtags_build: $(RTAGS_INSTALL_DIR)
 rtags_config: $(RTAGS_BUILD_DIR)
 rtags_clone: $(RTAGS_SRC_DIR)
+
+.PHONY: cquery cquery_install cquery_build cquery_config cquery_clone
+cquery: $(CQUERY_INSTALL_DIR)
+cquery_build: $(CQUERY_INSTALL_DIR)
+cquery_config: $(CQUERY_BUILD_DIR)
+cquery_clone: $(CQUERY_SRC_DIR)
 
 .PHONY: ccls ccls_install ccls_build ccls_config ccls_clone
 ccls: $(CCLS_INSTALL_DIR)
@@ -166,6 +213,12 @@ rtags_install: $(LOCAL_DIR) $(RTAGS_INSTALL_DIR)
 	@bd=$(shell cmany show_build_names $(RTAGS_CMANY_ARGS)) ; \
 	echo "Build name: $$bd" ; \
 	$(call copy_tree,$(RTAGS_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
+
+cquery_install: $(LOCAL_DIR) $(CQUERY_INSTALL_DIR)
+	@echo "cquery_install: $(CQUERY_INSTALL_DIR) ---> $(LOCAL_DIR)"
+	@bd=$(shell cmany show_build_names $(CQUERY_CMANY_ARGS)) ; \
+	echo "Build name: $$bd" ; \
+	$(call copy_tree,$(CQUERY_INSTALL_DIR)/$$bd,*,$(LOCAL_DIR))
 
 ccls_install: $(LOCAL_DIR) $(CCLS_INSTALL_DIR)
 	@echo "ccls_install: $(CCLS_INSTALL_DIR) ---> $(LOCAL_DIR)"
@@ -188,6 +241,10 @@ $(RTAGS_INSTALL_DIR): $(RTAGS_BUILD_DIR)
 	@echo "rtags_install_dir: $(RTAGS_INSTALL_DIR)"
 	cmany i $(RTAGS_CMANY_ARGS)
 
+$(CQUERY_INSTALL_DIR): $(CQUERY_BUILD_DIR)
+	@echo "cquery_install_dir: $(CQUERY_INSTALL_DIR)"
+	cmany i $(CQUERY_CMANY_ARGS)
+
 $(CCLS_INSTALL_DIR): $(CCLS_BUILD_DIR)
 	@echo "ccls_install_dir: $(CCLS_INSTALL_DIR)"
 	cmany i $(CCLS_CMANY_ARGS)
@@ -200,6 +257,10 @@ $(CLANG_INSTALL_DIR): $(CLANG_BUILD_DIR)
 $(RTAGS_BUILD_DIR): cmany $(RTAGS_SRC_DIR)
 	@echo "rtags_build_dir: $(RTAGS_INSTALL_DIR)"
 	cmany c $(RTAGS_CMANY_ARGS)
+
+$(CQUERY_BUILD_DIR): cmany $(CQUERY_SRC_DIR)
+	@echo "cquery_build_dir: $(CQUERY_INSTALL_DIR)"
+	cmany c $(CQUERY_CMANY_ARGS)
 
 $(CCLS_BUILD_DIR): cmany $(CCLS_SRC_DIR)
 	@echo "ccls_build_dir: $(CCLS_INSTALL_DIR)"
@@ -214,6 +275,12 @@ $(RTAGS_SRC_DIR): $(RTAGS_DIR)
 	@echo "rtags_src_dir: $(RTAGS_SRC_DIR)"
 	if [ ! -d "$(RTAGS_SRC_DIR)" ] ; then \
 	    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(RTAGS_BRANCH) $(RTAGS_REPO) $(RTAGS_SRC_DIR) ; \
+	fi
+
+$(CQUERY_SRC_DIR): $(CQUERY_DIR)
+	@echo "cquery_src_dir: $(CQUERY_SRC_DIR)"
+	if [ ! -d "$(CQUERY_SRC_DIR)" ] ; then \
+	    cd $(LOCAL_SRC_DIR) && git clone --recursive --branch=$(CQUERY_BRANCH) $(CQUERY_REPO) $(CQUERY_SRC_DIR) ; \
 	fi
 
 $(CCLS_SRC_DIR): $(CCLS_DIR)
@@ -239,6 +306,9 @@ $(CLANG_SRC_DIR): $(CLANG_DIR)
 
 $(RTAGS_DIR):
 	$(call makedirs, $(RTAGS_DIR))
+
+$(CQUERY_DIR):
+	$(call makedirs, $(CQUERY_DIR))
 
 $(CCLS_DIR):
 	$(call makedirs, $(CCLS_DIR))

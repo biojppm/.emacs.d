@@ -77,6 +77,16 @@
 (global-set-key "\C-x\C-z" nil)
 (global-set-key (kbd "C-x C-z") nil)
 
+;; UTF8 everywhere
+;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
+(set-terminal-coding-system 'utf-8)
+(set-language-environment 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq locale-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+
 ;;-------------------------------------------------------------------------------
 ;; set garbage-collection threshold to 10MB to speed up flx-ido:
 ;; see https://github.com/lewang/flx
@@ -788,9 +798,11 @@
   (setq bidi-paragraph-direction 'left-to-right))
 
 ;; Set Windows-specific preferences if running in a Windows environment.
-(defun udf-windows-setup () (interactive)
+;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
+(defun udf-windows-setup ()
+  (interactive)
   ;(setq git-shell-exe "C:\\Git\\bin\\sh")
-  (setq git-shell-exe "C:\\Git\\bin\\bash")
+  (setq git-shell-exe "C:\\Git\\bin\\bash.exe")
   (setq git-shell-dir "C:\\Git\\bin\\")
   ;(setq git-shell-dir (file-name-directory git-shell-exe)) ; this turns \ into /
   (add-to-list 'exec-path git-shell-dir)
@@ -806,6 +818,17 @@
 
 ;;(if (eq system-type 'windows-nt)
 ;;    (udf-windows-setup))
+
+(defun run-bash ()
+      (interactive)
+      (let ((shell-file-name "C:\\Git\\bin\\bash.exe"))
+            (shell "*bash*")))
+
+(defun run-cmdexe ()
+      (interactive)
+      (let ((shell-file-name "cmd.exe"))
+            (shell "*cmd.exe*")))
+
 
 ;;-------------------------------------------------------------------------
 ;; IDO mode: (Interactively DO things)
