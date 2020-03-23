@@ -1727,6 +1727,7 @@ original line and use the absolute value."
 )
 
 (defun hook-snips()
+  (interactive)
   (message "enabling YASnippet...")
   ;; insert our dir at the front of the default snippets
   ;(setq sdir (concat emacs-dir "snippets"))
@@ -2907,10 +2908,12 @@ original line and use the absolute value."
   :defer t
   :config
   (add-hook 'rst-mode-hook 'my-text-hook)
+  (add-hook 'rst-mode-hook 'hook-snips)
 )
 
 ;; Markdown
 ;; https://jblevins.org/projects/markdown-mode/
+;; to preview using the github style: https://github.com/joeyespo/grip
 (use-package markdown-mode
   :defer t
   :commands (markdown-mode gfm-mode)
@@ -2920,7 +2923,9 @@ original line and use the absolute value."
   :init (setq markdown-command "multimarkdown")
   :config
   (add-hook 'markdown-mode-hook 'my-text-hook)
+  (add-hook 'markdown-mode-hook 'hook-snips)
   (add-hook 'gfm-mode-hook 'my-text-hook)
+  (add-hook 'gfm-mode-hook 'hook-snips)
   )
 
 
