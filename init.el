@@ -5,6 +5,11 @@
 ;; see http://stackoverflow.com/questions/5795451/how-to-detect-that-emacs-is-in-terminal-mode
 ;; Many of the use-package calls were taken from https://github.com/ljos/.emacs.d/blob/master/init.el
 
+;; emacs on windows:
+;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
+;; https://github.com/hubisan/emacs-wsl
+
+
 (setq emacs-dir (file-name-directory load-file-name))
 (message (format "emacs-dir %s" emacs-dir))
 
