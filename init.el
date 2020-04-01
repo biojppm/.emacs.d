@@ -535,6 +535,10 @@
 ;; https://orgmode.org/manual/Clocking-work-time.html
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
+
+;; https://stackoverflow.com/questions/22720526/set-clock-table-duration-format-for-emacs-org-mode
+(setq org-duration-format (quote h:mm))
+
 ;; C-c C-x C-r     (org-clock-report) Insert a dynamic block
 ;; C-c C-c  or  C-c C-x C-u     (org-dblock-update) Update dynamic block at point
 ;; C-u C-c C-x C-u      Update all dynamic blocks
@@ -610,6 +614,54 @@
 
 (advice-add 'org-clocktable-indent-string
             :override #'my-org-clocktable-indent-string)
+
+(add-hook 'org-mode-hook #'use-snips)
+(add-hook 'org-mode-hook #'hook-snips)
+
+(defun --my-org-parse-hh:mm (tm)
+  (let* ((spl (split-string tm ":"))
+         (hh (string-to-number (nth 0 spl)))
+         (mm (string-to-number (nth 1 spl))))
+    (+ hh (/ mm 60.0))
+    )
+  )
+
+(defun --my-org-time-cmp(ts fn suffix)
+  (if (string-empty-p ts)
+      ""
+    (let* ((treal (--my-org-parse-hh:mm ts))
+           (tbill (/ (fround (* value 4.0)) 4.0)
+           (delta (- tbill treal)))
+      (format "%5.2f vs %5.2f -> %+.2f%s"
+              (funcall fn tbill) (funcall fn treal) (funcall fn delta) suffix)
+      )
+      )
+    )
+  )
+
+(defun my-org-time-cmp(ts)
+  (--my-org-time-cmp ts (lambda (arg) arg) "h")
+  )
+
+(defun my-org-bill-cmp(ts rate)
+  (--my-org-time-cmp ts (lambda (arg) (* arg rate)) "€")
+  )
+
+(defun my-org-merge-times(timesheet week day)
+  (if (not (string-empty-p day))
+      day
+    (if (not (string-empty-p week))
+        week
+      (if (not (string-empty-p timesheet))
+          timesheet
+        )
+      )
+    )
+  )
+
+(defun my-org-task-cost(timesheet week day)
+  )
+
 
 ;;-------------------------------------------
 ;; DIRTREE: https://github.com/zk/emacs-dirtree
@@ -824,12 +876,12 @@
 ;;(if (eq system-type 'windows-nt)
 ;;    (udf-windows-setup))
 
-(defun run-bash ()
+(defun run-bash-windows ()
       (interactive)
       (let ((shell-file-name "C:\\Git\\bin\\bash.exe"))
             (shell "*bash*")))
 
-(defun run-cmdexe ()
+(defun run-cmdexe-windows ()
       (interactive)
       (let ((shell-file-name "cmd.exe"))
             (shell "*cmd.exe*")))
@@ -1011,6 +1063,12 @@
 
 ;; using counsel-ag: very good:
 ;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
+;;
+;; C-c s k (counsel-ag) to search in the current directory.
+;; C-c C-o (ivy-occur) in the search result. It opens an ivy-occur buffer.
+;; C-x C-q (ivy-wgrep-change-to-wgrep-mode) on the ivy-occur buffer to edit it
+;;         I can now change each variable name globally using normal search/replace.
+;; C-c C-c (wgrep-finish-edit).
 
 (use-package counsel
   :ensure t
@@ -3097,12 +3155,10 @@ original line and use the absolute value."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
+   '("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default))
  '(ecb-options-version "2.40")
  '(package-selected-packages
-   (quote
-    (
+   '(
      ag
      anzu
      arduino-mode
@@ -3128,7 +3184,6 @@ original line and use the absolute value."
      dtrt-indent
      elisp-slime-nav
      elpy
-     elpygen
      ess
      find-file-in-project
      find-file-in-repository
@@ -3201,15 +3256,12 @@ original line and use the absolute value."
      yasnippet-classic-snippets
      zenburn-theme
      )
-    )
    )
  '(safe-local-variable-values
-   (quote
-    ((eval load-file
+   '((eval load-file
            (concat c4stl-dir ".project.el"))
      (eval set
-           (make-local-variable
-            (quote c4stl-dir))
+           (make-local-variable 'c4stl-dir)
            (file-name-directory
             (let
                 ((d
@@ -3217,7 +3269,7 @@ original line and use the absolute value."
               (if
                   (stringp d)
                   d
-                (car d)))))))))
+                (car d))))))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

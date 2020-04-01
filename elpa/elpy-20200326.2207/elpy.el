@@ -4,7 +4,7 @@
 
 ;; Author: Jorgen Schaefer <contact@jorgenschaefer.de>, Gaby Launay <gaby.launay@protonmail.com>
 ;; URL: https://github.com/jorgenschaefer/elpy
-;; Version: 1.32.0
+;; Version: 1.33.0
 ;; Keywords: Python, IDE, Languages, Tools
 ;; Package-Requires: ((company "0.9.10") (emacs "24.4") (highlight-indentation "0.7.0") (pyvenv "1.20") (yasnippet "0.13.0") (s "1.12.0"))
 
@@ -53,7 +53,7 @@
 (require 'elpy-rpc)
 (require 'pyvenv)
 
-(defconst elpy-version "1.32.0"
+(defconst elpy-version "1.33.0"
   "The version of the Elpy Lisp code.")
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -598,8 +598,8 @@ virtualenv.
 
 (defvar elpy-config--get-config "import json
 import sys
+from distutils.version import LooseVersion
 import warnings
-
 warnings.filterwarnings('ignore', category=FutureWarning)
 
 try:
@@ -607,12 +607,21 @@ try:
 except ImportError:
     import urllib.request as urllib
 
-from distutils.version import LooseVersion
+
+# Check if we can connect to pypi quickly enough
+try:
+    response = urllib.urlopen('https://pypi.org/pypi', timeout=1)
+    CAN_CONNECT_TO_PYPI = True
+except:
+    CAN_CONNECT_TO_PYPI = False
 
 
 def latest(package, version=None):
+    if not CAN_CONNECT_TO_PYPI:
+        return None
     try:
-        response = urllib.urlopen('https://pypi.org/pypi/{package}/json'.format(package=package)).read()
+        response = urllib.urlopen('https://pypi.org/pypi/{package}/json'.format(package=package),
+               timeout=2).read()
         latest = json.loads(response)['info']['version']
         if version is None or LooseVersion(version) < LooseVersion(latest):
             return latest
@@ -623,6 +632,7 @@ def latest(package, version=None):
 
 
 config = {}
+config['can_connect_to_pypi'] = CAN_CONNECT_TO_PYPI
 config['rpc_python_version'] = ('{major}.{minor}.{micro}'
                             .format(major=sys.version_info[0],
                                     minor=sys.version_info[1],
@@ -859,6 +869,20 @@ item in another window.\n\n")
                      :package python-shell-interpreter :norpc t)
       (insert "\n\n"))
 
+    ;; Couldn't connect to pypi to check package versions
+    (when (not (gethash "can_connect_to_pypi" config))
+      (elpy-insert--para
+       "Elpy could not connect to Pypi (or at least not quickly enough) "
+       "and check if the python packages were up-to-date. "
+       "You can still try to update all of them:"
+       "\n")
+      (insert "\n")
+      (widget-create 'elpy-insert--generic-button
+                     :button-name "[Update python packages]"
+                     :function (lambda () (with-elpy-rpc-virtualenv-activated
+                                        (elpy-rpc--install-dependencies))))
+      (insert "\n\n"))
+
     ;; Pip not available in the rpc virtualenv
     (when (and (elpy-rpc--pip-missing)
                (not (gethash "jedi_version" config)))
@@ -1034,7 +1058,9 @@ virtual_env_short"
       (let ((venv (getenv "VIRTUAL_ENV")))
         (puthash "virtual_env" venv config)
         (if venv
-            (puthash "virtual_env_short" (file-name-nondirectory venv) config)
+            (puthash "virtual_env_short" (file-name-nondirectory
+                                          (directory-file-name venv))
+                     config)
           (puthash "virtual_env_short" nil config)))
       (with-elpy-rpc-virtualenv-activated
        (let ((return-value (ignore-errors
@@ -2250,10 +2276,13 @@ prefix argument is given, prompt for a symbol from the user."
   (interactive)
   (cond
    ((elpy-config--package-available-p "yapf")
+    (when (interactive-p) (message "Autoformatting code with yapf."))
     (elpy-yapf-fix-code))
    ((elpy-config--package-available-p "autopep8")
+    (when (interactive-p) (message "Autoformatting code with autopep8."))
     (elpy-autopep8-fix-code))
    ((elpy-config--package-available-p "black")
+    (when (interactive-p) (message "Autoformatting code with black."))
     (elpy-black-fix-code))
    (t
     (message "Install yapf/autopep8 to format code."))))
@@ -3086,16 +3115,17 @@ display the current class and method instead."
   (let ((flymake-error (elpy-flymake-error-at-point)))
     (if flymake-error
         flymake-error
-      ;; Try getting calltip
-      (elpy-rpc-get-calltip
-       (lambda (calltip)
+      (elpy-rpc-get-calltip-or-oneline-docstring
+       (lambda (info)
          (cond
-          ((stringp calltip)
-           (eldoc-message calltip))
-          (calltip
-           (let ((name (cdr (assq 'name calltip)))
-                 (index (cdr (assq 'index calltip)))
-                 (params (cdr (assq 'params calltip))))
+          ;; INFO is a string, just display it
+          ((stringp info)
+           (eldoc-message info))
+          ;; INFO is a calltip
+          ((string= (cdr (assq 'kind info)) "calltip")
+           (let ((name (cdr (assq 'name info)))
+                 (index (cdr (assq 'index info)))
+                 (params (cdr (assq 'params info))))
              (when index
                (setf (nth index params)
                      (propertize (nth index params)
@@ -3108,28 +3138,29 @@ display the current class and method instead."
                 (if (version<= emacs-version "25")
                     (format "%s%s" prefix args)
                   (eldoc-docstring-format-sym-doc prefix args nil))))))
+          ;; INFO is a oneline docstring
+          ((string= (cdr (assq 'kind info)) "oneline_doc")
+           (let ((name (cdr (assq 'name info)))
+                 (docs (cdr (assq 'doc info))))
+             (let ((prefix (propertize (format "%s: " name)
+                                       'face
+                                       'font-lock-function-name-face)))
+               (eldoc-message
+                (if (version<= emacs-version "25")
+                    (format "%s%s" prefix docs)
+                  (let ((eldoc-echo-area-use-multiline-p nil))
+                    (eldoc-docstring-format-sym-doc prefix docs nil)))))))
+          ;; INFO is nil, maybe display the current function
           (t
-           ;; Try getting oneline docstring
-           (elpy-rpc-get-oneline-docstring
-            (lambda (doc)
-              (cond
-               (doc
-                (let ((name (cdr (assq 'name doc)))
-                      (doc (cdr (assq 'doc doc))))
-                  (let ((prefix (propertize (format "%s: " name)
-                                            'face
-                                            'font-lock-function-name-face)))
-                    (eldoc-message
-                     (if (version<= emacs-version "25")
-                         (format "%s%s" prefix doc)
-                       (let ((eldoc-echo-area-use-multiline-p nil))
-                         (eldoc-docstring-format-sym-doc prefix doc nil)))))))
-               ;; Give the current definition
-               (elpy-eldoc-show-current-function
-                (let ((current-defun (python-info-current-defun)))
-                  (when current-defun
-                    (eldoc-message
-                     (format "In: %s()" current-defun))))))))))))
+           (if elpy-eldoc-show-current-function
+               (let ((current-defun (python-info-current-defun)))
+                 (when current-defun
+                   (eldoc-message
+                    (concat "In: "
+                            (propertize
+                             (format "%s()" current-defun)
+                             'face 'font-lock-function-name-face)))))
+             (eldoc-message ""))))))
       ;; Return the last message until we're done
       eldoc-last-message)))
 

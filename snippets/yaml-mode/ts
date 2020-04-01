@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: add daily time stamps
+# key: ts
+# --
+`(format-time-string "%Y%m%d")`: [${1:09:00}, ${2:17:00}]$0
