@@ -41,6 +41,7 @@
         compile-goto-error
         counsel-yank-pop
         duplicate-line-or-region
+        end-of-buffer
         enlarge-window-horizontally
         gud-tooltip-mouse-motion
         help-for-help

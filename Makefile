@@ -5,7 +5,9 @@ EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
 RIPGREP_VERSION = 11.0.2
+RIPGREP_VERSION_URL = "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip"
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
+FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/fzf-0.21.1-windows_amd64.zip"
 PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
 MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
@@ -70,12 +72,11 @@ else
     # https://askubuntu.com/questions/279168/detect-if-its-ubuntu-linux-os-in-makefile
     ifeq ($(UNAME_S),Linux)
         OS = Linux
-	ifeq ($(shell lsb_release -si),ManjaroLinux)
-	    DISTRO = Manjaro
+	DISTRO = $(shell lsb_release -si | sed 's/Linux//') # Manjaro
+    else
+        ifeq ($(UNAME_S),Darwin)
+            OS = Darwin
         endif
-    endif
-    ifeq ($(UNAME_S),Darwin)
-        OS = Darwin
     endif
 endif
 
@@ -95,10 +96,18 @@ download = curl -o "$2" -L -s "$1"
 # install a pip package
 pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) install $1 ; fi
 
+# download and unpack a windows zip
+# $1=url
+# $2=unpack pattern
+wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
+	curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$1" ; \
+	7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn ; \
+	cp -favr $(WIN_DL_DIR)/$$fn/$2 $(LOCAL_DIR)/bin/
+
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag cmany pip_packages markdown_toc clang_install cquery_install ccls_install system_only
+all: ripgrep ag fzf pandoc markdow_toc cmany pip_packages markdown_toc clang_install cquery_install ccls_install system_only
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -123,10 +132,7 @@ pip_packages:
 ripgrep: $(LOCAL_DIR)/bin
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
-	   fn="ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc" && \
-	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/$$fn.zip" && \
-	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
-	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	   $(call wininstallzip,$(RIPGREP_VERSION_URL),*.*) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S ripgrep ; \
@@ -142,10 +148,7 @@ ripgrep: $(LOCAL_DIR)/bin
 ag: $(LOCAL_DIR)/bin
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
-	   fn=`basename $(AG_VERSION_URL) | sed 's:\.zip$$::g'` && \
-	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$(AG_VERSION_URL)" && \
-	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
-	   cp -favr $(WIN_DL_DIR)/$$fn/*.* $(LOCAL_DIR)/bin/ ; \
+	   $(call wininstallzip,$(AG_VERSION_URL),ag.exe) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S the_silver_searcher ; \
@@ -157,14 +160,28 @@ ag: $(LOCAL_DIR)/bin
 	fi
 
 
+# https://github.com/junegunn/fzf
+.PHONY: fzf
+fzf: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(FZF_VERSION_URL),*.*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S fzf ; \
+	   else \
+              sudo apt-get install fzf ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
 .PHONY: pandoc
 pandoc: $(LOCAL_DIR)/bin
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
-	   fn=`basename $(PANDOC_VERSION_URL) | sed 's:\.zip$$::g'` && \
-	   curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$(PANDOC_VERSION_URL)" && \
-	   7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn && \
-	   cp -favr $(WIN_DL_DIR)/$$fn/pandoc-$(PANDOC_VERSION)/*.exe $(LOCAL_DIR)/bin/ ; \
+	   $(call wininstallzip,$(PANDOC_VERSION_URL),pandoc-$(PANDOC_VERSION)/*.exe) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S pandoc ; \

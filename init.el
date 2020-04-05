@@ -1019,43 +1019,6 @@
 
 
 ;;------------------------------------------------------------------
-;; wgrep
-;; wgrep allows you to edit a grep buffer and apply those changes to the file buffer.
-;; You can edit the text in the *grep* buffer after typing `C-c C-p` .
-;; After that the changed text is highlighted.
-;; The following keybindings are defined:
-;;
-;; * `C-c C-e`: Apply the changes to file buffers.
-;; * `C-c C-u`: All changes are unmarked and ignored.
-;; * `C-c C-d`: Mark as delete to current line (including newline).
-;; * `C-c C-r`: Remove the changes in the region (these changes are not
-;;   applied to the files. Of course, the remaining
-;;   changes can still be applied to the files.)
-;; * `C-c C-p`: Toggle read-only area.
-;; * `C-c C-k`: Discard all changes and exit.
-;; * `C-x C-q`: Exit wgrep mode.
-;;
-;; * To save all buffers that wgrep has changed, run
-;;
-;;     M-x wgrep-save-all-buffers
-;;
-;; * To save buffer automatically when `wgrep-finish-edit'.
-;;
-;;     (setq wgrep-auto-save-buffer t)
-;;
-;; * You can change the default key binding to switch to wgrep.
-;;
-;;     (setq wgrep-enable-key "r")
-;;
-;; * To apply all changes wheather or not buffer is read-only.
-;;
-;;     (setq wgrep-change-readonly-file t)
-
-(use-package wgrep
-  )
-
-
-;;------------------------------------------------------------------
 ;; counsel
 
 ;; nice intro:
@@ -1080,6 +1043,7 @@
          ("<f1> l" . counsel-find-library)
          ;;("<f2> i" . counsel-info-lookup-symbol)
          ;;("<f2> u" . counsel-unicode-char)
+         ("C-c s f" . counsel-fzf)
          ("C-c s g" . counsel-git-grep)
          ("C-c s j" . counsel-git)
          ("C-c s k" . counsel-ag) ;; https://truthseekers.io/lessons/how-to-use-ivy-swiper-counsel-in-emacs-for-noobs/
@@ -1192,27 +1156,6 @@
                 (message "%s is updated!" tags-file))))
           )
         )
-  )
-
-
-;;-------------------------------------------------------------------------
-
-(setq --my-grep--pattern "")
-(setq --my-grep--target nil)
-(defun my-grep()
-  (interactive)
-  (let* ((pattern (read-string "grep pattern: " --my-grep--pattern))
-         (_target (if --my-grep--target --my-grep--target buffer-file-name))
-         (dn (file-name-directory _target))
-         (bn (file-name-base _target))
-         (target (ido-read-file-name
-                  "grep target: " dn bn nil bn))
-         )                              ;
-    (message "grepping for pattern: '%s' at target '%s'" pattern target)
-    (setq --my-grep--pattern pattern)
-    (setq --my-grep--target target)
-    (grep (format "grep -rnH '%s' %s" pattern target))
-    )
   )
 
 
@@ -1779,6 +1722,25 @@ original line and use the absolute value."
 ;; (setq-default sml/vc-mode-show-backend t
 ;		sml/theme 'respectful)
 ;; (sml/setup))
+
+;;-------------------------------------------------------------------------
+;; string inflection
+;; https://github.com/akicho8/string-inflection
+;;
+;; (string-inflection-underscore-function "EmacsLisp")           ; => "emacs_lisp"
+;; (string-inflection-pascal-case-function "emacs_lisp")         ; => "EmacsLisp"
+;; (string-inflection-camelcase-function "emacs_lisp")           ; => "emacsLisp"
+;; (string-inflection-upcase-function "emacs_lisp")              ; => "EMACS_LISP"
+;; (string-inflection-kebab-case-function "emacs_lisp")          ; => "emacs-lisp"
+;; (string-inflection-capital-underscore-function "emacs_lisp")  ; => "Emacs_Lisp"
+;;
+;; (string-inflection-pascal-case-p "EmacsLisp")                 ; => t
+;; (string-inflection-pascal-case-p "emacs_lisp")                ; => nil
+
+(use-package string-inflection
+  :config
+  )
+
 
 ;;-------------------------------------------------------------------------
 ;;SNIPPETS
@@ -2888,9 +2850,9 @@ original line and use the absolute value."
   ;; name and the latter will prompt the user for a name. The
   ;; rg-list-searches command will open a buffer with all active rg-mode
   ;; buffers showing basic information about each search.
-   rg-save-search
-   rg-save-search-as-name
-   rg-list-searches
+  rg-save-search
+  rg-save-search-as-name
+  rg-list-searches
   :init
   ;; M-s r 	rg
   ;; M-s d 	rg-dwim
@@ -2913,6 +2875,41 @@ original line and use the absolute value."
   :init
   )
 
+
+;;------------------------------------------------------------------
+;; wgrep
+;; wgrep allows you to edit a grep buffer and apply those changes to the file buffer.
+;; You can edit the text in the *grep* buffer after typing `C-c C-p` .
+;; After that the changed text is highlighted.
+;; The following keybindings are defined:
+;;
+;; * `C-c C-e`: Apply the changes to file buffers.
+;; * `C-c C-u`: All changes are unmarked and ignored.
+;; * `C-c C-d`: Mark as delete to current line (including newline).
+;; * `C-c C-r`: Remove the changes in the region (these changes are not
+;;   applied to the files. Of course, the remaining
+;;   changes can still be applied to the files.)
+;; * `C-c C-p`: Toggle read-only area.
+;; * `C-c C-k`: Discard all changes and exit.
+;; * `C-x C-q`: Exit wgrep mode.
+;;
+;; * To save all buffers that wgrep has changed, run
+;;
+;;     M-x wgrep-save-all-buffers
+;;
+;; * To save buffer automatically when `wgrep-finish-edit'.
+;;
+;;     (setq wgrep-auto-save-buffer t)
+;;
+;; * You can change the default key binding to switch to wgrep.
+;;
+;;     (setq wgrep-enable-key "r")
+;;
+;; * To apply all changes wheather or not buffer is read-only.
+;;
+;;     (setq wgrep-change-readonly-file t)
+
+
 ;; wgrep allows you to edit all files in a grep result. For example,
 ;; you can use C-c g or C-c r to search all files in a project, then
 ;; use C-c C-o to enter ivy-occur mode, followed by 'w' to make
@@ -2920,6 +2917,26 @@ original line and use the absolute value."
 ;; however you wish.
 (use-package wgrep
 :ensure t)
+
+;;-------------------------------------------------------------------------
+
+(setq --my-grep--pattern "")
+(setq --my-grep--target nil)
+(defun my-grep()
+  (interactive)
+  (let* ((pattern (read-string "grep pattern: " --my-grep--pattern))
+         (_target (if --my-grep--target --my-grep--target buffer-file-name))
+         (dn (file-name-directory _target))
+         (bn (file-name-base _target))
+         (target (ido-read-file-name
+                  "grep target: " dn bn nil bn))
+         )                              ;
+    (message "grepping for pattern: '%s' at target '%s'" pattern target)
+    (setq --my-grep--pattern pattern)
+    (setq --my-grep--target target)
+    (grep (format "grep -rnH '%s' %s" pattern target))
+    )
+  )
 
 
 ;;-------------------------------------------------------------------------
@@ -3192,6 +3209,7 @@ original line and use the absolute value."
      flymake-cppcheck
      flx-ido
      fsharp-mode
+     fzf
      git-timemachine
      glsl-mode
      ghc
@@ -3238,6 +3256,7 @@ original line and use the absolute value."
      smartparens
      smex
      solarized-theme
+     string-inflection
      syntax-subword
      tango-plus-theme
      term-run
