@@ -1766,6 +1766,7 @@ original line and use the absolute value."
   ;; bind yas-expand to C-S-tab
   (define-key yas-minor-mode-map (kbd "<C-S-iso-lefttab>") 'yas-expand)  ;; this doesn't work in windows
   (define-key yas-minor-mode-map (kbd "<C-s-tab>") 'yas-expand)  ;; ... so use this with the windows key
+  (define-key yas-minor-mode-map (kbd "<C-S-tab>") 'yas-expand)  ;; ... so use this with the windows key
   (define-key yas-minor-mode-map (kbd "C-+") 'yas-expand)
   (yas-minor-mode-on)
   (message "enabling YASnippet: done")
