@@ -204,6 +204,24 @@ markdown_toc: $(LOCAL_DIR)/bin
 	$(call download,$(MARKDOWN_TOC),$(LOCAL_DIR)/bin/gh-md-toc)
 
 
+.PHONY: dropbox
+dropbox:
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   aaaaaaaa not done ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	       # https://forum.manjaro.org/t/cannot-upgrade-dropbox-key-issue/71432
+	      gpg --recv-key --keyserver hkp://pgp.mit.edu FC918B335044912E
+	      trizen -S dropbox dropbox-cli
+	   else \
+	      sudo apt-get install dropbox ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
 #----------------------------------------------------------------------
 
 .PHONY: rtags rtags_install rtags_build rtags_config rtags_clone

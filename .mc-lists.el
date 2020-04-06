@@ -12,6 +12,7 @@
         c-electric-star
         c-hungry-delete-forward
         c-indent-line-or-region
+        dired-next-line
         drag-stuff-down
         gcm-scroll-down
         gcm-scroll-up
@@ -52,4 +53,5 @@
         my-open-init-el
         my-recompile
         smex
+        wdired-finish-edit
         ))
