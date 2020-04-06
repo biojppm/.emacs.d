@@ -65,17 +65,17 @@ CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
 
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
-    OS = Windows
+    OS := Windows
     WIN_DL_DIR = "$(SYSTEMDRIVE)/Users/$(USERNAME)/Downloads"
 else
     UNAME_S := $(shell uname -s)
     # https://askubuntu.com/questions/279168/detect-if-its-ubuntu-linux-os-in-makefile
     ifeq ($(UNAME_S),Linux)
-        OS = Linux
-	DISTRO = $(shell lsb_release -si | sed 's/Linux//') # Manjaro
+        OS := Linux
+	DISTRO := $(shell lsb_release -si | sed 's/Linux//' | sed 's/[[:blank:]]//g')
     else
         ifeq ($(UNAME_S),Darwin)
-            OS = Darwin
+            OS := Darwin
         endif
     endif
 endif
@@ -107,7 +107,7 @@ wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag fzf pandoc markdow_toc cmany pip_packages markdown_toc clang_install cquery_install ccls_install system_only
+all: ripgrep ag fzf pandoc markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -122,6 +122,7 @@ linux_only: rtags_install
 .PHONY: cmany
 cmany:
 	$(call pipinstall, cmany)
+
 
 .PHONY: pip_packages
 pip_packages:
