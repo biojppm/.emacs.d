@@ -4,7 +4,7 @@
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
-RIPGREP_VERSION = 11.0.2
+RIPGREP_VERSION = 12.0.1
 RIPGREP_VERSION_URL = "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip"
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
 FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/fzf-0.21.1-windows_amd64.zip"
@@ -137,7 +137,9 @@ ripgrep: $(LOCAL_DIR)/bin
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S ripgrep ; \
 	   else \
-	      aaaaaaaa not done ; \
+	      sudo add-apt-repository ppa:x4121/ripgrep ; \
+	      sudo apt-get update ; \
+	      sudo apt-get install ripgrep ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
@@ -153,7 +155,9 @@ ag: $(LOCAL_DIR)/bin
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S the_silver_searcher ; \
 	   else \
-	      aaaaaaaa not done ; \
+	      sudo add-apt-repository ppa:pgolm/the-silver-searcher ; \
+	      sudo apt-get update ; \
+	      sudo apt-get install the-silver-searcher ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
@@ -170,7 +174,8 @@ fzf: $(LOCAL_DIR)/bin
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S fzf ; \
 	   else \
-              sudo apt-get install fzf ; \
+              git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf ; \
+	      ~/.fzf/install ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
@@ -186,7 +191,7 @@ pandoc: $(LOCAL_DIR)/bin
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S pandoc ; \
 	   else \
-	      aaaaaaaa not done ; \
+	      sudo apt-get install pandoc ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
