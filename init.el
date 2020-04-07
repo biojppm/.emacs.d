@@ -3093,7 +3093,7 @@ original line and use the absolute value."
 (defun my-magit-status ()
   (interactive)
   (let* ((prompt "repo root: ")
-         (rd (shell-command-to-string "git rev-parse --show-toplevel"))
+         (rd (car (split-string (shell-command-to-string "git rev-parse --show-toplevel"))))
          (.. (message "repodir=%s" rd))
          (dn (file-name-directory rd))
          (.. (message "repodirname=%s" dn))
