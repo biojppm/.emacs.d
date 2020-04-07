@@ -14,6 +14,7 @@
         c-indent-line-or-region
         dired-next-line
         drag-stuff-down
+        end-of-visual-line
         gcm-scroll-down
         gcm-scroll-up
         hungry-delete-backward

@@ -1788,6 +1788,8 @@ original line and use the absolute value."
   ;;:defer t
   :init
   (setq projectile-enable-caching t)
+  ;; use git or find or fd (if available) to index projects
+  (setq projectile-indexing-method 'alien)
   ;;:bind ("s-p" . projectile-command-map)
   :config
   (projectile-mode)
@@ -3157,6 +3159,7 @@ original line and use the absolute value."
     ;;                                          :height 100 :family "Monospace")))))
   )
 )
+
 
 ;;--------------------------------------------------------------------
 ;; Persistent scratch - save the scratch file
