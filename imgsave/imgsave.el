@@ -1,14 +1,15 @@
-;; suffix directory where images go
-(setq imgsave--default-dir "img")
 
-;; the full path to the python script
-(setq imgsave--py-script
-      (format "%simgsave.py"
+(defvar imgsave--default-dir "img"
+    "suffix directory where images are saved to")
+
+(defvar imgsave--py-script
+    (format "%simgsave.py"
        (file-truename
         (if load-file-name
            (file-name-directory load-file-name)
          default-directory
-         ))))
+         )))
+    "the full path to the imgsave python script")
 
 
 (defun imgsave-save-and-paste()

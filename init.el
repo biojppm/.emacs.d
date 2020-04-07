@@ -906,6 +906,8 @@
 (setq ido-enable-flex-matching t)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 
+;; ido binds C-x C-d to ido-list-directory, so bind to dired
+(global-set-key (kbd "C-x C-d") 'ido-dired)
 
 ;; disable ido faces to see flx highlights.
 ;(setq ido-use-faces nil)
@@ -1402,6 +1404,8 @@ If point was already at that position, move point to beginning of line."
 
 (win-nav-rsz)
 
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;;=========================================================================
 ;; EDITING
 
@@ -1787,6 +1791,7 @@ original line and use the absolute value."
   ;;:bind ("s-p" . projectile-command-map)
   :config
   (projectile-mode)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   ;;(persp-mode)
   ;;(use-package persp-projectile
   ;;  :commands persp-projectile
@@ -3152,6 +3157,54 @@ original line and use the absolute value."
     ;;                                          :height 100 :family "Monospace")))))
   )
 )
+
+;;--------------------------------------------------------------------
+;; Persistent scratch - save the scratch file
+;; http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html
+
+(defvar persistent-scratch-backup-directory
+    (concat user-emacs-directory "scratch-persist/")
+    "Location of backups of the *scratch* buffer contents for
+    persistent-scratch.")
+
+(defvar persistent-scratch-filename
+    (concat persistent-scratch-backup-directory "current.txt")
+    "Location of *scratch* file contents for persistent-scratch.")
+
+(defun persistent-scratch-get-backup-name ()
+  "Create a filename to backup the current scratch file by
+  concatenating persistent-scratch-backup-directory with the
+  current date and time."
+  (concat persistent-scratch-backup-directory
+          ;; TODO use the file modification time instead
+          "scratch." (format-time-string "%Y%m%d_%H%M%S") ".txt"))
+
+(defun persistent-scratch-save ()
+  (interactive)
+  "write the contents of *scratch* to the file name
+  persistent-scratch-filename, making a backup copy in
+  persistent-scratch-backup-directory."
+  (unless (file-directory-p persistent-scratch-backup-directory)
+    (make-directory persistent-scratch-backup-directory))
+  (with-current-buffer (get-buffer "*scratch*")
+    (if (file-exists-p persistent-scratch-filename)
+        (let ((bn (persistent-scratch-get-backup-name)))
+          (if (file-exists-p bn) (delete-file bn))
+          (copy-file persistent-scratch-filename bn)))
+    (write-region (point-min) (point-max)
+                  persistent-scratch-filename)))
+
+(defun persistent-scratch-load ()
+  (interactive)
+  "Load the contents of PERSISTENT-SCRATCH-FILENAME into the
+  scratch buffer, clearing its contents first."
+  (if (file-exists-p persistent-scratch-filename)
+      (with-current-buffer (get-buffer "*scratch*")
+        (delete-region (point-min) (point-max))
+        (shell-command (format "cat %s" persistent-scratch-filename) (current-buffer)))))
+
+(persistent-scratch-load)
+(push #'persistent-scratch-save kill-emacs-hook)
 
 
 ;;-----------------------------------------------------------------------------
