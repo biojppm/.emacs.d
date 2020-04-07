@@ -1,4 +1,4 @@
-(define-package "ccls" "20200204.444" "ccls client for lsp-mode"
+(define-package "ccls" "20200327.1915" "ccls client for lsp-mode"
   '((emacs "25.1")
     (lsp-mode "4.2")
     (dash "0.14")
