@@ -305,6 +305,8 @@
 ;; Important shortcuts:
 
 ;; TODO: start using which-key: https://github.com/justbur/emacs-which-key
+(require 'which-key)
+(which-key-mode)
 
 ;; C-h m
 ;; F1 m
@@ -3229,10 +3231,12 @@ original line and use the absolute value."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default))
+   (quote
+    ("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default)))
  '(ecb-options-version "2.40")
  '(package-selected-packages
-   '(
+   (quote
+    (
      ag
      anzu
      arduino-mode
@@ -3325,6 +3329,7 @@ original line and use the absolute value."
      web-mode
      wgrep
      wgrep-ag
+     which-key
      window-number
      ws-butler
      xahk-mode
@@ -3332,12 +3337,15 @@ original line and use the absolute value."
      yasnippet-classic-snippets
      zenburn-theme
      )
+    )
    )
  '(safe-local-variable-values
-   '((eval load-file
+   (quote
+    ((eval load-file
            (concat c4stl-dir ".project.el"))
      (eval set
-           (make-local-variable 'c4stl-dir)
+           (make-local-variable
+            (quote c4stl-dir))
            (file-name-directory
             (let
                 ((d
@@ -3345,7 +3353,7 @@ original line and use the absolute value."
               (if
                   (stringp d)
                   d
-                (car d))))))))
+                (car d)))))))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
