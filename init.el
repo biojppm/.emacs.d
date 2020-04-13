@@ -2056,6 +2056,15 @@ original line and use the absolute value."
   (message "my-cquery-hook --- DONE")
   )
 
+(use-package lsp-mode
+  ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  :init (setq lsp-keymap-prefix "C-c l")
+  :hook (;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp
+  )
+
 (load "my-lsp-setup")
 (defun my-lsp-hook()
   (interactive)
