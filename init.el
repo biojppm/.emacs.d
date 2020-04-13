@@ -304,9 +304,9 @@
 ;;-------------------------------------------------------------------------------
 ;; Important shortcuts:
 
-;; TODO: start using which-key: https://github.com/justbur/emacs-which-key
-(require 'which-key)
-(which-key-mode)
+;; which-key: https://github.com/justbur/emacs-which-key
+(use-package which-key
+  :config (which-key-mode))
 
 ;; C-h m
 ;; F1 m
