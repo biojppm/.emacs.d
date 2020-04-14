@@ -8,6 +8,7 @@ RIPGREP_VERSION = 12.0.1
 RIPGREP_VERSION_URL = "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip"
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
 FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/fzf-0.21.1-windows_amd64.zip"
+FD_VERSION_URL = "https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5.0-i686-pc-windows-msvc.zip"
 PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
 MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
@@ -177,6 +178,23 @@ fzf: $(LOCAL_DIR)/bin
 	   else \
               git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf ; \
 	      ~/.fzf/install ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+# https://github.com/sharkdp/fd/
+.PHONY: fd
+fd: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(FD_VERSION_URL),*.*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S fd ; \
+	   else \
+	      bbbbbbbb not done ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
