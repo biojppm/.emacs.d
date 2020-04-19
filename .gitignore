@@ -15,6 +15,7 @@ ede-projects.el
 eshell/
 history
 ido.last
+/image-dired/
 .local
 local.el
 local/

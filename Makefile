@@ -11,6 +11,7 @@ FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/
 FD_VERSION_URL = "https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5.0-i686-pc-windows-msvc.zip"
 PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
+IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-6-portable-Q16-x64.zip"
 MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
 PIP ?= pip
 
@@ -108,7 +109,7 @@ wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag fzf pandoc markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
+all: ripgrep ag fzf pandoc image_magick markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -211,6 +212,22 @@ pandoc: $(LOCAL_DIR)/bin
 	      sudo pacman -S pandoc ; \
 	   else \
 	      sudo apt-get install pandoc ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+.PHONY: image_magick
+image_magick: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(IMAGE_MAGICK_URL),*.{exe,dll}) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S imagemagick ; \
+	   else \
+	      sudo apt-get install imagemagick ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
