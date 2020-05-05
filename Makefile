@@ -12,7 +12,7 @@ FD_VERSION_URL = "https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5
 PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-6-portable-Q16-x64.zip"
-MARKDOWN_TOC = "https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc"
+MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -23,9 +23,9 @@ CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
 CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
 CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--proj-dir $(CLANG_SRC_DIR) \
 	--build-dir $(CLANG_BUILD_DIR) \
 	--install-dir $(CLANG_INSTALL_DIR) \
-	$(CLANG_SRC_DIR) \
         -V CLANG_VERSION=$(CLANG_VERSION)
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
@@ -35,9 +35,9 @@ CCLS_SRC_DIR ?= $(CCLS_DIR)/src
 CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
 CCLS_INSTALL_DIR ?= $(CCLS_DIR)/install
 CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--proj-dir $(CCLS_SRC_DIR) \
 	--build-dir $(CCLS_BUILD_DIR) \
 	--install-dir $(CCLS_INSTALL_DIR) \
-	$(CCLS_SRC_DIR) \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
 RTAGS_REPO ?= https://github.com/Andersbakken/rtags
@@ -47,21 +47,21 @@ RTAGS_SRC_DIR ?= $(RTAGS_DIR)/src
 RTAGS_BUILD_DIR ?= $(RTAGS_DIR)/build
 RTAGS_INSTALL_DIR ?= $(RTAGS_DIR)/install
 RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--proj-dir $(RTAGS_SRC_DIR) \
 	--build-dir $(RTAGS_BUILD_DIR) \
 	--install-dir $(RTAGS_INSTALL_DIR) \
-	$(RTAGS_SRC_DIR) \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
 CQUERY_REPO ?= https://github.com/cquery-project/cquery
 CQUERY_BRANCH ?= master  # may also be a tag
-CQUERY_DIR ?= $(LOCAL_SRC_DIR)/
-CQUERY_SRC_DIR ?= $(CQUERY_DIR)/cquery
+CQUERY_DIR ?= $(LOCAL_SRC_DIR)/cquery
+CQUERY_SRC_DIR ?= $(CQUERY_DIR)/src
 CQUERY_BUILD_DIR ?= $(CQUERY_DIR)/build
 CQUERY_INSTALL_DIR ?= $(CQUERY_DIR)/install
 CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--proj-dir $(CQUERY_SRC_DIR) \
 	--build-dir $(CQUERY_BUILD_DIR) \
 	--install-dir $(CQUERY_INSTALL_DIR) \
-	$(CQUERY_SRC_DIR) \
 	-V SYSTEM_CLANG=ON \
 	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
 
@@ -87,13 +87,13 @@ endif
 
 # define a function to copy file trees
 # usage: $(call copy_tree,src_root,pattern(s),dst_root)
-copy_tree = cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
+copy_tree = set -e ; set -x ; cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
 # define a function to make a directory and parents
 makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 
 # download a url $1 to a destination file $2
-download = curl -o "$2" -L -s "$1"
+download = curl -o $2 -L -s "$1"
 
 # install a pip package
 pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) install $1 ; fi
@@ -237,6 +237,7 @@ image_magick: $(LOCAL_DIR)/bin
 .PHONY: markdown_toc
 markdown_toc: $(LOCAL_DIR)/bin
 	$(call download,$(MARKDOWN_TOC),$(LOCAL_DIR)/bin/gh-md-toc)
+	chmod a+x $(LOCAL_DIR)/bin/gh-md-toc
 
 
 .PHONY: dropbox

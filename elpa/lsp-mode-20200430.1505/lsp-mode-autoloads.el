@@ -46,20 +46,6 @@ Explain a clang-tidy ERROR by scraping documentation from llvm.org.
 
 ;;;***
 
-;;;### (autoloads nil "lsp-dart" "lsp-dart.el" (0 0 0 0))
-;;; Generated autoloads from lsp-dart.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dart" '("lsp-dart-")))
-
-;;;***
-
-;;;### (autoloads nil "lsp-dls" "lsp-dls.el" (0 0 0 0))
-;;; Generated autoloads from lsp-dls.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dls" '("lsp-dls-")))
-
-;;;***
-
 ;;;### (autoloads nil "lsp-elm" "lsp-elm.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-elm.el
 
