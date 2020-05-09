@@ -1810,6 +1810,9 @@ original line and use the absolute value."
         '(:eval (if (file-remote-p default-directory)
                     " Prj[*remote*]"
                   (format " Prj[%s]" (projectile-project-name)))))
+  (push ".ccls-cache" projectile-globally-ignored-directories)
+  (push ".clangd" projectile-globally-ignored-directories)
+  (push ".cquery_cached_index" projectile-globally-ignored-directories)
   )
 
 ;;
@@ -1962,116 +1965,6 @@ original line and use the absolute value."
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
-
-(use-package clang-format
-  :defer t
-  :bind ("C-c C-M-f" . clang-format-region))
-
-(use-package c-mode
-  :defer t
-  :config
-  (use-snips)
-  (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-c++-completion-hook)
-  :bind
-  (:map c-mode-base-map
-        ;; ("C-d" . duplicate-line-or-region)
-        )
-  )
-
-(use-package cc-mode
-  :defer t
-  :config
-  (use-snips)
-  (add-hook 'c-mode-common-hook #'my-c-hook)
-  (add-hook 'c-mode-common-hook #'my-c++-completion-hook)
-  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
-  :bind
-  (:map c-mode-base-map
-        ;; ("C-d" . duplicate-line-or-region)
-        )
-  )
-
-;; C++11 update to C++ syntax highlighting
-;; https://github.com/ludwigpacifici/modern-cpp-font-lock
-(use-package modern-cpp-font-lock
-  :defer t
-  :commands
-  modern-c++-font-lock-global-mode
-  modern-c++-font-lock-mode
-  )
-
-(defun my-c++-completion-hook()
-  (if this-is-windows
-      (progn
-        ;;(my-universal-tags-hook)
-        ;;(my-cquery-hook)
-        (my-lsp-hook)
-        )
-    (progn
-      ;;(my-rtags-hook)
-      ;;(my-cquery-hook)
-      (my-lsp-hook)
-      ()
-      )
-    )
-  )
-
-(defun my-universal-tags-hook ()
-  (interactive)
-  (load "my-ycmd-setup")
-  )
-
-(defun my-rtags-hook ()
-  (interactive)
-  (load "my-rtags-setup")
-  (rtags-start-process-unless-running)
-  (when (not (boundp 'company-backends))
-    (setq company-backends ())
-    )
-  (add-to-list 'company-backends 'company-rtags)
-  (add-to-list 'company-backends 'company-c-headers)
-  )
-
-(defun my-cquery-hook()
-  ;; https://github.com/cquery-project/cquery/wiki/Emacs
-  (interactive)
-  (message "my-cquery-hook 0")
-  (load "my-cquery-setup")
-  (message "my-cquery-hook 1")
-  (lsp)
-  (message "my-cquery-hook 2")
-  (lsp-mode)
-  (message "my-cquery-hook 3")
-  (when (not (boundp 'company-backends))
-    (setq company-backends ())
-    )
-  (add-to-list 'company-backends 'company-lsp)
-  (message "my-cquery-hook 4")
-  ;; disable client-side cache and sorting because the server does a better job
-  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
-  (message "my-cquery-hook 5")
-  ;; dont prompt for identifier on calls to xref-find-references
-  (add-to-list 'xref-prompt-for-identifier 'xref-find-references)
-  (message "my-cquery-hook --- DONE")
-  )
-
-(use-package lsp-mode
-  ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  :init (setq lsp-keymap-prefix "C-c l")
-  :hook (;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp
-  )
-
-(load "my-lsp-setup")
-(defun my-lsp-hook()
-  (interactive)
-  (message "my-lsp-hook 0")
-  (lsp)
-  (message "my-lsp-hook 1")
-  )
 
 ;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
@@ -2351,10 +2244,10 @@ original line and use the absolute value."
   :mode ("\\.ps1$" . powershell-mode)
   )
 
-;;; Robot Frameework
+;;; Robot Framework
 (use-package robot-mode
   :defer t
-  :init (message "robot framework init!!")
+  ;;:init (message "robot framework init!!")
   :config (message "robot framework config!!")
   :mode ("\\.robot$" . robot-mode)
   )

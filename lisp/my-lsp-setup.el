@@ -32,6 +32,7 @@
     (message "lsp-ui INIT")
     ;; https://github.com/emacs-lsp/lsp-ui/blob/master/lsp-ui-sideline.el
     (setq lsp-ui-sideline-delay 5.0)
+    (setq lsp-ui-doc-delay 5.0)
     (message "lsp-ui DONE")
     :bind
     ("C-c C-?" . lsp-ui-sideline-toggle-symbols-info)
