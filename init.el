@@ -1744,8 +1744,12 @@ original line and use the absolute value."
 ;; (string-inflection-pascal-case-p "emacs_lisp")                ; => nil
 
 (use-package string-inflection
+  :defer t
+  :commands string-inflection-all-cycle
   :config
+  (message "loading string-inflection")
   )
+(global-set-key (kbd "C-c C-u") 'string-inflection-all-cycle)
 
 
 ;;-------------------------------------------------------------------------
@@ -3068,6 +3072,18 @@ original line and use the absolute value."
 ;;--------------------------------------------------------------------
 ;; Persistent scratch - save the scratch file
 ;; http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html
+
+(setq initial-major-mode 'fundamental-mode) ;; https://emacsredux.com/blog/2014/07/25/configure-the-scratch-buffers-mode/
+(setq initial-scratch-message "# Scratch buffer
+
+This buffer is for notes you don't want to save.
+If you want to create a file, visit that file with `C-x C-f`,
+then enter the text in that file's own buffer.
+
+This buffer contains markdown text, but it is in fundamental-mode
+to make startup faster. Run `M-x markdown-mode` to enable markdown
+mode.
+")
 
 (defvar persistent-scratch-backup-directory
     (concat user-emacs-directory "scratch-persist/")
