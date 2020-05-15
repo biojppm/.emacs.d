@@ -1688,27 +1688,34 @@ original line and use the absolute value."
 
 ;;-------------------------------------------------------------------------
 
-;; a minor mode that provides many features for manipulating
-;; pairs. Pair can be simple as parentheses or brackets, or can be
-;; programming tokens such as if...fi or if...end in many
-;; languages. The most basic and essential feature is automatic closing
-;; of a pair when user inserts an opening one.
-(use-package smartparens
-  :commands (smartparens-mode
-             smartparens-strict-mode
-             sp-with-modes)
-  :bind (:map smartparens-strict-mode-map
-              ("C-}" . sp-forward-slurp-sexp)
-              ("M-s" . sp-backward-unwrap-sexp)
-              ("C-c [" . sp-select-next-thing)
-              ("C-c ]" . sp-select-next-thing-exchange))
-  :config
-  (require 'smartparens-config)
-  (show-smartparens-global-mode +1)
-  (smartparens-global-mode 1)
-  )
-;; something else interacted with this. Manually enabling seems to fix it.
-(smartparens-global-mode 1)
+;;;; a minor mode that provides many features for manipulating
+;;;; pairs. Pair can be simple as parentheses or brackets, or can be
+;;;; programming tokens such as if...fi or if...end in many
+;;;; languages. The most basic and essential feature is automatic closing
+;;;; of a pair when user inserts an opening one.
+;;(use-package smartparens
+;;  :commands (smartparens-mode
+;;             smartparens-strict-mode
+;;             sp-with-modes)
+;;  :bind (:map smartparens-strict-mode-map
+;;              ("C-}" . sp-forward-slurp-sexp)
+;;              ("M-s" . sp-backward-unwrap-sexp)
+;;              ("C-c [" . sp-select-next-thing)
+;;              ("C-c ]" . sp-select-next-thing-exchange))
+;;  :config
+;;  (require 'smartparens-config)
+;;  (show-smartparens-global-mode +1)
+;;  (smartparens-global-mode 1)
+;;  )
+;;;; something else interacted with this. Manually enabling seems to fix it.
+;;(smartparens-global-mode 1)
+
+;; try this instead of smartparens:
+;; https://github.com/joaotavora/autopair
+
+;; this was superseded by electric-pair-mode
+(electric-pair-mode)
+
 
 (use-package highlight-symbol
   :commands highlight-symbol-mode
