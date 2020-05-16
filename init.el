@@ -3053,29 +3053,6 @@ original line and use the absolute value."
   )
 
 
-;;-----------------------------------------------------------------------------
-(if this-is-windows
-  (progn
-    ;;if in Windows run this block
-    (set-face-attribute 'default nil :font "Consolas-10")
-    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-    ;;                                          :height 100 :family "Consolas")))))
-  )
-  (progn
-    ;;otherwise run this block
-    ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
-    (set-face-attribute 'default nil :font "Consolas-11")
-    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
-    ;;(set-face-attribute 'default nil :font "Consolas-11")
-    ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
-    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-    ;;                                          ;;:height 120 :family "Inconsolata")))))
-    ;;                                          ;;:height 120 :family "Consolas")))))
-    ;;                                          :height 100 :family "Monospace")))))
-  )
-)
-
-
 ;;--------------------------------------------------------------------
 ;; Persistent scratch - save the scratch file
 ;; http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html
@@ -3139,6 +3116,51 @@ mode.
 
 ;;-----------------------------------------------------------------------------
 
+;; https://www.reddit.com/r/emacs/comments/981khz/emacs_music_player_with_emms/
+(use-package emms
+  :defer t
+  :commands ()
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players)
+  (setq emms-source-file-default-directory "~/Dropbox/muzzik/tmp/")
+  (setq emms-playlist-buffer-name "*Music*")
+  (setq emms-info-asynchronously t)
+  ;; https://emacs.stackexchange.com/questions/45938/install-emms-and-missing-executable-emms-print-metadata
+  ;;(require 'emms-info-libtag) ;;; load functions that will talk to emms-print-metadata which in turn talks to libtag and gets metadata
+  ;;(setq emms-info-functions '(emms-info-libtag)) ;;; make sure libtag is the only thing delivering metadata
+  (require 'emms-mode-line)
+  (emms-mode-line 1)
+  (require 'emms-playing-time)
+  (emms-playing-time 1))
+
+
+;;-----------------------------------------------------------------------------
+(if this-is-windows
+  (progn
+    ;;if in Windows run this block
+    (set-face-attribute 'default nil :font "Consolas-10")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          :height 100 :family "Consolas")))))
+  )
+  (progn
+    ;;otherwise run this block
+    ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
+    (set-face-attribute 'default nil :font "Consolas-11")
+    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
+    ;;(set-face-attribute 'default nil :font "Consolas-11")
+    ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
+    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
+    ;;                                          ;;:height 120 :family "Inconsolata")))))
+    ;;                                          ;;:height 120 :family "Consolas")))))
+    ;;                                          :height 100 :family "Monospace")))))
+  )
+)
+
+
+;;-----------------------------------------------------------------------------
+
 (let ((fn (concat emacs-dir "local.el")))
   (if (file-exists-p fn)
       (progn
@@ -3187,6 +3209,12 @@ mode.
      dtrt-indent
      elisp-slime-nav
      elpy
+     emms
+     emms-info-mediainfo
+     emms-mark-ext
+     emms-mode-line-cycle
+     emms-player-simple-mpv
+     emms-state
      ess
      find-file-in-project
      find-file-in-repository
