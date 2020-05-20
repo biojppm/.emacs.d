@@ -163,14 +163,6 @@
                                      ; new window every time instead of reusing an existing one
 ;  (setq ff-always-in-other-frame 1) ; will this work?
 
-  ;; smart-parens
-  ;; when pressing RET, the curly braces automatically
-  ;; add another newline
-  (sp-with-modes '(c-mode c++-mode)
-                 (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
-                 (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
-                                                           ("* ||\n[i]" "RET"))))
-
   (message "my-c-hook: finished")
 )
 

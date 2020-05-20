@@ -1706,6 +1706,12 @@ original line and use the absolute value."
 ;;  (require 'smartparens-config)
 ;;  (show-smartparens-global-mode +1)
 ;;  (smartparens-global-mode 1)
+;;  ;; when pressing RET, the curly braces automatically
+;;  ;; add another newline
+;;  (sp-with-modes '(c-mode c++-mode)
+;;                 (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+;;                 (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
+;;                                                           ("* ||\n[i]" "RET"))))
 ;;  )
 ;;;; something else interacted with this. Manually enabling seems to fix it.
 ;;(smartparens-global-mode 1)
