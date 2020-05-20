@@ -32,10 +32,6 @@ the function `buffer-file-name'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("clang-format-pkg.el") (0 0 0 0))
-
-;;;***
-
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t

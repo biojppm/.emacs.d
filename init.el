@@ -3226,6 +3226,7 @@ mode.
      find-file-in-repository
      firebelly-theme
      flycheck
+     flymake-yaml
      flymake-cppcheck
      flx-ido
      fsharp-mode

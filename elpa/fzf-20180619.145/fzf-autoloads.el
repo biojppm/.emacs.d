@@ -49,10 +49,6 @@ Starts a fzf session based on git grep result. The input comes
 
 ;;;***
 
-;;;### (autoloads nil nil ("fzf-pkg.el") (0 0 0 0))
-
-;;;***
-
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
