@@ -280,6 +280,7 @@
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-signature-auto-activate nil)
   ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
   (setq xref-prompt-for-identifier
         '(not xref-find-definitions
@@ -293,9 +294,11 @@
   (setq lsp-ui-doc-delay 3.0)
   ;; (message "lsp-mode :init - done.")
 
+
   :config
   (message "lsp-mode :config")
   (lsp-ui-mode 0)
+  ;;(lsp-signature-mode 0)
   (message "lsp-mode 1")
   (lsp-ui-peek-mode 1)
   (message "lsp-mode 2")
