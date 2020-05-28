@@ -13,6 +13,7 @@ PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-6-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
+TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -104,7 +105,7 @@ pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) inst
 wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 	curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$1" ; \
 	7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn ; \
-	cp -favr $(WIN_DL_DIR)/$$fn/$2 $(LOCAL_DIR)/bin/
+        ( cd $(WIN_DL_DIR)/$$fn && cp -favr $2 $(LOCAL_DIR)/bin/ )
 
 
 #----------------------------------------------------------------------
@@ -116,7 +117,7 @@ system_only: windows_only
 else
 system_only: linux_only
 endif
-windows_only:
+windows_only: tcpview
 linux_only: rtags_install
 
 #----------------------------------------------------------------------
@@ -222,7 +223,7 @@ pandoc: $(LOCAL_DIR)/bin
 image_magick: $(LOCAL_DIR)/bin
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
-	   $(call wininstallzip,$(IMAGE_MAGICK_URL),*.{exe,dll}) ; \
+	   $(call wininstallzip,$(IMAGE_MAGICK_URL),*.exe *.dll) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      sudo pacman -S imagemagick ; \
@@ -256,6 +257,11 @@ dropbox:
 	else \
 	   bbbbbbbb not done ; \
 	fi
+
+
+.PHONY: tcpview
+tcpview:
+	$(call wininstallzip,$(TCPVIEW_URL),*.exe *.chm *.HLP)
 
 
 #----------------------------------------------------------------------
