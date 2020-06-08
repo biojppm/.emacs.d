@@ -1530,6 +1530,8 @@ If point was already at that position, move point to beginning of line."
   :commands (dtrt-indent-mode)
   )
 
+(require 'highlight-indentation)
+
 ;;------------------------------------------------------------------
 ;; drag line/selection up or down
 ;; http://emacs.stackexchange.com/questions/13941/move-selected-lines-up-and-down
@@ -1689,6 +1691,15 @@ original line and use the absolute value."
 (global-set-key (kbd "C-d") 'duplicate-line-or-region)
 
 ;;-------------------------------------------------------------------------
+
+;; https://www.emacswiki.org/emacs/ShowParenMode
+(add-hook 'prog-mode-hook
+          (function
+           (lambda ()
+             (message "enable show-parent mode"))
+             (show-paren-mode +1)
+           )
+          )
 
 ;;;; a minor mode that provides many features for manipulating
 ;;;; pairs. Pair can be simple as parentheses or brackets, or can be
