@@ -895,6 +895,7 @@
 
 (require 'ido)
 (require 'flx-ido) ; https://github.com/lewang/flx
+(require 'ido-hacks) ; https://github.com/scottjad/ido-hacks
 (require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
 (require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
 (ido-mode 1)
@@ -3263,6 +3264,7 @@ mode.
      hemisu-theme
      highlight-symbol
      hungry-delete
+     ido-hacks
      ido-ubiquitous
      ido-vertical-mode
      iedit
