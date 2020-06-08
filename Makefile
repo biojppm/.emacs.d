@@ -75,7 +75,11 @@ else
     # https://askubuntu.com/questions/279168/detect-if-its-ubuntu-linux-os-in-makefile
     ifeq ($(UNAME_S),Linux)
         OS := Linux
-	DISTRO := $(shell lsb_release -si | sed 's/Linux//' | sed 's/[[:blank:]]//g')
+	ifeq ($(shell ls /etc/arch-release),/etc/arch-release)
+	    DISTRO := Arch
+	else
+	    DISTRO := $(shell lsb_release -si | sed 's/Linux//' | sed 's/[[:blank:]]//g')
+	endif
     else
         ifeq ($(UNAME_S),Darwin)
             OS := Darwin
@@ -243,14 +247,14 @@ markdown_toc: $(LOCAL_DIR)/bin
 
 .PHONY: dropbox
 dropbox:
+	 # https://forum.manjaro.org/t/cannot-upgrade-dropbox-key-issue/71432
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
 	   aaaaaaaa not done ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
-	       # https://forum.manjaro.org/t/cannot-upgrade-dropbox-key-issue/71432
-	      gpg --recv-key --keyserver hkp://pgp.mit.edu FC918B335044912E
-	      trizen -S dropbox dropbox-cli
+	      gpg --recv-key --keyserver hkp://pgp.mit.edu FC918B335044912E ; \
+	      trizen -S dropbox dropbox-cli ; \
 	   else \
 	      sudo apt-get install dropbox ; \
 	   fi ; \
@@ -322,36 +326,36 @@ clang_install: $(LOCAL_DIR) $(CLANG_INSTALL_DIR)
 
 $(RTAGS_INSTALL_DIR): $(RTAGS_BUILD_DIR)
 	@echo "rtags_install_dir: $(RTAGS_INSTALL_DIR)"
-	cmany i $(RTAGS_CMANY_ARGS)
+	cd $(RTAGS_SRC_DIR) && cmany i $(RTAGS_CMANY_ARGS)
 
 $(CQUERY_INSTALL_DIR): $(CQUERY_BUILD_DIR)
 	@echo "cquery_install_dir: $(CQUERY_INSTALL_DIR)"
-	cmany i $(CQUERY_CMANY_ARGS)
+	cd $(CQUERY_SRC_DIR) && cmany i $(CQUERY_CMANY_ARGS)
 
 $(CCLS_INSTALL_DIR): $(CCLS_BUILD_DIR)
 	@echo "ccls_install_dir: $(CCLS_INSTALL_DIR)"
-	cmany i $(CCLS_CMANY_ARGS)
+	cd $(CCLS_SRC_DIR) && cmany i $(CCLS_CMANY_ARGS)
 
 $(CLANG_INSTALL_DIR): $(CLANG_BUILD_DIR)
 	@echo "clang_install_dir: $(CLANG_INSTALL_DIR)"
-	cmany b $(CLANG_CMANY_ARGS)
+	cd $(CLANG_SRC_DIR) && cmany b $(CLANG_CMANY_ARGS)
 
 
 $(RTAGS_BUILD_DIR): cmany $(RTAGS_SRC_DIR)
-	@echo "rtags_build_dir: $(RTAGS_INSTALL_DIR)"
-	cmany c $(RTAGS_CMANY_ARGS)
+	@echo "rtags_build_dir: $(RTAGS_BUILD_DIR)"
+	cd $(RTAGS_SRC_DIR) && cmany c $(RTAGS_CMANY_ARGS)
 
 $(CQUERY_BUILD_DIR): cmany $(CQUERY_SRC_DIR)
-	@echo "cquery_build_dir: $(CQUERY_INSTALL_DIR)"
-	cmany c $(CQUERY_CMANY_ARGS)
+	@echo "cquery_build_dir: $(CQUERY_BUILD_DIR)"
+	cd $(CQUERY_SRC_DIR) && cmany c $(CQUERY_CMANY_ARGS)
 
 $(CCLS_BUILD_DIR): cmany $(CCLS_SRC_DIR)
-	@echo "ccls_build_dir: $(CCLS_INSTALL_DIR)"
-	cmany c $(CCLS_CMANY_ARGS)
+	@echo "ccls_build_dir: $(CCLS_BUILD_DIR)"
+	cd $(CCLS_SRC_DIR) && cmany c $(CCLS_CMANY_ARGS)
 
 $(CLANG_BUILD_DIR): cmany $(CLANG_SRC_DIR)
 	@echo "clang_build_dir: $(CLANG_INSTALL_DIR)"
-	cmany c $(CLANG_CMANY_ARGS)
+	cd $(CLANG_SRC_DIR) && cmany c $(CLANG_CMANY_ARGS)
 
 
 $(RTAGS_SRC_DIR): $(RTAGS_DIR)

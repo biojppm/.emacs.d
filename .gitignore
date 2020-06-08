@@ -1,8 +1,10 @@
 *.elc
 *.pyc
 *~
-.#smex-items
+\#*
+.#*
 .lsp-session-*
+.python-version
 .yas-compiled-snippets.el
 __pycache__
 ac-comphist.dat
