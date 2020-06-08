@@ -2070,17 +2070,19 @@ original line and use the absolute value."
   :defer t
   :mode ("\\.py" . python-mode)
   :config
+  (message "python mode: config")
   (use-package elpy
     :commands elpy-enable
     :config
     (message "python mode: elpy config")
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
-    (setq elpy-rpc-python-command "python"
-;;         elpy-modules (dolist (elem '(elpy-module-highlight-indentation
+;;    (setq elpy-rpc-python-command "python3")
+    (setq elpy-rpc-virtualenv-path 'system)  ;; avoid the local environment bullshit
+;;    (setq elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
-         )
+;;    )
     ;;(elpy-use-ipython "ipython3")
     (add-hook 'python-mode-hook #'my-python-hook)
     (add-hook 'gud-mode-hook #'my-pdb-hook)
@@ -2095,8 +2097,9 @@ original line and use the absolute value."
                 ("C-<left>" . subword-backward)
                 )
     )
-  (message "python mode: config")
+  (message "python mode: enable elpy")
   (elpy-enable)
+  (message "python mode: enable elpy finished")
   (use-snips)
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
