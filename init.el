@@ -911,6 +911,7 @@
 
 ;; ido binds C-x C-d to ido-list-directory, so bind to dired
 (global-set-key (kbd "C-x C-d") 'ido-dired)
+(setq dired-listing-switches "-l")
 
 ;; disable ido faces to see flx highlights.
 ;(setq ido-use-faces nil)
