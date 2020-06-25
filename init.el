@@ -890,6 +890,29 @@
 
 
 ;;-------------------------------------------------------------------------
+;; DIRED
+
+(setq dired-listing-switches "-l")
+
+;; enable dired-x: dired extensions
+(add-hook 'dired-load-hook
+          (lambda ()
+            (load "dired-x")
+            ;; Set dired-x global variables here. For example:
+            ;; (setq dired-guess-shell-gnutar "gtar")
+            ;; (setq dired-x-hands-off-my-keys nil)
+            ))
+(add-hook 'dired-mode-hook
+          (lambda ()
+            ;; Set dired-x buffer-local variables here. For example:
+            ;; (dired-omit-mode 1)
+            ))
+
+(setq completion-ignored-extensions (delete "\\.pg" completion-ignored-extensions))
+(setq completion-ignored-extensions (delete "\\.pgs" completion-ignored-extensions))
+
+
+;;-------------------------------------------------------------------------
 ;; IDO mode: (Interactively DO things)
 ;; https://www.masteringemacs.org/article/introduction-to-ido-mode
 
@@ -911,7 +934,6 @@
 
 ;; ido binds C-x C-d to ido-list-directory, so bind to dired
 (global-set-key (kbd "C-x C-d") 'ido-dired)
-(setq dired-listing-switches "-l")
 
 ;; disable ido faces to see flx highlights.
 ;(setq ido-use-faces nil)
