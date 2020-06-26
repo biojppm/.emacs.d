@@ -1,3 +1,4 @@
+\#*
 *.elc
 *.pyc
 *~
@@ -29,6 +30,7 @@ recentf
 scratch-persist/*.txt
 semanticdb/
 server
+session.*
 smex-items
 tramp
 transient/

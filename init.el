@@ -1553,8 +1553,6 @@ If point was already at that position, move point to beginning of line."
   :commands (dtrt-indent-mode)
   )
 
-(require 'highlight-indentation)
-
 ;;------------------------------------------------------------------
 ;; drag line/selection up or down
 ;; http://emacs.stackexchange.com/questions/13941/move-selected-lines-up-and-down
@@ -1755,9 +1753,12 @@ original line and use the absolute value."
 
 ;; try this instead of smartparens:
 ;; https://github.com/joaotavora/autopair
-
-;; this was superseded by electric-pair-mode
+;; ----- was superseded by electric-pair-mode
 (electric-pair-mode)
+
+(show-paren-mode 1)
+(require 'highlight-indentation)
+(highlight-indentation-mode 1)
 
 (use-package highlight-symbol
   :commands highlight-symbol-mode
