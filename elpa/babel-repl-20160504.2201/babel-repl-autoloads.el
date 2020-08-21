@@ -10,14 +10,10 @@
 ;;; Generated autoloads from babel-repl.el
 
 (autoload 'babel-repl "babel-repl" "\
-Start babel shell comint mode.
-
-\(fn)" t nil)
+Start babel shell comint mode." t nil)
 
 (autoload 'babel-repl-switch-to-buffer "babel-repl" "\
-Switch to babel shell buffer.
-
-\(fn)" t nil)
+Switch to babel shell buffer." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "babel-repl" '("babel-")))
 

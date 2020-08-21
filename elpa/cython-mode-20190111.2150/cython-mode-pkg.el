@@ -1,2 +1,2 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "cython-mode" "20190111.2150" "Major mode for editing Cython files" 'nil :commit "7e233ab00e117b2e7165c246941ac85a989be262")
+;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/cython-mode-20190111.2150/cython-mode.el  -*- no-byte-compile: t -*-
+(define-package "cython-mode" "20190111.2150" "Major mode for editing Cython files" 'nil :commit "fcfd16c7467c31f255287a73f36cf66b32bc096c")

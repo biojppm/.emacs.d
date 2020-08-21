@@ -22,6 +22,11 @@ or call the function `emms-state-mode'.")
 (autoload 'emms-state-mode "emms-state" "\
 Minor mode for displaying some EMMS info in the mode line.
 
+If called interactively, enable Emms-State mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
+
 This mode is intended to be a substitution for `emms-mode-line'
 and `emms-playing-time'.
 

@@ -8,7 +8,7 @@
     (cl-lib "0.5")
     (s "1.10.0")
     (f "0.19.0"))
-  :keywords
+  :commit "e658a18a762438c3e1737612737b05d02a21ca2a" :keywords
   '("languages" "csharp" "c#" "ide" "auto-complete" "intellisense")
   :authors
   '(("Mika Vilpas and others"))

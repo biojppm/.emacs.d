@@ -54,9 +54,7 @@ respectively of difference list, runs ediff over the adjacent chunks.
 ;;; Generated autoloads from vlf-occur.el
 
 (autoload 'vlf-occur-load "vlf-occur" "\
-Load serialized `vlf-occur' results from current buffer.
-
-\(fn)" t nil)
+Load serialized `vlf-occur' results from current buffer." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "vlf-occur" '("vlf-")))
 

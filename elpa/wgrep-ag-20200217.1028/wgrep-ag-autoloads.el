@@ -9,10 +9,7 @@
 ;;;### (autoloads nil "wgrep-ag" "wgrep-ag.el" (0 0 0 0))
 ;;; Generated autoloads from wgrep-ag.el
 
-(autoload 'wgrep-ag-setup "wgrep-ag" "\
-
-
-\(fn)" nil nil)
+(autoload 'wgrep-ag-setup "wgrep-ag" nil nil nil)
 
 (add-hook 'ag-mode-hook 'wgrep-ag-setup)
 

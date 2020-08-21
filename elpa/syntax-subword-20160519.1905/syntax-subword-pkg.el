@@ -1,2 +1,2 @@
-;;; -*- no-byte-compile: t -*-
+;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/syntax-subword-20160519.1905/syntax-subword.el  -*- no-byte-compile: t -*-
 (define-package "syntax-subword" "20160519.1905" "make operations on words more fine-grained" 'nil :commit "ad0db0fcb464652a1d3408f525dee9293ce2b70c" :authors '(("Jonathan Kotta" . "jpkotta@gmail.com")) :maintainer '("Jonathan Kotta" . "jpkotta@gmail.com"))

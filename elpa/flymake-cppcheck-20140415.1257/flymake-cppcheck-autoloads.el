@@ -11,9 +11,7 @@
 ;;; Generated autoloads from flymake-cppcheck.el
 
 (autoload 'flymake-cppcheck-load "flymake-cppcheck" "\
-Configure flymake mode to check the current buffer's C/C++ source.
-
-\(fn)" t nil)
+Configure flymake mode to check the current buffer's C/C++ source." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "flymake-cppcheck" '("flymake-cppcheck-")))
 

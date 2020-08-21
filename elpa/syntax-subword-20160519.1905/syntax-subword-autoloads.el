@@ -16,7 +16,14 @@ This mode is like `subword-mode', but also treats syntax
   same as face changes when font lock is
   enabled. \\{syntax-subword-mode-map}
 
+If called interactively, enable Syntax-Subword mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
+
 \(fn &optional ARG)" t nil)
+
+(put 'global-syntax-subword-mode 'globalized-minor-mode t)
 
 (defvar global-syntax-subword-mode nil "\
 Non-nil if Global Syntax-Subword mode is enabled.

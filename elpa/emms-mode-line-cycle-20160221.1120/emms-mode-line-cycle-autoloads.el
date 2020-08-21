@@ -41,6 +41,11 @@ or call the function `emms-mode-line-cycle'.")
 (autoload 'emms-mode-line-cycle "emms-mode-line-cycle" "\
 Update `emms-mode-line-string' cyclically with `emms-playing-time-display'.
 
+If called interactively, enable Emms-Mode-Line-Cycle mode if ARG
+is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
+
 \(fn &optional ARG)" t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "emms-mode-line-cycle" '("emms-mode-line-cycle-")))

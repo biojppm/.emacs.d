@@ -11,9 +11,7 @@
 ;;; Generated autoloads from find-file-in-project.el
 
 (autoload 'ffip-git-diff-current-file "find-file-in-project" "\
-Run 'git diff version:current-file current-file'.
-
-\(fn)" nil nil)
+Run 'git diff version:current-file current-file'." nil nil)
 
 (autoload 'ffip-copy-without-change "find-file-in-project" "\
 Copy P without change.
@@ -34,24 +32,16 @@ Create org link from P and copy the result.
 The callback after calling `find-relative-path'.")
 
 (autoload 'ffip-project-root "find-file-in-project" "\
-Return project root or `default-directory'.
-
-\(fn)" nil nil)
+Return project root or `default-directory'." nil nil)
 
 (autoload 'ffip-save-ivy-last "find-file-in-project" "\
-Save `ivy-last' into `ffip-ivy-last-saved'.  Requires ivy.
-
-\(fn)" t nil)
+Save `ivy-last' into `ffip-ivy-last-saved'.  Requires ivy." t nil)
 
 (autoload 'ffip-get-project-root-directory "find-file-in-project" "\
-Get the full path of project root directory.
-
-\(fn)" nil nil)
+Get the full path of project root directory." nil nil)
 
 (autoload 'ffip-ivy-resume "find-file-in-project" "\
-Wrapper of `ivy-resume'.  Resume the search saved at `ffip-ivy-last-saved'.
-
-\(fn)" t nil)
+Wrapper of `ivy-resume'.  Resume the search saved at `ffip-ivy-last-saved'." t nil)
 
 (autoload 'ffip-filename-identity "find-file-in-project" "\
 Return identical KEYWORD.
@@ -106,9 +96,7 @@ This function is the API to find files.
 (autoload 'ffip-create-project-file "find-file-in-project" "\
 Create or Append .dir-locals.el to set up per directory.
 You can move .dir-locals.el to root directory.
-See (info \"(Emacs) Directory Variables\") for details.
-
-\(fn)" t nil)
+See (info \"(Emacs) Directory Variables\") for details." t nil)
 
 (autoload 'ffip-current-full-filename-match-pattern-p "find-file-in-project" "\
 Is current full file name (including directory) match the REGEX?
@@ -159,9 +147,7 @@ If OPEN-ANOTHER-WINDOW is not nil, the file will be opened in new window.
 
 (autoload 'ffip-insert-file "find-file-in-project" "\
 Insert contents of file in current buffer.
-The file name is selected interactively from candidates in project.
-
-\(fn)" t nil)
+The file name is selected interactively from candidates in project." t nil)
 
 (autoload 'find-file-with-similar-name "find-file-in-project" "\
 Use base name of current file as keyword which could be further stripped.
@@ -224,9 +210,7 @@ Keyword to search new file is selected text or user input.
 \(fn &optional RATIO)" t nil)
 
 (autoload 'ffip-diff-quit "find-file-in-project" "\
-Quit.
-
-\(fn)" t nil)
+Quit." t nil)
 
 (autoload 'ffip-diff-find-file "find-file-in-project" "\
 File file(s) in current hunk.
@@ -256,7 +240,7 @@ If REVERSE is t, applied patch is reverted.
 
 \(fn &optional REVERSE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "find-file-in-project" '("find-relative-path" "ffip-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "find-file-in-project" '("ffip-" "find-relative-path")))
 
 ;;;***
 

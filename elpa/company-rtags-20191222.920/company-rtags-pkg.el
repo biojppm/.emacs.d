@@ -1,2 +1,2 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "company-rtags" "20191222.920" "RTags back-end for company" '((emacs "24.3") (company "0.8.1") (rtags "2.10")) :commit "d370c09007d299dc6b6aae719bf728b95dd426c5" :authors '(("Jan Erik Hanssen" . "jhanssen@gmail.com") ("Anders Bakken" . "agbakken@gmail.com")) :maintainer '("Jan Erik Hanssen" . "jhanssen@gmail.com") :url "https://github.com/Andersbakken/rtags")
+;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/company-rtags-20191222.920/company-rtags.el  -*- no-byte-compile: t -*-
+(define-package "company-rtags" "20191222.920" "RTags back-end for company" '((emacs "24.3") (company "0.8.1") (rtags "2.10")) :commit "b57b36039f6411f23009c4ec0315ca5a7adb6824" :authors '(("Jan Erik Hanssen" . "jhanssen@gmail.com") ("Anders Bakken" . "agbakken@gmail.com")) :maintainer '("Jan Erik Hanssen" . "jhanssen@gmail.com") :url "https://github.com/Andersbakken/rtags")

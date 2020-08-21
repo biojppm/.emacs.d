@@ -10,14 +10,10 @@
 ;;; Generated autoloads from mc-cua.el
 
 (autoload 'mc/cua-rectangle-to-multiple-cursors "mc-cua" "\
-Turn CUA rectangle mode into multiple-cursors mode, keeping insert positions and selections.
-
-\(fn)" t nil)
+Turn CUA rectangle mode into multiple-cursors mode, keeping insert positions and selections." t nil)
 
 (autoload 'mc/cua-rectangle-setup "mc-cua" "\
-Enable interaction between multiple cursors and CUA rectangle copy & paste.
-
-\(fn)" nil nil)
+Enable interaction between multiple cursors and CUA rectangle copy & paste." nil nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "mc-cua" '("mc/cua-saved-kill-ring")))
 
@@ -35,9 +31,7 @@ point before freezing fake cursors.
 \(fn &optional ARG)" t nil)
 
 (autoload 'mc/unfreeze-fake-cursors "mc-freeze" "\
-Unfreeze frozen fake cursors.
-
-\(fn)" t nil)
+Unfreeze frozen fake cursors." t nil)
 
 (autoload 'mc/freeze-fake-cursors-dwim "mc-freeze" "\
 Freeze or unfreeze fake cursors depending on the current state.
@@ -66,14 +60,10 @@ Mark previous ARG sexps.
 \(fn ARG)" t nil)
 
 (autoload 'mc/mark-all-below "mc-mark-extras" "\
-Mark lines below until the cursor hits a line shorter than the current column position.
-
-\(fn)" t nil)
+Mark lines below until the cursor hits a line shorter than the current column position." t nil)
 
 (autoload 'mc/mark-all-above "mc-mark-extras" "\
-Mark lines above until the cursor hits a line shorter than the current column position.
-
-\(fn)" t nil)
+Mark lines above until the cursor hits a line shorter than the current column position." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "mc-mark-extras" '("mc/mark-sexps")))
 
@@ -97,14 +87,10 @@ This command pushes the mark before moving cursors.
 
 (autoload 'mc/compare-chars-forward "mc-move" "\
 Compare the character at point with that at each fake cursor, and move forward as far as they all match.
-This command pushes the mark before moving cursors.
-
-\(fn)" t nil)
+This command pushes the mark before moving cursors." t nil)
 
 (autoload 'mc/compare-chars-backward "mc-move" "\
-Backwards version of `mc/compare-chars-forward'.
-
-\(fn)" t nil)
+Backwards version of `mc/compare-chars-forward'." t nil)
 
 ;;;***
 
@@ -122,29 +108,19 @@ Turn rectangle-mark-mode into multiple-cursors mode, keeping selections.
 ;;; Generated autoloads from mc-remove.el
 
 (autoload 'mc/remove-current-cursor "mc-remove" "\
-Remove the current cursor by replacing the next fake cursor with the real cursor.
-
-\(fn)" t nil)
+Remove the current cursor by replacing the next fake cursor with the real cursor." t nil)
 
 (autoload 'mc/remove-duplicated-cursors "mc-remove" "\
-Remove duplicated fake cursors, including ones that overlap the real cursor.
-
-\(fn)" t nil)
+Remove duplicated fake cursors, including ones that overlap the real cursor." t nil)
 
 (autoload 'mc/remove-cursors-at-bol "mc-remove" "\
-Remove cursors at BOL, either fake or real.
-
-\(fn)" t nil)
+Remove cursors at BOL, either fake or real." t nil)
 
 (autoload 'mc/remove-cursors-at-eol "mc-remove" "\
-Remove cursors at EOL, either fake or real.
-
-\(fn)" t nil)
+Remove cursors at EOL, either fake or real." t nil)
 
 (autoload 'mc/remove-cursors-on-blank-lines "mc-remove" "\
-Remove cursors on blank lines, either fake or real.
-
-\(fn)" t nil)
+Remove cursors on blank lines, either fake or real." t nil)
 
 ;;;***
 

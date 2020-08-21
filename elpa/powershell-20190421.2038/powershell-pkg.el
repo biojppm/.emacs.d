@@ -1,2 +1,2 @@
-;;; Generated package description from c:/Users/jmagalhaes/.emacs.d/elpa/powershell-20190421.2038/powershell.el  -*- no-byte-compile: t -*-
+;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/powershell-20190421.2038/powershell.el  -*- no-byte-compile: t -*-
 (define-package "powershell" "20190421.2038" "Mode for editing PowerShell scripts" '((emacs "24")) :commit "87826777bd3ebd53740be99b4546bfc11ccc625d" :keywords '("powershell" "languages") :authors '(("Frédéric Perrin <frederic (dot) perrin (arobas) resel (dot) fr>")) :maintainer '("Frédéric Perrin <frederic (dot) perrin (arobas) resel (dot) fr>") :url "http://github.com/jschaf/powershell.el")

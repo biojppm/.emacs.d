@@ -33,16 +33,14 @@ On Error Resume Next
 
 MSVS_versions = Array _
 ( _
-    "VisualStudio.DTE.16.0", _
-    "VisualStudio.DTE.15.0", _
-    "VisualStudio.DTE.14.0", _
-    "VisualStudio.DTE.12.0", _
-    "VisualStudio.DTE.11.0", _
-    "VisualStudio.DTE.10.0", _
+    "VisualStudio.DTE.7", _
+    "VisualStudio.DTE.7.1", _
     "VisualStudio.DTE.8.0", _
     "VisualStudio.DTE.9.0", _
-    "VisualStudio.DTE.7.1", _
-    "VisualStudio.DTE.7" _
+    "VisualStudio.DTE.10.0", _
+    "VisualStudio.DTE.11.0", _
+    "VisualStudio.DTE.12.0", _
+    "VisualStudio.DTE.14.0" _
 )
 
 For each version in MSVS_versions
@@ -60,10 +58,9 @@ End If
 
 
 dte.MainWindow.Activate
-dte.MainWindow.SetFocus
 dte.MainWindow.Visible = True
 dte.UserControl = True
-dte.MainWindow.Raise
 
 dte.ItemOperations.OpenFile filename
 dte.ActiveDocument.Selection.MoveToLineAndOffset line, column + 1
+

@@ -172,14 +172,14 @@
 
 ;;------------------------------------------------------------------------------
 ;; MELPA - package installer
-;; http://melpa.milkbox.net/#/getting-started
-;; http://ergoemacs.org/emacs/emacs_package_system.html
+;; https://melpa.org/#/getting-started
+;; https://ergoemacs.org/emacs/emacs_package_system.html
 
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
-             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+             '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 ;(when (not package-archive-contents)
 ;; (package-refresh-contents))
 (package-initialize)
@@ -220,6 +220,19 @@
 
 (define-key package-menu-mode-map "s" #'package-menu-filter-by-status)
 (define-key package-menu-mode-map "a" #'package-menu-find-marks)
+
+
+(defun package-upgrade-all-installed ()
+  (interactive)
+  (package-refresh-contents)
+  (dolist (pk package-selected-packages)
+    (message "\n\n\n\n")
+    (message "======> reinstalling %s..." pk)
+    (package-reinstall pk)
+    (message "======> reinstalling %s: OK!" pk)
+    )
+  (package-autoremove)
+  )
 
 
 ;-------------------------------------------------------------------------------
@@ -798,12 +811,6 @@
   (set-face-background 'mode-line-inactive "#303030")
 )
 
-(defun my-set-theme-firebelly()
-  ; firebelly-theme: https://github.com/startling/firebelly
-  (interactive)
-  (load-theme 'firebelly t)
-)
-
 (defun my-set-theme-hemisu()
   ; hemisu-dark-theme: https://github.com/andrzejsliwa/hemisu-theme
   (interactive)
@@ -921,6 +928,7 @@
 (require 'ido-hacks) ; https://github.com/scottjad/ido-hacks
 (require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
 (require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
+;;(require 'ido-completing-read+) ; https://github.com/DarwinAwardWinner/ido-completing-read-plus
 (ido-mode 1)
 (flx-ido-mode)
 (ido-everywhere 1) ; enable basic IDO support for files and buffers
@@ -931,6 +939,7 @@
 (ido-ubiquitous-mode 1)
 (setq ido-enable-flex-matching t)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+;;(setq completing-read-function 'ido-completing-read+)
 
 ;; ido binds C-x C-d to ido-list-directory, so bind to dired
 (global-set-key (kbd "C-x C-d") 'ido-dired)
@@ -3255,7 +3264,6 @@ mode.
      ag
      anzu
      arduino-mode
-     async-await
      babel
      babel-repl
      bicycle
@@ -3286,23 +3294,20 @@ mode.
      ess
      find-file-in-project
      find-file-in-repository
-     firebelly-theme
      flycheck
      flymake-yaml
      flymake-cppcheck
      flx-ido
-     fsharp-mode
      fzf
      git-timemachine
      glsl-mode
      ghc
      google-this
-     help-fns+
      hemisu-theme
      highlight-symbol
      hungry-delete
+     ido-completing-read+
      ido-hacks
-     ido-ubiquitous
      ido-vertical-mode
      iedit
      ivy
@@ -3334,7 +3339,6 @@ mode.
      rg
      rtags
      rtags-xref
-     seq
      slime
      smart-mode-line
      smartparens

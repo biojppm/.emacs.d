@@ -2,7 +2,7 @@
   '((emacs "24")
     (cl-lib "0.5")
     (emms "4.0"))
-  :keywords
+  :commit "101d120ccdee1c2c213fd2f0423c858b21649c00" :keywords
   '("emms" "mpv")
   :authors
   '(("momomo5717"))

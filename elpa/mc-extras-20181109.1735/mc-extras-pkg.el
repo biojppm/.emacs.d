@@ -1,6 +1,6 @@
 (define-package "mc-extras" "20181109.1735" "Extra functions for multiple-cursors mode."
   '((multiple-cursors "1.2.1"))
-  :keywords
+  :commit "053abc52181b8718559d7361a587bbb795faf164" :keywords
   '("editing" "cursors")
   :authors
   '(("Akinori MUSHA" . "knu@iDaemons.org"))

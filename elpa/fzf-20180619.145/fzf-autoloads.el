@@ -10,40 +10,26 @@
 ;;; Generated autoloads from fzf.el
 
 (autoload 'fzf "fzf" "\
-Starts a fzf session.
-
-\(fn)" t nil)
+Starts a fzf session." t nil)
 
 (autoload 'fzf-directory "fzf" "\
-Starts a fzf session at the specified directory.
-
-\(fn)" t nil)
+Starts a fzf session at the specified directory." t nil)
 
 (autoload 'fzf-git "fzf" "\
-Starts a fzf session at the root of the current git.
-
-\(fn)" t nil)
+Starts a fzf session at the root of the current git." t nil)
 
 (autoload 'fzf-git-files "fzf" "\
-Starts a fzf session only searching for git tracked files.
-
-\(fn)" t nil)
+Starts a fzf session only searching for git tracked files." t nil)
 
 (autoload 'fzf-hg "fzf" "\
-Starts a fzf session at the root of the curreng hg.
-
-\(fn)" t nil)
+Starts a fzf session at the root of the curreng hg." t nil)
 
 (autoload 'fzf-projectile "fzf" "\
-Starts a fzf session at the root of the projectile project.
-
-\(fn)" t nil)
+Starts a fzf session at the root of the projectile project." t nil)
 
 (autoload 'fzf-git-grep "fzf" "\
 Starts a fzf session based on git grep result. The input comes
-   from the prompt or the selected region
-
-\(fn)" t nil)
+   from the prompt or the selected region" t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "fzf" '("fzf/")))
 

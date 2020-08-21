@@ -9,15 +9,9 @@
 ;;;### (autoloads nil "ghc" "ghc.el" (0 0 0 0))
 ;;; Generated autoloads from ghc.el
 
-(autoload 'ghc-init "ghc" "\
+(autoload 'ghc-init "ghc" nil nil nil)
 
-
-\(fn)" nil nil)
-
-(autoload 'ghc-debug "ghc" "\
-
-
-\(fn)" t nil)
+(autoload 'ghc-debug "ghc" nil t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghc" '("ghc-")))
 
@@ -26,7 +20,7 @@
 ;;;### (autoloads nil "ghc-check" "ghc-check.el" (0 0 0 0))
 ;;; Generated autoloads from ghc-check.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghc-check" '("ghc-" "buttonize-buffer" "find-file-button")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghc-check" '("buttonize-buffer" "find-file-button" "ghc-")))
 
 ;;;***
 
@@ -89,7 +83,7 @@
 ;;;### (autoloads nil "ghc-rewrite" "ghc-rewrite.el" (0 0 0 0))
 ;;; Generated autoloads from ghc-rewrite.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghc-rewrite" '("ghc-" "auto-button")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghc-rewrite" '("auto-button" "ghc-")))
 
 ;;;***
 

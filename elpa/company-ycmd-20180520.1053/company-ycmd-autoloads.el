@@ -10,9 +10,7 @@
 ;;; Generated autoloads from company-ycmd.el
 
 (autoload 'company-ycmd-setup "company-ycmd" "\
-Add company-ycmd to the front of company-backends.
-
-\(fn)" nil nil)
+Add company-ycmd to the front of company-backends." nil nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "company-ycmd" '("company-ycmd")))
 

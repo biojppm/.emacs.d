@@ -1,4 +1,4 @@
-(define-package "open-in-msvs" "20170123.2228" "Open current file:line:column in Microsoft Visual Studio" 'nil :keywords
+(define-package "open-in-msvs" "20170123.2228" "Open current file:line:column in Microsoft Visual Studio" 'nil :commit "e0d071c83188ad5db8f3297d6ce784b4ed554a04" :keywords
   '("convenience" "usability" "integration" "visual studio" "msvs" "ide")
   :authors
   '(("Evgeny Panasyuk"))

@@ -19,9 +19,7 @@ Shortcuts             Command Name
 
 \\[xahk-lookup-ahk-ref]     `xahk-lookup-ahk-ref'
 
-Complete documentation at URL `http://xahlee.info/mswin/emacs_autohotkey_mode.html'.
-
-\(fn)" t nil)
+Complete documentation at URL `http://xahlee.info/mswin/emacs_autohotkey_mode.html'." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "xahk-mode" '("ahk-mode" "xahk-")))
 

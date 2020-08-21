@@ -10,9 +10,7 @@
 ;;; Generated autoloads from flymake-yaml.el
 
 (autoload 'flymake-yaml-load "flymake-yaml" "\
-Configure flymake mode to check the current buffer's YAML syntax.
-
-\(fn)" t nil)
+Configure flymake mode to check the current buffer's YAML syntax." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "flymake-yaml" '("flymake-yaml-")))
 

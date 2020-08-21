@@ -118,9 +118,7 @@ Uses replacements in `google-this-error-regexp' and stops at the first match.
 \(fn S)" t nil)
 
 (autoload 'google-this-cpp-reference "google-this" "\
-Visit the most probable cppreference.com page for this word.
-
-\(fn)" t nil)
+Visit the most probable cppreference.com page for this word." t nil)
 
 (autoload 'google-this-forecast "google-this" "\
 Search google for \"weather\".
@@ -137,18 +135,17 @@ for a description of this minor mode.")
 
 (autoload 'google-this-mode "google-this" "\
 Toggle Google-This mode on or off.
-With a prefix argument ARG, enable Google-This mode if ARG is
-positive, and disable it otherwise.  If called from Lisp, enable
-the mode if ARG is omitted or nil, and toggle it if ARG is `toggle'.
+
+If called interactively, enable Google-This mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
+
 \\{google-this-mode-map}
 
 \(fn &optional ARG)" t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "google-this" '("google-this-")))
-
-;;;***
-
-;;;### (autoloads nil nil ("google-this-pkg.el") (0 0 0 0))
 
 ;;;***
 
