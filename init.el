@@ -2031,7 +2031,7 @@ original line and use the absolute value."
 
 ;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
-(load "cmany")
+(load "cmany-new")
 ;;(global-cmany-mode 1)
 ;;(add-hook 'c-mode-common-hook 'cmany-mode)
 
