@@ -1,3 +1,4 @@
+;; http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
 ;; see https://github.com/chrisdone/elisp-guide
 ;; see http://lisperati.com/casting.html
 ;; see http://ergoemacs.org/emacs/elisp_basics.html
@@ -9,8 +10,8 @@
 ;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
 ;; https://github.com/hubisan/emacs-wsl
 
-
 (setq emacs-dir (file-name-directory load-file-name))
+(setq init-el (concat emacs-dir "init.el"))
 (message (format "emacs-dir %s" emacs-dir))
 
 ;;; Emacs Load Path
@@ -23,7 +24,7 @@
 (defun my-open-init-el ()
   "edit ~/.emacs.d/init.el"
   (interactive)
-  (find-file (concat user-emacs-directory "init.el"))
+  (find-file init-el)
   )
 (defun my-open-cmany-el ()
   "edit ~/.emacs.d/cmany.el/cmany.el"
@@ -137,22 +138,19 @@
     (byte-compile-file (expand-file-name file)))
   )
 
-(add-hook
- 'after-save-hook
- (function
-  (lambda ()
-    (if (string= (file-truename "~/.emacs.el")
-                 (file-truename (buffer-file-name)))
-        (byte-compile-init-files (file-truename "~/.emacs.el")))
-    )
-  )
- )
+(add-hook 'after-save-hook
+          (lambda ()
+            (when (string= (file-truename init-el)
+                           (file-truename (buffer-file-name)))
+              (message "compiling %s [LAMBDA]" init-el)
+              (byte-compile-init-files init-el)
+              )
+            )
+          )
 
 ;; Byte-compile again to ~/.emacs.elc if it is outdated
-(if (file-newer-than-file-p
-     (file-truename "~/.emacs.el")
-     (file-truename "~/.emacs.elc"))
-(byte-compile-init-files "~/.emacs.el"))
+(when (file-newer-than-file-p (file-truename init-el) (file-truename (concat init-el "c")))
+  (byte-compile-init-files init-el))
 
 
 ;;-------------------------------------------------------------------------------
@@ -641,18 +639,17 @@
     )
   )
 
-(defun --my-org-time-cmp(ts fn suffix)
+(defun --my-org-time-cmp (ts fn suffix)
   (if (string-empty-p ts)
       ""
     (let* ((treal (--my-org-parse-hh:mm ts))
-           (tbill (/ (fround (* value 4.0)) 4.0)
+           (tbill (/ (fround (* value 4.0)) 4.0))
            (delta (- tbill treal)))
       (format "%5.2f vs %5.2f -> %+.2f%s"
               (funcall fn tbill) (funcall fn treal) (funcall fn delta) suffix)
       )
       )
     )
-  )
 
 (defun my-org-time-cmp(ts)
   (--my-org-time-cmp ts (lambda (arg) arg) "h")
@@ -2048,7 +2045,7 @@ original line and use the absolute value."
 ;; https://github.com/OmniSharp/omnisharp-emacs
 (defun my-csharp-mode-setup()
   (flycheck-mode)
-  (csharp-mode 1)
+  (csharp-mode)
   (c-set-offset 'substatement-open 0)
   (add-to-list 'company-backends 'company-omnisharp)
   (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
@@ -2094,7 +2091,7 @@ original line and use the absolute value."
   (let ((b (current-buffer)))
     (message "pdb: sending command %s" cmd)
     (switch-to-buffer (get-buffer "*gud-main.py*"))
-    (end-of-buffer)
+    (goto-char (point-max)) ;;(end-of-buffer)
     (insert cmd)
     (execute-kbd-macro "\C-m")
     (switch-to-buffer b)
@@ -3036,6 +3033,26 @@ original line and use the absolute value."
 ;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 ;;
 
+(defun my-magit-status ()
+  (interactive)
+  (let* ((prompt "repo root: ")
+         (rd (car (split-string (shell-command-to-string "git rev-parse --show-toplevel"))))
+         (.. (message "repodir=%s" rd))
+         (dn (file-name-directory rd))
+         (.. (message "repodirname=%s" dn))
+         (bn (file-name-base rd))
+         (.. (message "repobasename=%s" bn))
+         (r (ido-read-directory-name prompt dn bn nil bn))
+         (.. (message "read=%s" r))
+         (r (file-truename r))
+         (.. (message "truename=%s" r))
+         (r (file-name-as-directory r))
+         (.. (message "finalname=%s" r))
+         )
+    (magit-status-setup-buffer r)
+    )
+  )
+
 (use-package magit
   :init
   (setq magit-refresh-status-buffer nil)
@@ -3058,26 +3075,6 @@ original line and use the absolute value."
    ("C-x g" . magit-status)
    ("C-x C-g" . my-magit-status)
    ("C-x M-g" . magit-dispatch-popup))
-  )
-
-(defun my-magit-status ()
-  (interactive)
-  (let* ((prompt "repo root: ")
-         (rd (car (split-string (shell-command-to-string "git rev-parse --show-toplevel"))))
-         (.. (message "repodir=%s" rd))
-         (dn (file-name-directory rd))
-         (.. (message "repodirname=%s" dn))
-         (bn (file-name-base rd))
-         (.. (message "repobasename=%s" bn))
-         (r (ido-read-directory-name prompt dn bn nil bn))
-         (.. (message "read=%s" r))
-         (r (file-truename r))
-         (.. (message "truename=%s" r))
-         (r (file-name-as-directory r))
-         (.. (message "finalname=%s" r))
-         )
-    (magit-status r)
-    )
   )
 
 
