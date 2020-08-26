@@ -11,23 +11,23 @@ FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/
 FD_VERSION_URL = "https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5.0-i686-pc-windows-msvc.zip"
 PANDOC_VERSION = 2.9.2
 PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
-IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-6-portable-Q16-x64.zip"
+IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
 PIP ?= pip
 
 CMANY_COMPILER ?=
 
-CLANG_VERSION ?= 9.0.1
+CLANG_VERSION ?= 10.0.1
 CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
 CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
 CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--proj-dir $(CLANG_SRC_DIR) \
 	--build-dir $(CLANG_BUILD_DIR) \
 	--install-dir $(CLANG_INSTALL_DIR) \
-        -V CLANG_VERSION=$(CLANG_VERSION)
+        -V CLANG_VERSION=$(CLANG_VERSION) \
+	$(CLANG_SRC_DIR)
 
 CCLS_REPO ?= https://github.com/MaskRay/ccls
 CCLS_BRANCH ?= master  # may also be a tag
@@ -36,10 +36,11 @@ CCLS_SRC_DIR ?= $(CCLS_DIR)/src
 CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
 CCLS_INSTALL_DIR ?= $(CCLS_DIR)/install
 CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--proj-dir $(CCLS_SRC_DIR) \
 	--build-dir $(CCLS_BUILD_DIR) \
 	--install-dir $(CCLS_INSTALL_DIR) \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(CCLS_SRC_DIR)
+
 
 RTAGS_REPO ?= https://github.com/Andersbakken/rtags
 RTAGS_BRANCH ?= master  # may also be a tag
@@ -48,10 +49,10 @@ RTAGS_SRC_DIR ?= $(RTAGS_DIR)/src
 RTAGS_BUILD_DIR ?= $(RTAGS_DIR)/build
 RTAGS_INSTALL_DIR ?= $(RTAGS_DIR)/install
 RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--proj-dir $(RTAGS_SRC_DIR) \
 	--build-dir $(RTAGS_BUILD_DIR) \
 	--install-dir $(RTAGS_INSTALL_DIR) \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(RTAGS_SRC_DIR)
 
 CQUERY_REPO ?= https://github.com/cquery-project/cquery
 CQUERY_BRANCH ?= master  # may also be a tag
@@ -60,11 +61,11 @@ CQUERY_SRC_DIR ?= $(CQUERY_DIR)/src
 CQUERY_BUILD_DIR ?= $(CQUERY_DIR)/build
 CQUERY_INSTALL_DIR ?= $(CQUERY_DIR)/install
 CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--proj-dir $(CQUERY_SRC_DIR) \
 	--build-dir $(CQUERY_BUILD_DIR) \
 	--install-dir $(CQUERY_INSTALL_DIR) \
 	-V SYSTEM_CLANG=ON \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang"
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(CQUERY_SRC_DIR)
 
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
@@ -114,7 +115,7 @@ wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag fzf pandoc image_magick markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
+all: ripgrep ag fzf fd pandoc image_magick markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -134,6 +135,7 @@ cmany:
 .PHONY: pip_packages
 pip_packages:
 	$(call pipinstall, pillow)
+	$(call pipinstall, grip)
 
 
 .PHONY: ripgrep
