@@ -2119,7 +2119,7 @@ original line and use the absolute value."
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
 ;;    (setq elpy-rpc-python-command "python3")
-    (setq elpy-rpc-virtualenv-path 'system)  ;; avoid the local environment bullshit
+    ;;(setq elpy-rpc-virtualenv-path 'system)  ;; avoid the local environment bullshit
 ;;    (setq elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
