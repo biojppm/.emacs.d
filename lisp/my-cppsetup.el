@@ -528,25 +528,20 @@
 )
 
 (defun my-semantic-parse-current-dir (regex)
-  "
-   Parses all files under the current directory matching regex
-  "
+  "Parses all files under the current directory matching regex"
   (my-semantic-parse-tree (file-name-directory(buffer-file-name)) regex)
 )
 
 (defun my-parse-curdir-c ()
-  "
-   Parses all the c/c++ related files under the current directory
-   and inputs their data into semantic
-  "
+  "Parses all the c/c++ related files under the current directory
+   and inputs their data into semantic"
   (interactive)
   (my-semantic-parse-current-dir c-files-regex)
 )
 
 (defun my-parse-dir-c (dir)
   "Prompts the user for a directory and parses all c/c++ related files
-   under the directory
-  "
+   under the directory"
   (interactive (list (read-directory-name "Provide the directory to search in:")))
   (my-semantic-parse-tree (expand-file-name dir) c-files-regex)
 )
