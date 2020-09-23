@@ -1515,8 +1515,11 @@ If point was already at that position, move point to beginning of line."
 (use-package multiple-cursors
   :commands (
              mc/edit-lines
+             mc/mark-all-in-region
              mc/mark-next-like-this
              mc/mark-previous-like-this
+             mc/unmark-next-like-this
+             mc/unmark-previous-like-this
              mc/mark-all-like-this
              )
   :bind
@@ -1527,7 +1530,9 @@ If point was already at that position, move point to beginning of line."
    ("M-M" . mc/mark-all-in-region)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this)
-   ("C-ç a" . mc/mark-all-like-this)
+   ("C-M->" . mc/unmark-next-like-this)
+   ("C-M-<" . mc/unmark-previous-like-this)
+   ("C-c a" . mc/mark-all-like-this)
    )
 )
 
@@ -2126,7 +2131,7 @@ original line and use the absolute value."
     ;; http://emacs.stackexchange.com/questions/16637/how-to-set-up-elpy-to-use-python3
     ;; requires sudo pip3 install rope_py3k jedi importmagic autopep8 flake8
 ;;    (setq elpy-rpc-python-command "python3")
-    ;;(setq elpy-rpc-virtualenv-path 'system)  ;; avoid the local environment bullshit
+    (setq elpy-rpc-virtualenv-path 'system)  ;; avoid the local environment bullshit
 ;;    (setq elpy-modules (dolist (elem '(elpy-module-highlight-indentation
 ;;                                     elpy-module-yasnippet))
 ;;                        (remove elem elpy-modules))
