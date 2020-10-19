@@ -4,6 +4,8 @@
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
+BAZEL_VERSION = 3.6.0
+BAZEL_VERSION_URL = "https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)/bazel-$(BAZEL_VERSION)-windows-x86_64.exe"
 RIPGREP_VERSION = 12.0.1
 RIPGREP_VERSION_URL = "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip"
 AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
@@ -150,6 +152,22 @@ ripgrep: $(LOCAL_DIR)/bin
 	      sudo add-apt-repository ppa:x4121/ripgrep ; \
 	      sudo apt-get update ; \
 	      sudo apt-get install ripgrep ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+.PHONY: bazel
+bazel: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call download,$(BAZEL_VERSION_URL),$(LOCAL_DIR)/bin/bazel.exe) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S bazel ; \
+	   else \
+	      sudo apt-get install bazel ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
