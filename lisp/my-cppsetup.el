@@ -96,7 +96,7 @@
   (newline-and-indent)
   (insert "}")
   (c-indent-line-or-region)
-  (previous-line)
+  (forward-line -1)  ;; (previous-line) ;; previous-line is for interactive use only
   (end-of-visual-line)
   (newline-and-indent)
   )
@@ -275,12 +275,13 @@
          (lsp-mode . lsp-enable-which-key-integration))
 
   :init
-  ;; (message "lsp-mode :init")
+  (message "lsp-mode :init")
   ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-signature-auto-activate nil)
+  (setq lsp-enable-file-watchers nil)
   ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
   (setq xref-prompt-for-identifier
         '(not xref-find-definitions
@@ -292,8 +293,7 @@
   ;; https://github.com/emacs-lsp/lsp-ui/blob/master/lsp-ui-sideline.el
   (setq lsp-ui-sideline-delay 2.0)
   (setq lsp-ui-doc-delay 3.0)
-  ;; (message "lsp-mode :init - done.")
-
+  (message "lsp-mode :init - done.")
 
   :config
   (message "lsp-mode :config")
@@ -354,198 +354,204 @@
   (message "load-c-ide-demo: finished")
   )
 
-
-;; CEDET
-;; see:
-;; http://www.logilab.org/173886
-;; http://cedet.sourceforge.net/setup.shtml
-;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
-;; http://cxwangyi.wordpress.com/2010/08/21/using-cedet-with-emacs/
-(defun load-cedet()
-  (interactive)
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/cogre")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/ede")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/eieio")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/semantic")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/speedbar")
-  (add-to-list 'load-path "~/.emacs.d/cedet-1.1/srecode")
-
-  (message "load-cedet: stage 1")
-  (load-file "~/.emacs.d/cedet-1.1/common/cedet.el")
-  (message "load-cedet: stage 2")
-  (load-file "~/.emacs.d/cedet-1.1/contrib/semantic-tag-folding.el")
-  (message "load-cedet: stage 3")
-
-  (require 'semantic-ia)          ; names completion and display of tags
-  (message "load-cedet: stage 4")
-
-  (require 'semantic-gcc)         ; auto locate system include files
-  (require 'semanticdb)
-  (require 'eassist)
-  (require 'semantic-tag-folding)
-
-  (require 'auto-complete-exuberant-ctags)
-  (ac-exuberant-ctags-setup)
-  ;In your project root directory, do the following command to make tags file:
-  ;ctags --verbose -R --fields="+afikKlmnsSzt"
-
-  (message "load-cedet: stage 5")
-
-  (global-ede-mode 1)                  ; enable the project management system
-  ;(semantic-decoration-mode t) ; ERROR in emacs24
-  (semantic-load-enable-minimum-features)
-  (message "load-cedet: semantic-enable-minimum-features ok")
-  (semantic-load-enable-code-helpers)  ; Enable prototype help and smart completion
-  (message "load-cedet: semantic-load-enable-code-helpers ok")
-  (semantic-load-enable-excessive-code-helpers)
-  (message "load-cedet: semantic-load-enable-excessive-code-helpers")
-  (global-srecode-minor-mode 1)        ; Enable template insertion menu
-  (message "load-cedet: global-srecode-minor-mode")
-
-  ;(semantic-add-system-include "~/3rd-party/boost-1.43.0/include/" 'c++-mode)
-  ;(semantic-add-system-include "~/3rd-party/protobuf-2.3.0/include" 'c++-mode)
-
-  (global-semanticdb-minor-mode 1)
-
-  (add-hook 'speedbar-load-hook (lambda () (require 'semantic/sb)))
-
-  ;(concat eassist-header-switches "hh" "cc" "hpp" "cpp")
-
-  (message "load-cedet: stage 6")
-
-  (defun my-cedet-hook ()
-    (interactive)
-
-    (global-semanticdb-minor-mode 1)
-
-    (message "my-cedet-hook: entered")
-
-    (semantic-default-c-setup)
-
-    (local-set-key (kbd "C-.") 'semantic-ia-complete-symbol)
-    (local-set-key (kbd "C-:") 'semantic-ia-complete-symbol-menu)
-    (local-set-key (kbd "C-?") 'semantic-ia-complete-tip)
-    (local-set-key (kbd "C-c >") 'semantic-complete-analyze-inline)
-
-    (message "my-cedet-hook: stage 2")
-    (local-set-key (kbd "C-c i") 'semantic-decoration-include-visit)
-                                 ; go to the header file #included under cursor
-
-    (local-set-key (kbd "C-c j") 'semantic-ia-fast-jump)
-                                 ; go to definition
-    (local-set-key (kbd "C-c J") 'semantic-complete-jump)
-                                 ; go to definition
-
-    (message "my-cedet-hook: stage 3")
-
-    (local-set-key (kbd "C-c q") 'semantic-ia-show-doc)
-    (local-set-key (kbd "C-c s") 'semantic-ia-show-summary)
-    (local-set-key (kbd "C-c p") 'semantic-analyze-proto-impl-toggle)
-    (local-set-key (kbd "C-c +") 'semantic-tag-folding-show-block)
-    (local-set-key (kbd "C-c -") 'semantic-tag-folding-fold-block)
-    (local-set-key (kbd "C-c C-+") 'semantic-tag-folding-show-all)
-    (local-set-key (kbd "C-c C--") 'semantic-tag-folding-fold-all)
-    (local-set-key (kbd "C-c t") 'eassist-switch-h-cpp)
-    (local-set-key (kbd "C-c e") 'eassist-list-methods)
-
-
-    (local-set-key (kbd "C-c C-r") 'semantic-symref)
-                                   ; show references to the symbol
-                                   ; under the cursor
-    (local-set-key (kbd "C-c C-R") 'semantic-symref-symbol)
-                                   ; show references to a symbol
-                                   ; which will be prompted
-
-    (message "my-cedet-hook: stage 4")
-  )
-  (add-hook 'c-mode-common-hook 'my-cedet-hook)
-  ;(add-hook 'c++-mode-common-hook 'my-c-hook) ; c++-hook invokes c-hook
-
-  (global-semantic-tag-folding-mode 1)
-
-
-  (message "load-cedet: stage 7")
-
-  ;; gnu global support
-  (require 'semanticdb-global)
-  (semanticdb-enable-gnu-global-databases 'c-mode)
-  (semanticdb-enable-gnu-global-databases 'c++-mode)
-
-  (message "load-cedet: stage 8")
-
-  ;; ctags
-  (require 'semanticdb-ectag)
-  (semantic-load-enable-primary-exuberent-ctags-support)
-
-  ;(global-semantic-idle-tag-highlight-mode 1) ; ERROR in emacs24
-
-  (message "load-cedet: stage 9")
-
-  (add-to-list 'load-path "~/.emacs.d/ecb-master")
-  (require 'ecb)
-
-  (message "load-cedet: finished!")
-)
-
-;-------------------------------------------------------------------------------
-; ======== FORCE SEMANTIC PARSING OF FILES A DIRECTORY ========
-; see http://stackoverflow.com/questions/18230838/semantic-cedet-how-to-force-parsing-of-source-files
-
-(defvar c-files-regex ".*\\.\\(c\\|cpp\\|cxx\\|cc\\|h\\|hpp\\|hxx\\|hh\\|cu\\|cl\\)"
-  "A regular expression to match any c/c++ related files under a directory")
-
-(defun my-semantic-parse-tree (root regex)
-  "
-   This function is an attempt of mine to force semantic to
-   parse all source files under a root directory. Arguments:
-   -- root: The full path to the root directory
-   -- regex: A regular expression against which to match all files in the directory
-  "
-  ;(message "PARSING: ENTERING DIR: %s" root)
-  (let (
-        ;;make sure that root has a trailing slash and is a dir
-        (root (file-name-as-directory root))
-        (files (directory-files root t ))
-       )
-    ;; remove current dir and parent dir from list
-    (setq files (delete (format "%s." root) files))
-    (setq files (delete (format "%s.." root) files))
-    (while files
-      (setq file (pop files))
-      (if (not(file-accessible-directory-p file))
-          ;;if it's a file that matches the regex we seek
-          (progn (when (string-match-p regex file)
-               (message "PARSING: %s" file)
-               (save-excursion
-                 (semanticdb-file-table-object file))
-           ))
-          ;;else if it's a directory
-          (my-semantic-parse-tree file regex)
-      )
-    )
-  )
-)
-
-(defun my-semantic-parse-current-dir (regex)
-  "Parses all files under the current directory matching regex"
-  (my-semantic-parse-tree (file-name-directory(buffer-file-name)) regex)
-)
-
-(defun my-parse-curdir-c ()
-  "Parses all the c/c++ related files under the current directory
-   and inputs their data into semantic"
-  (interactive)
-  (my-semantic-parse-current-dir c-files-regex)
-)
-
-(defun my-parse-dir-c (dir)
-  "Prompts the user for a directory and parses all c/c++ related files
-   under the directory"
-  (interactive (list (read-directory-name "Provide the directory to search in:")))
-  (my-semantic-parse-tree (expand-file-name dir) c-files-regex)
-)
-
-(provide 'lk-file-search)
-
-
+;;
+;; ;; CEDET
+;; ;; see:
+;; ;; http://www.logilab.org/173886
+;; ;; http://cedet.sourceforge.net/setup.shtml
+;; ;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
+;; ;; http://cxwangyi.wordpress.com/2010/08/21/using-cedet-with-emacs/
+;; (defun load-cedet()
+;;   (interactive)
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/cogre")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/ede")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/eieio")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/semantic")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/speedbar")
+;;   (add-to-list 'load-path "~/.emacs.d/cedet-1.1/srecode")
+;;
+;;   (message "load-cedet: stage 1")
+;;   (load-file "~/.emacs.d/cedet-1.1/common/cedet.el")
+;;   (message "load-cedet: stage 2")
+;;   (load-file "~/.emacs.d/cedet-1.1/contrib/semantic-tag-folding.el")
+;;   (message "load-cedet: stage 3")
+;;
+;;   (require 'semantic-ia)          ; names completion and display of tags
+;;   (message "load-cedet: stage 4")
+;;
+;;   (require 'semantic-gcc)         ; auto locate system include files
+;;   (require 'semanticdb)
+;;   (require 'eassist)
+;;   (require 'semantic-tag-folding)
+;;
+;;   (require 'auto-complete-exuberant-ctags)
+;;   (ac-exuberant-ctags-setup)
+;;   ;In your project root directory, do the following command to make tags file:
+;;   ;ctags --verbose -R --fields="+afikKlmnsSzt"
+;;
+;;   (message "load-cedet: stage 5")
+;;
+;;   (global-ede-mode 1)                  ; enable the project management system
+;;   ;(semantic-decoration-mode t) ; ERROR in emacs24
+;;   (semantic-load-enable-minimum-features)
+;;   (message "load-cedet: semantic-enable-minimum-features ok")
+;;   (semantic-load-enable-code-helpers)  ; Enable prototype help and smart completion
+;;   (message "load-cedet: semantic-load-enable-code-helpers ok")
+;;   (semantic-load-enable-excessive-code-helpers)
+;;   (message "load-cedet: semantic-load-enable-excessive-code-helpers")
+;;   (global-srecode-minor-mode 1)        ; Enable template insertion menu
+;;   (message "load-cedet: global-srecode-minor-mode")
+;;
+;;   ;(semantic-add-system-include "~/3rd-party/boost-1.43.0/include/" 'c++-mode)
+;;   ;(semantic-add-system-include "~/3rd-party/protobuf-2.3.0/include" 'c++-mode)
+;;
+;;   (global-semanticdb-minor-mode 1)
+;;
+;;   (add-hook 'speedbar-load-hook (lambda () (require 'semantic/sb)))
+;;
+;;   ;(concat eassist-header-switches "hh" "cc" "hpp" "cpp")
+;;
+;;   (message "load-cedet: stage 6")
+;;
+;;   (defun my-cedet-hook ()
+;;     (interactive)
+;;
+;;     (global-semanticdb-minor-mode 1)
+;;
+;;     (message "my-cedet-hook: entered")
+;;
+;;     (semantic-default-c-setup)
+;;
+;;     (local-set-key (kbd "C-.") 'semantic-ia-complete-symbol)
+;;     (local-set-key (kbd "C-:") 'semantic-ia-complete-symbol-menu)
+;;     (local-set-key (kbd "C-?") 'semantic-ia-complete-tip)
+;;     (local-set-key (kbd "C-c >") 'semantic-complete-analyze-inline)
+;;
+;;     (message "my-cedet-hook: stage 2")
+;;     (local-set-key (kbd "C-c i") 'semantic-decoration-include-visit)
+;;                                  ; go to the header file #included under cursor
+;;
+;;     (local-set-key (kbd "C-c j") 'semantic-ia-fast-jump)
+;;                                  ; go to definition
+;;     (local-set-key (kbd "C-c J") 'semantic-complete-jump)
+;;                                  ; go to definition
+;;
+;;     (message "my-cedet-hook: stage 3")
+;;
+;;     (local-set-key (kbd "C-c q") 'semantic-ia-show-doc)
+;;     (local-set-key (kbd "C-c s") 'semantic-ia-show-summary)
+;;     (local-set-key (kbd "C-c p") 'semantic-analyze-proto-impl-toggle)
+;;     (local-set-key (kbd "C-c +") 'semantic-tag-folding-show-block)
+;;     (local-set-key (kbd "C-c -") 'semantic-tag-folding-fold-block)
+;;     (local-set-key (kbd "C-c C-+") 'semantic-tag-folding-show-all)
+;;     (local-set-key (kbd "C-c C--") 'semantic-tag-folding-fold-all)
+;;     (local-set-key (kbd "C-c t") 'eassist-switch-h-cpp)
+;;     (local-set-key (kbd "C-c e") 'eassist-list-methods)
+;;
+;;
+;;     (local-set-key (kbd "C-c C-r") 'semantic-symref)
+;;                                    ; show references to the symbol
+;;                                    ; under the cursor
+;;     (local-set-key (kbd "C-c C-R") 'semantic-symref-symbol)
+;;                                    ; show references to a symbol
+;;                                    ; which will be prompted
+;;
+;;     (message "my-cedet-hook: stage 4")
+;;   )
+;;   (add-hook 'c-mode-common-hook 'my-cedet-hook)
+;;   ;(add-hook 'c++-mode-common-hook 'my-c-hook) ; c++-hook invokes c-hook
+;;
+;;   (global-semantic-tag-folding-mode 1)
+;;
+;;
+;;   (message "load-cedet: stage 7")
+;;
+;;   ;; gnu global support
+;;   (require 'semanticdb-global)
+;;   (semanticdb-enable-gnu-global-databases 'c-mode)
+;;   (semanticdb-enable-gnu-global-databases 'c++-mode)
+;;
+;;   (message "load-cedet: stage 8")
+;;
+;;   ;; ctags
+;;   (require 'semanticdb-ectag)
+;;   (semantic-load-enable-primary-exuberent-ctags-support)
+;;
+;;   ;(global-semantic-idle-tag-highlight-mode 1) ; ERROR in emacs24
+;;
+;;   (message "load-cedet: stage 9")
+;;
+;;   (add-to-list 'load-path "~/.emacs.d/ecb-master")
+;;   (require 'ecb)
+;;
+;;   (message "load-cedet: finished!")
+;; )
+;;
+;; ;-------------------------------------------------------------------------------
+;; ; ======== FORCE SEMANTIC PARSING OF FILES A DIRECTORY ========
+;; ; see http://stackoverflow.com/questions/18230838/semantic-cedet-how-to-force-parsing-of-source-files
+;;
+;; (defvar c-files-regex ".*\\.\\(c\\|cpp\\|cxx\\|cc\\|h\\|hpp\\|hxx\\|hh\\|cu\\|cl\\)"
+;;   "A regular expression to match any c/c++ related files under a directory")
+;;
+;; (defun my-semantic-parse-tree (root regex)
+;;   "
+;;    This function is an attempt of mine to force semantic to
+;;    parse all source files under a root directory. Arguments:
+;;    -- root: The full path to the root directory
+;;    -- regex: A regular expression against which to match all files in the directory
+;;   "
+;;   ;(message "PARSING: ENTERING DIR: %s" root)
+;;   (let (
+;;         ;;make sure that root has a trailing slash and is a dir
+;;         (root (file-name-as-directory root))
+;;         (files (directory-files root t ))
+;;        )
+;;     ;; remove current dir and parent dir from list
+;;     (setq files (delete (format "%s." root) files))
+;;     (setq files (delete (format "%s.." root) files))
+;;     (while files
+;;       (setq file (pop files))
+;;       (if (not(file-accessible-directory-p file))
+;;           ;;if it's a file that matches the regex we seek
+;;           (progn (when (string-match-p regex file)
+;;                (message "PARSING: %s" file)
+;;                (save-excursion
+;;                  (semanticdb-file-table-object file))
+;;            ))
+;;           ;;else if it's a directory
+;;           (my-semantic-parse-tree file regex)
+;;       )
+;;     )
+;;   )
+;; )
+;;
+;; (defun my-semantic-parse-current-dir (regex)
+;;   "
+;;    Parses all files under the current directory matching regex
+;;   "
+;;   (my-semantic-parse-tree (file-name-directory(buffer-file-name)) regex)
+;; )
+;;
+;; (defun my-parse-curdir-c ()
+;;   "
+;;    Parses all the c/c++ related files under the current directory
+;;    and inputs their data into semantic
+;;   "
+;;   (interactive)
+;;   (my-semantic-parse-current-dir c-files-regex)
+;; )
+;;
+;; (defun my-parse-dir-c (dir)
+;;   "Prompts the user for a directory and parses all c/c++ related files
+;;    under the directory
+;;   "
+;;   (interactive (list (read-directory-name "Provide the directory to search in:")))
+;;   (my-semantic-parse-tree (expand-file-name dir) c-files-regex)
+;; )
+;;
+;; (provide 'lk-file-search)
+;;
+;;
+;;

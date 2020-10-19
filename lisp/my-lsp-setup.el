@@ -4,9 +4,13 @@
 (use-package lsp-mode
   :defer t
   :commands lsp
-  :config
-  (message "lsp-mode INIT")
+  :init
+  (message "lsp-mode INIT start")
   (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-enable-file-watchers nil)
+  (message "lsp-mode INIT end")
+  :config
+  (message "lsp-mode CONFIG")
   (message "lsp-mode 1")
   ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
   (setq xref-prompt-for-identifier
