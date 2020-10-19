@@ -2060,16 +2060,16 @@ original line and use the absolute value."
   (flycheck-mode)
   (csharp-mode)
   (c-set-offset 'substatement-open 0)
-  (add-to-list 'company-backends 'company-omnisharp)
-  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
+;;  (add-to-list 'company-backends 'company-omnisharp)
+;;  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
   )
-(use-package omnisharp-mode
-  :config
-  (use-package csharp-mode)
-  (use-snips)(add-hook 'csharp-mode-hook #'hook-snips)
-  (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
-  :mode (("\\.cs\\'" . omnisharp-mode)
-         ("\\.CS\\'" . omnisharp-mode)))
+;;(use-package omnisharp-mode
+;;  :config
+;;  (use-package csharp-mode)
+;;  (use-snips)(add-hook 'csharp-mode-hook #'hook-snips)
+;;  (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
+;;  :mode (("\\.cs\\'" . omnisharp-mode)
+;;         ("\\.CS\\'" . omnisharp-mode)))
 
 ;; F#
 (use-package fsharp-mode
@@ -2218,7 +2218,7 @@ original line and use the absolute value."
 ;; http://superuser.com/questions/383520/how-to-efficiently-type-in-a-pair-of-xml-tags-in-emacs
 ;; C-c <right> / C-c <left> move to end of matching tag
 ;; C-M-n / C-M-p jump to begin/end of tag
-(use-package nxml
+(use-package nxml-mode
   :init (setq nxml-slash-auto-complete-flag t)
   :mode (("\\.xml\\'" . nxml-mode)
          ("\\.xsd\\'" . nxml-mode)
@@ -2297,18 +2297,19 @@ original line and use the absolute value."
 
 ;;; Octave/Matlab
 ;;see http://www.gnu.org/software/octave/doc/v4.0.1/Using-Octave-Mode.html#Using-Octave-Mode
-(use-package octave-mode
-  :init
+(defun -my-octave-hook()
   (abbrev-mode 1)
   (auto-fill-mode 1)
   (if (eq window-system 'x)
       (font-lock-mode 1))
-  :config
   (use-snips)
-  (add-hook 'octave-mode-hook #'hook-snips)
   (setq inferior-octave-program "octave-cli")
-  :mode ("\\.m$" . octave-mode)
   )
+(autoload 'octave-mode "octave-mode" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(add-hook 'octave-mode-hook #'hook-snips)
+(add-hook 'octave-mode-hook #'-my-octave-hook)
 
 ;;; AutoHotKey
 (use-package xahk-mode
@@ -2998,12 +2999,14 @@ original line and use the absolute value."
 ;;available key bindings. I.e. C-c C-h gives you help on all key
 ;;bindings while C-c C-r C-h gives you help on the commands for
 ;;regions. This is handy if you forgot a certain key binding.
-(use-package rst-mode
-  :defer t
-  :config
-  (add-hook 'rst-mode-hook 'my-text-hook)
-  (add-hook 'rst-mode-hook 'hook-snips)
-)
+(defun -my-rst-hook()
+  (use-snips)
+  )
+(autoload 'rst-mode "rst-mode" nil t)
+(setq auto-mode-alist
+      (cons '("\\.rst$" . rst-mode) auto-mode-alist))
+(add-hook 'rst-mode-hook #'-my-rst-hook)
+(add-hook 'rst-mode-hook #'hook-snips)
 
 ;; Markdown
 ;; https://jblevins.org/projects/markdown-mode/
