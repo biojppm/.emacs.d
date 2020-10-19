@@ -16,6 +16,7 @@
 
 ;;; Emacs Load Path
 (add-to-list 'load-path (concat emacs-dir "lisp"))
+(setenv "PYTHONIOENCODING" "UTF-8")
 
 ;;http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
