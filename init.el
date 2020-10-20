@@ -3031,6 +3031,7 @@ original line and use the absolute value."
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown")
   :config
+  (use-snips)
   (add-hook 'markdown-mode-hook 'my-text-hook)
   (add-hook 'markdown-mode-hook 'hook-snips)
   (add-hook 'gfm-mode-hook 'my-text-hook)
