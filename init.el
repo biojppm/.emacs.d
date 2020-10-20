@@ -2054,6 +2054,18 @@ original line and use the absolute value."
 )
 
 
+;; lua
+;; https://github.com/OmniSharp/omnisharp-emacs
+(defun my-lua-mode-setup()
+  )
+(use-package lua-mode
+  :config
+  (use-snips)(add-hook 'lua-mode-hook #'hook-snips)
+  (add-hook 'lua-mode-hook 'my-lua-mode-setup t)
+  :mode (("\\.lua\\'" . lua-mode)
+         ("\\.LUA\\'" . lua-mode))
+  )
+
 ;; C#
 ;; https://github.com/OmniSharp/omnisharp-emacs
 (defun my-csharp-mode-setup()
@@ -3365,6 +3377,7 @@ mode.
      levenshtein
      lsp-mode
      lsp-ui
+     lua-mode
      magit
      man-commands
      markdown-mode
