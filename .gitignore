@@ -31,6 +31,7 @@ scratch-persist/*.txt
 semanticdb/
 server
 session.*
+srecode-map.el
 smex-items
 tramp
 transient/
