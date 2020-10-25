@@ -2023,6 +2023,26 @@ original line and use the absolute value."
 ;;Indent size
 (setq standard-indent 4)
 
+;; smart-shift https://github.com/hbin/smart-shift
+(use-package smart-shift
+  :defer t
+  :commands
+      smart-shift-mode
+      global-smart-shift-mode
+      smart-shift-left
+      smart-shift-right
+      smart-shift-up
+      smart-shift-down
+  :config
+      ;;(setq smart-shift-indentation-level 4)
+      (setq smart-shift-indentation-level 2)
+      (global-smart-shift-mode 1)
+  :bind
+      ("C-c C-<left>" . smart-shift-left)("C-c <left>" . smart-shift-left)
+      ("C-c C-<right>" . smart-shift-left)("C-c <right>" . smart-shift-left)
+  )
+
+
 ;;Auto-close bracket pairs
 ;(electric-pair-mode 1)
 
@@ -2272,6 +2292,7 @@ original line and use the absolute value."
 
 
 ;;; YAML
+;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
 (defun my-yaml-hook()
   (message "my-yaml-hook: enter")
   (use-snips)
@@ -3408,6 +3429,7 @@ mode.
      rtags-xref
      slime
      smart-mode-line
+     smart-shift
      smartparens
      smex
      solarized-theme
