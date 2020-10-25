@@ -1542,11 +1542,23 @@ If point was already at that position, move point to beginning of line."
 ;; code folding.
 ;; there's also this: https://github.com/zenozeng/yafolding.el
 
-(use-package bicycle
-  :after outline
-  :bind (:map outline-minor-mode-map
-              ("C-c <C-return>" . bicycle-cycle)
-              ("C-c <C-S-return>" . bicycle-cycle-global)))
+;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
+(defun aj-toggle-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1))))))
+(global-set-key (kbd "C-c <C-return>") 'aj-toggle-fold)
+
+;;(use-package bicycle
+;;  :after outline
+;;  :bind (:map outline-minor-mode-map
+;;              ("C-c <C-return>" . bicycle-cycle)
+;;              ("C-c <C-S-return>" . bicycle-cycle-global)))
 
 (use-package prog-mode
   :config
@@ -2265,6 +2277,7 @@ original line and use the absolute value."
   (use-snips)
   (hook-snips)
   (auto-fill-mode 0)
+  (highlight-indentation-mode 1)
   (disable-line-wrapping)
   (message "my-yaml-hook: exit")
   )

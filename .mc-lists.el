@@ -34,6 +34,7 @@
         org-yank
         overwrite-mode
         smart-beginning-of-line
+        wdired-next-line
         xref-pop-marker-stack
         yaml-electric-backspace
         yaml-electric-dash-and-dot
