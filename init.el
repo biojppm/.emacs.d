@@ -1802,6 +1802,13 @@ original line and use the absolute value."
                (message "highlight porra"))
              )
             )
+  :bind
+  ("C-c h s" . highlight-symbol)
+  ("C-c h n" . highlight-symbol-next)
+  ("C-c h p" . highlight-symbol-prev)
+  ("C-c h c" . highlight-symbol-count)
+  ("C-c h o" . highlight-symbol-occur)
+  ("C-c h l" . highlight-symbol-list-all)
   )
 
 ;(use-package smart-mode-line
@@ -2038,8 +2045,10 @@ original line and use the absolute value."
       (setq smart-shift-indentation-level 2)
       (global-smart-shift-mode 1)
   :bind
-      ("C-c C-<left>" . smart-shift-left)("C-c <left>" . smart-shift-left)
-      ("C-c C-<right>" . smart-shift-left)("C-c <right>" . smart-shift-left)
+      ("C-c C-<left>" . smart-shift-left)
+      ("C-c <left>" . smart-shift-left)
+      ("C-c C-<right>" . smart-shift-right)
+      ("C-c <right>" . smart-shift-right)
   )
 
 
@@ -2300,6 +2309,7 @@ original line and use the absolute value."
   (auto-fill-mode 0)
   (highlight-indentation-mode 1)
   (disable-line-wrapping)
+  (setq show-trailing-whitespace 1)
   (message "my-yaml-hook: exit")
   )
 (use-package yaml-mode
