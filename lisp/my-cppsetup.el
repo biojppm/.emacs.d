@@ -313,47 +313,6 @@
 ;;-----------------------------------------------------------------------------
 ;; old setups
 
-(defun load-ide-demo()
-  (interactive)
-  (add-to-list 'load-path (concat user-emacs-directory "emacs-c-ide-demo/custom"))
-
-  (message "load-c-ide-demo: starting")
-
-  (use-package counsel
-    :defer t)
-  (use-package counsel-projectile
-    :defer t)
-  (use-package volatile-highlights
-    :defer t)
-  (use-package dtrt-indent
-    :defer t)
-  (use-package anzu
-    :defer t)
-  (use-package clean-aindent-mode
-    :defer t)
-
-  (message "load-c-ide-demo: packages done.")
-
-  (require 'setup-general)
-
-  (message "load-c-ide-demo: stage 1 done.")
-
-  (if (version< emacs-version "24.4")
-      (require 'setup-ivy-counsel)
-    (require 'setup-helm)
-    (require 'setup-helm-gtags))
-
-  (message "load-c-ide-demo: stage 2 done.")
-
-  ;; (require 'setup-ggtags)
-  (require 'setup-cedet)
-  (require 'setup-editing)
-
-  (message "load-c-ide-demo: stage 3 done.")
-
-  (message "load-c-ide-demo: finished")
-  )
-
 ;;
 ;; ;; CEDET
 ;; ;; see:
