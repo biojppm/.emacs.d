@@ -50,11 +50,13 @@
         gud-tooltip-mouse-motion
         help-for-help
         ido-find-file
+        ivy-switch-buffer
         mouse-set-region
         my-compile
         my-open-cmany-el
         my-open-init-el
         my-recompile
+        previous-buffer
         smex
         wdired-finish-edit
         ))
