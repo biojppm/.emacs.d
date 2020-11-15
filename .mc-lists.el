@@ -34,6 +34,8 @@
         org-yank
         overwrite-mode
         smart-beginning-of-line
+        smart-shift-pass-through
+        smart-shift-right
         wdired-next-line
         xref-pop-marker-stack
         yaml-electric-backspace
@@ -51,6 +53,9 @@
         help-for-help
         ido-find-file
         ivy-switch-buffer
+        lsp-ui-doc--handle-mouse-movement
+        mouse-drag-vertical-line
+        mouse-select-window
         mouse-set-region
         my-compile
         my-open-cmany-el
