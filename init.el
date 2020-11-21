@@ -918,10 +918,12 @@
           (lambda ()
             ;; Set dired-x buffer-local variables here. For example:
             ;; (dired-omit-mode 1)
+            (local-set-key (kbd "M-<up>") 'dired-up-directory)
             ))
 
-(setq completion-ignored-extensions (delete "\\.pg" completion-ignored-extensions))
-(setq completion-ignored-extensions (delete "\\.pgs" completion-ignored-extensions))
+(setq completion-ignored-extensions (delete ".pg" completion-ignored-extensions))
+(setq completion-ignored-extensions (delete ".pgs" completion-ignored-extensions))
+(setq completion-ignored-extensions (delete ".pgc" completion-ignored-extensions))
 
 
 ;;-------------------------------------------------------------------------
