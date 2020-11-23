@@ -3377,6 +3377,7 @@ mode.
      csharp-mode
      cython-mode
      dirtree
+     dockerfile-mode
      drag-stuff
      dtrt-indent
      dumb-jump
