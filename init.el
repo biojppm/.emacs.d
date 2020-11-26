@@ -3043,11 +3043,12 @@ original line and use the absolute value."
 
 (defun my-text-hook ()
   (message "my-text-hook: entering")
-  (visual-line-mode 0)
-  (setq-default fill-column 77) ; https://www.emacswiki.org/emacs/FillParagraph#toc2
-  (message "my-text-hook: turning on auto-fill-mode. See https://www.emacswiki.org/emacs/AutoFillMode")
-  (auto-fill-mode 77)
-  (turn-on-auto-fill)
+  (visual-line-mode 1)
+  ;;(visual-line-mode 0)
+  ;;(setq-default fill-column 77) ; https://www.emacswiki.org/emacs/FillParagraph#toc2
+  ;;(message "my-text-hook: turning on auto-fill-mode. See https://www.emacswiki.org/emacs/AutoFillMode")
+  ;;(auto-fill-mode 77)
+  ;;(turn-on-auto-fill)
   (message "my-text-hook: done.")
 )
 (add-hook 'text-mode-hook 'my-text-hook)
