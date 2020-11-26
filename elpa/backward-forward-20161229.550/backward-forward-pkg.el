@@ -1,0 +1,2 @@
+;;; Generated package description from /home/jpmag/.emacs.d/elpa/backward-forward-20161229.550/backward-forward.el  -*- no-byte-compile: t -*-
+(define-package "backward-forward" "20161229.550" "navigation backwards and forwards across marks" '((emacs "24.5")) :commit "58489957a62a0da25dfb5df902624d2548d800b4" :keywords '("navigation" "convenience" "backward" "forward") :authors '(("Currell Berry" . "currellberry@gmail.com")) :maintainer '("Currell Berry" . "currellberry@gmail.com") :url "https://gitlab.com/vancan1ty/emacs-backward-forward/tree/master")

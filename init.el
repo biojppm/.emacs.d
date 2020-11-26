@@ -734,7 +734,7 @@
   (setq linum-mode 0)    ; WTF? these two are necessary
   (other-window 1) ;switch the cursor
 )
-(global-set-key (kbd "C-<f6>") 'myide)
+;;(global-set-key (kbd "C-<f6>") 'myide)
 
 
 (defun my-three-windows()
@@ -751,7 +751,7 @@
       )
     )
   )
-(global-set-key (kbd "C-<f3>") 'my-three-windows)
+;;(global-set-key (kbd "C-<f3>") 'my-three-windows)
 
 
 ;;-------------------------------------------
@@ -763,6 +763,7 @@
 ;;monokai-theme: https://github.com/oneKelvinSmith/monokai-emacs
 ;;firebelly-theme: https://github.com/startling/firebelly
 ;;hemisu-dark-theme: https://github.com/andrzejsliwa/hemisu-theme
+;;vscode-dark-plus-emacs-theme https://github.com/ianpan870102/vscode-dark-plus-emacs-theme
 
 ;;If Emacs looks considerably uglier in a terminal try setting this
 ;;environment variable:
@@ -816,6 +817,14 @@
   (set-face-background 'mode-line-inactive "#303030")
 )
 
+(defun my-set-theme-vscode-dark-plus()
+  ;; https://github.com/ianpan870102/vscode-dark-plus-emacs-theme
+  (interactive)
+  (use-package vscode-dark-plus-theme
+    :config
+    (load-theme 'vscode-dark-plus t))
+)
+
 (defun my-set-theme-hemisu()
   ; hemisu-dark-theme: https://github.com/andrzejsliwa/hemisu-theme
   (interactive)
@@ -827,8 +836,9 @@
   (load-theme 'tango-2 t)
 )
 
-(my-set-theme-monokai)
-;(my-set-theme-tango-2)
+(my-set-theme-vscode-dark-plus)
+;;(my-set-theme-monokai)
+;;(my-set-theme-tango-2)
 
 ;;-------------------------------------------
 ;; Show line numbers
@@ -1750,7 +1760,7 @@ original line and use the absolute value."
 (add-hook 'prog-mode-hook
           (function
            (lambda ()
-             (message "enable show-parent mode")
+             (message "enable show-paren mode")
              (show-paren-mode +1)
 	     )
            )
@@ -1954,6 +1964,22 @@ original line and use the absolute value."
 ;; C-c p m 	  Run the commander (an interface to run commands with a single key).
 ;; C-c p ESC 	  Switch to the most recently selected Projectile buffer.
 ;;
+
+;;-------------------------------------------------------------------------
+;; https://utcc.utoronto.ca/~cks/space/blog/programming/EmacsBackForward
+
+(use-package backward-forward
+  :demand
+  :config (backward-forward-mode t)
+  :bind (:map backward-forward-mode-map
+              ("<C-left>" . nil)
+              ("<C-right>" . nil)
+              ("<M-left>" . backward-forward-previous-location)
+              ("<M-right>" . backward-forward-next-location)
+              ("<mouse-8>" . backward-forward-previous-location)
+              ("<mouse-9>" . backward-forward-next-location)
+              )
+  )
 
 ;;-------------------------------------------------------------------------
 ;; https://github.com/atilaneves/cmake-ide
@@ -3362,6 +3388,7 @@ mode.
      arduino-mode
      babel
      babel-repl
+     backward-forward
      bicycle
      ccls
      clang-format
@@ -3455,6 +3482,7 @@ mode.
      use-package
      vlf
      volatile-highlights
+     vscode-dark-plus-theme
      web-mode
      wgrep
      wgrep-ag
