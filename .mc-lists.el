@@ -63,5 +63,6 @@
         my-recompile
         previous-buffer
         smex
+        text-scale-adjust
         wdired-finish-edit
         ))

@@ -935,6 +935,8 @@
 (setq completion-ignored-extensions (delete ".pgs" completion-ignored-extensions))
 (setq completion-ignored-extensions (delete ".pgc" completion-ignored-extensions))
 
+;; use fd in dired
+(use-package fd-dired)
 
 ;;-------------------------------------------------------------------------
 ;; IDO mode: (Interactively DO things)
@@ -3418,6 +3420,7 @@ mode.
      emms-player-simple-mpv
      emms-state
      ess
+     fd-dired
      find-file-in-project
      find-file-in-repository
      flycheck
