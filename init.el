@@ -2110,6 +2110,13 @@ original line and use the absolute value."
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
 
+(use-package cmake-mode
+  :defer t
+  :commands cmake-mode
+  :config
+  (add-to-list 'company-backends 'company-cmake)
+  )
+
 ;; cmany
 (add-to-list 'load-path (concat emacs-dir "cmany.el"))
 (load "cmany-new")
