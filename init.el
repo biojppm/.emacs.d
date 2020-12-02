@@ -1048,6 +1048,7 @@
 ;; If Ido is getting in your way, remember the fallback commands:
 ;;  C-f for files; C-b for buffers.
 
+
 ;;-----------------------------------------------------------------------------
 ;; Ivy config
 ;; https://nilsdeppe.com/posts/emacs-c++-ide2
@@ -1056,10 +1057,10 @@
   :ensure t
   :config
   (require 'ivy)
-  (ivy-mode t)
   (setq ivy-wrap t)
   (setq ivy-display-style 'fancy)
   (setq ivy-use-virtual-buffers t)
+  (ivy-mode t)
   (setq enable-recursive-minibuffers t)
   (setq magit-completing-read-function 'ivy-completing-read)
   (global-set-key (kbd "C-c C-r") 'ivy-resume)
@@ -1291,6 +1292,47 @@
    ("="   . company--my-insert-equal)
    )
   )
+
+
+;; https://www.emacswiki.org/emacs/idomenu.el
+;; idomenu.el --- imenu tag selection a la ido
+;;
+;; This package provides the `idomenu' command for selecting an imenu tag using
+;; ido completion.  The buffer needs to have support for imenu already enabled.
+;;
+;; idomenu uses imenu to get the tags:
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html
+(use-package idomenu
+  :defer t
+  :commands idomenu
+  )
+
+
+
+;; Dumb Jump
+;; https://github.com/jacktasia/dumb-jump
+(use-package dumb-jump
+  :ensure t
+  :bind (
+         ("M-j ," . dumb-jump-back)
+         ("M-j ." . dumb-jump-go)
+         ("M-j o" . dumb-jump-go-other-window)
+         ("M-j q" . dumb-jump-quick-look)
+         ("M-j x" . dumb-jump-go-prefer-external)
+         ("M-j z" . dumb-jump-go-prefer-external-other-window))
+  :init
+  :config
+  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-prefer-searcher 'ag)
+  ;;(setq dumb-jump-git-grep-search-args "")
+  ;;setq dumb-jump-ag-search-args "")
+  ;;(setq dumb-jump-rg-search-args "--pcre2")
+  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+  )
+
+;; this is needed to bind M-j as a prefix key
+;; see https://emacs.stackexchange.com/questions/54782/emacs-wont-let-me-bind-a-key-tells-me-key-sequence-c-z-c-starts-with-non-pref
+(define-key global-map (kbd "M-j") (make-sparse-keymap))
 
 
 ;;-------------------------------------------------------------------------
@@ -1552,9 +1594,7 @@ If point was already at that position, move point to beginning of line."
 )
 
 ;;------------------------------------------------------------------
-;; bicycle. https://github.com/tarsius/bicycle
 ;; code folding.
-;; there's also this: https://github.com/zenozeng/yafolding.el
 
 ;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
 (defun aj-toggle-fold ()
@@ -1568,11 +1608,17 @@ If point was already at that position, move point to beginning of line."
        (if selective-display nil (or col 1))))))
 (global-set-key (kbd "C-c <C-return>") 'aj-toggle-fold)
 
+;; bicycle. https://github.com/tarsius/bicycle
 ;;(use-package bicycle
 ;;  :after outline
 ;;  :bind (:map outline-minor-mode-map
 ;;              ("C-c <C-return>" . bicycle-cycle)
 ;;              ("C-c <C-S-return>" . bicycle-cycle-global)))
+
+;; there's also this: https://github.com/zenozeng/yafolding.el
+
+
+;;------------------------------------------------------------------
 
 (use-package prog-mode
   :config
@@ -3002,31 +3048,6 @@ original line and use the absolute value."
   :init
   )
 
-;; this is needed to bind M-j as a prefix key
-;; see https://emacs.stackexchange.com/questions/54782/emacs-wont-let-me-bind-a-key-tells-me-key-sequence-c-z-c-starts-with-non-pref
-(define-key global-map (kbd "M-j") (make-sparse-keymap))
-
-;; Dumb Jump
-;; https://github.com/jacktasia/dumb-jump
-(use-package dumb-jump
-  :ensure t
-  :bind (
-         ("M-j ," . dumb-jump-back)
-         ("M-j ." . dumb-jump-go)
-         ("M-j o" . dumb-jump-go-other-window)
-         ("M-j q" . dumb-jump-quick-look)
-         ("M-j x" . dumb-jump-go-prefer-external)
-         ("M-j z" . dumb-jump-go-prefer-external-other-window))
-  :init
-  :config
-  (setq dumb-jump-selector 'ivy)
-  (setq dumb-jump-prefer-searcher 'ag)
-  ;;(setq dumb-jump-git-grep-search-args "")
-  ;;setq dumb-jump-ag-search-args "")
-  ;;(setq dumb-jump-rg-search-args "--pcre2")
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  )
-
 
 ;;-------------------------------------------------------------------------
 
@@ -3472,6 +3493,7 @@ mode.
      hemisu-theme
      highlight-symbol
      hungry-delete
+     idomenu
      ido-completing-read+
      ido-hacks
      ido-vertical-mode
