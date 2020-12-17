@@ -16,6 +16,8 @@ PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_V
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
+MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-win.zip"
+MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-linux.tar.gz"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -134,6 +136,22 @@ cmany:
 	$(call pipinstall, cmany)
 
 
+.PHONY: bazel
+bazel: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call download,$(BAZEL_VERSION_URL),$(LOCAL_DIR)/bin/bazel.exe) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S bazel ; \
+	   else \
+	      sudo apt-get install bazel ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
 .PHONY: pip_packages
 pip_packages:
 	$(call pipinstall, pillow)
@@ -152,22 +170,6 @@ ripgrep: $(LOCAL_DIR)/bin
 	      sudo add-apt-repository ppa:x4121/ripgrep ; \
 	      sudo apt-get update ; \
 	      sudo apt-get install ripgrep ; \
-	   fi ; \
-	else \
-	   bbbbbbbb not done ; \
-	fi
-
-
-.PHONY: bazel
-bazel: $(LOCAL_DIR)/bin
-	set -x ; set -e ; \
-	if [ "$(OS)" == "Windows" ] ; then \
-	   $(call download,$(BAZEL_VERSION_URL),$(LOCAL_DIR)/bin/bazel.exe) ; \
-	elif [ "$(OS)" == "Linux" ] ; then \
-	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
-	      sudo pacman -S bazel ; \
-	   else \
-	      sudo apt-get install bazel ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
@@ -263,6 +265,18 @@ image_magick: $(LOCAL_DIR)/bin
 markdown_toc: $(LOCAL_DIR)/bin
 	$(call download,$(MARKDOWN_TOC),$(LOCAL_DIR)/bin/gh-md-toc)
 	chmod a+x $(LOCAL_DIR)/bin/gh-md-toc
+
+
+.PHONY: marp
+marp: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(MARP_ZIP),*.exe) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   bbbbbbbb not done ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
 
 
 .PHONY: dropbox
