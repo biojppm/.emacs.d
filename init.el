@@ -2110,10 +2110,12 @@ original line and use the absolute value."
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
 
+;; cmake
 (use-package cmake-mode
   :defer t
   :commands cmake-mode
   :config
+  (company-mode t)
   (add-to-list 'company-backends 'company-cmake)
   )
 

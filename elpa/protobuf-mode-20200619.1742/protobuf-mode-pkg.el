@@ -1,2 +1,2 @@
-;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/protobuf-mode-20200619.1742/protobuf-mode.el  -*- no-byte-compile: t -*-
-(define-package "protobuf-mode" "20200619.1742" "major mode for editing protocol buffers." 'nil :commit "4b93993ac714342e57aa3c47dfc07c9fb0e4c181" :keywords '("google" "protobuf" "languages") :authors '(("Alexandre Vassalotti" . "alexandre@peadrop.com")) :maintainer '("Alexandre Vassalotti" . "alexandre@peadrop.com"))
+;;; Generated package description from /home/jpmag/.emacs.d/elpa/protobuf-mode-20200619.1742/protobuf-mode.el  -*- no-byte-compile: t -*-
+(define-package "protobuf-mode" "20200619.1742" "major mode for editing protocol buffers." 'nil :commit "64dd751868d633421563e53e68da831a0a02c923" :keywords '("google" "protobuf" "languages") :authors '(("Alexandre Vassalotti" . "alexandre@peadrop.com")) :maintainer '("Alexandre Vassalotti" . "alexandre@peadrop.com"))

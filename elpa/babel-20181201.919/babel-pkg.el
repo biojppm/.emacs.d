@@ -1,2 +1,0 @@
-;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/babel-20181201.919/babel.el  -*- no-byte-compile: t -*-
-(define-package "babel" "20181201.919" "interface to web translation services such as Babelfish" 'nil :commit "c25dedb5c7f2465b122102f02cd9845668818c20" :keywords '("translation" "web") :authors '(("Juergen Hoetzel" . "juergen@hoetzel.info") ("Eric Marsden" . "emarsden@laas.fr")) :maintainer '("Juergen Hoetzel" . "juergen@hoetzel.info") :url "http://github.com/juergenhoetzel/babel")

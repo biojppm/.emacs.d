@@ -273,7 +273,11 @@ marp: $(LOCAL_DIR)/bin
 	if [ "$(OS)" == "Windows" ] ; then \
 	   $(call wininstallzip,$(MARP_ZIP),*.exe) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
-	   bbbbbbbb not done ; \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      yaourt -S marp-cli ; \
+	   else \
+	      bbbbbbb not done ; \
+	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
 	fi

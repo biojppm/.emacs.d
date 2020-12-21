@@ -3,11 +3,11 @@
     (lsp-mode "3.4")
     (dash "0.13"))
   :commit "555e50984ebda177421fdcdc8c76cb29235d9694" :keywords
-  '("languages" "lsp" "c++")
+  ("languages" "lsp" "c++")
   :authors
-  '(("Tobias Pisani"))
+  (("Tobias Pisani"))
   :maintainer
-  '("Tobias Pisani")
+  ("Tobias Pisani")
   :url "https://github.com/jacobdufault/cquery")
 ;; Local Variables:
 ;; no-byte-compile: t

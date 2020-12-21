@@ -47,6 +47,7 @@
         compile-goto-error
         counsel-yank-pop
         duplicate-line-or-region
+        electric-pair-delete-pair
         end-of-buffer
         enlarge-window-horizontally
         gud-tooltip-mouse-motion

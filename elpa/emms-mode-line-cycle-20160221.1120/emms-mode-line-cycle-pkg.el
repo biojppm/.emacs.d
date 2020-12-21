@@ -1,2 +1,2 @@
-;;; Generated package description from c:/Users/jpmag/.emacs.d/elpa/emms-mode-line-cycle-20160221.1120/emms-mode-line-cycle.el  -*- no-byte-compile: t -*-
+;;; Generated package description from /home/jpmag/.emacs.d/elpa/emms-mode-line-cycle-20160221.1120/emms-mode-line-cycle.el  -*- no-byte-compile: t -*-
 (define-package "emms-mode-line-cycle" "20160221.1120" "Display the emms mode line as a ticker" '((emacs "24") (emms "4.0")) :commit "2c2f395e484a1d345050ddd61ff5fab71a92a6bc" :keywords '("emms" "mode-line") :authors '(("momomo5717")) :maintainer '("momomo5717") :url "https://github.com/momomo5717/emms-mode-line-cycle")
