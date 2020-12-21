@@ -3122,6 +3122,9 @@ original line and use the absolute value."
   (add-hook 'gfm-mode-hook 'hook-snips)
   )
 
+;;-----------------------------------------------------------------------------
+
+(setq ediff-split-window-function 'split-window-horizontally)
 
 ;;-----------------------------------------------------------------------------
 ;;Step through historic versions of git controlled file
