@@ -3219,6 +3219,9 @@ original line and use the absolute value."
    ("C-x M-g" . magit-dispatch-popup))
   )
 
+;; the default prefix for smerge sucks: C-c ^
+(setq smerge-command-prefix "\C-c d")
+
 
 ;;-----------------------------------------------------------------------------
 ;; google-this
