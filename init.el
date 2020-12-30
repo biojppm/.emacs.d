@@ -3175,6 +3175,54 @@ original line and use the absolute value."
 ;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 ;;
 
+(use-package smerge-mode
+  :init
+  ;; the default prefix for smerge sucks: C-c ^ --- change to C-c d
+  (setq smerge-command-prefix "\C-cd")
+  ;; smerge commands:
+  ;; C-c ^ RET       smerge-keep-current
+  ;; C-c ^ =         Prefix Command
+  ;; C-c ^ C         smerge-combine-with-next
+  ;; C-c ^ E         smerge-ediff
+  ;; C-c ^ R         smerge-refine
+  ;; C-c ^ a         smerge-keep-all
+  ;; C-c ^ b         smerge-keep-base
+  ;; C-c ^ m         smerge-keep-mine
+  ;; C-c ^ n         smerge-next
+  ;; C-c ^ o         smerge-keep-other
+  ;; C-c ^ p         smerge-prev
+  ;; C-c ^ r         smerge-resolve
+  ;;
+  ;; C-c ^ = <       smerge-diff-base-mine
+  ;; C-c ^ = =       smerge-diff-mine-other
+  ;; C-c ^ = >       smerge-diff-base-other
+  )
+
+(use-package magit
+  :init
+    (setq magit-refresh-status-buffer nil)
+    ;; https://magit.vc/manual/magit/Listing-Submodules.html
+    ;; https://emacs.stackexchange.com/questions/13659/displaying-branch-descriptions-in-magit
+    (setq magit-module-sections-nested t)
+  :config
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-overview
+                          nil t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpulled-from-upstream
+                          nil t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-upstream
+                          nil t)
+  :commands (magit-status)
+  :bind
+  (
+   ("C-x g" . magit-status)
+   ("C-x C-g" . my-magit-status)
+   ("C-x M-g" . magit-dispatch-popup))
+  )
+
+
 (defun my-magit-status ()
   (interactive)
   (let* ((prompt "repo root: ")
@@ -3194,33 +3242,6 @@ original line and use the absolute value."
     (magit-status-setup-buffer r)
     )
   )
-
-(use-package magit
-  :init
-  (setq magit-refresh-status-buffer nil)
-  ;; https://magit.vc/manual/magit/Listing-Submodules.html
-  ;; https://emacs.stackexchange.com/questions/13659/displaying-branch-descriptions-in-magit
-  (setq magit-module-sections-nested t)
-  :config
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-overview
-                          nil t)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-upstream
-                          nil t)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-upstream
-                          nil t)
-  :commands (magit-status)
-  :bind
-  (
-   ("C-x g" . magit-status)
-   ("C-x C-g" . my-magit-status)
-   ("C-x M-g" . magit-dispatch-popup))
-  )
-
-;; the default prefix for smerge sucks: C-c ^
-(setq smerge-command-prefix "\C-c d")
 
 
 ;;-----------------------------------------------------------------------------
