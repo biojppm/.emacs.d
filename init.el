@@ -1313,13 +1313,6 @@
 ;; https://github.com/jacktasia/dumb-jump
 (use-package dumb-jump
   :ensure t
-  :bind (
-         ("M-j ," . dumb-jump-back)
-         ("M-j ." . dumb-jump-go)
-         ("M-j o" . dumb-jump-go-other-window)
-         ("M-j q" . dumb-jump-quick-look)
-         ("M-j x" . dumb-jump-go-prefer-external)
-         ("M-j z" . dumb-jump-go-prefer-external-other-window))
   :init
   :config
   (setq dumb-jump-selector 'ivy)
@@ -1328,11 +1321,18 @@
   ;;setq dumb-jump-ag-search-args "")
   ;;(setq dumb-jump-rg-search-args "--pcre2")
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
+  ;; this is needed to bind M-j as a prefix key
+  ;; see https://emacs.stackexchange.com/questions/54782/emacs-wont-let-me-bind-a-key-tells-me-key-sequence-c-z-c-starts-with-non-pref
+  (define-key global-map (kbd "M-j") nil)
+  (define-key global-map (kbd "M-j") (make-sparse-keymap))
+  :bind (
+         ("M-j ," . dumb-jump-back)
+         ("M-j ." . dumb-jump-go)
+         ("M-j o" . dumb-jump-go-other-window)
+         ("M-j q" . dumb-jump-quick-look)
+         ("M-j x" . dumb-jump-go-prefer-external)
+         ("M-j z" . dumb-jump-go-prefer-external-other-window))
   )
-
-;; this is needed to bind M-j as a prefix key
-;; see https://emacs.stackexchange.com/questions/54782/emacs-wont-let-me-bind-a-key-tells-me-key-sequence-c-z-c-starts-with-non-pref
-(define-key global-map (kbd "M-j") (make-sparse-keymap))
 
 
 ;;-------------------------------------------------------------------------
