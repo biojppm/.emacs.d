@@ -18,6 +18,7 @@ MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/ma
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
 MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-win.zip"
 MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-linux.tar.gz"
+IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -278,6 +279,18 @@ marp: $(LOCAL_DIR)/bin
 	   else \
 	      bbbbbbb not done ; \
 	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+.PHONY: iperf
+iperf: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(IPERF_ZIP),iperf*/*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   bbbbbbbb not done ; \
 	else \
 	   bbbbbbbb not done ; \
 	fi
