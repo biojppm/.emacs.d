@@ -2154,6 +2154,51 @@ original line and use the absolute value."
   :defer t
   :commands open-in-msvs)
 
+(use-package lsp-mode
+  :defer t
+  :commands lsp
+  :hook (;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :init
+  (message "lsp-mode :init")
+  ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-signature-auto-activate nil)
+  (setq lsp-enable-file-watchers nil)
+  ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
+  (setq xref-prompt-for-identifier
+        '(not xref-find-definitions
+              xref-find-definitions-other-window
+              xref-find-definitions-other-frame
+              xref-find-references
+              )
+        )
+  ;; https://github.com/emacs-lsp/lsp-ui/blob/master/lsp-ui-sideline.el
+  (setq lsp-ui-sideline-delay 2.0)
+  (setq lsp-ui-doc-delay 3.0)
+  (message "lsp-mode :init - done.")
+
+  :config
+  (message "lsp-mode :config")
+  (lsp-ui-mode 0)
+  ;;(lsp-signature-mode 0)
+  (message "lsp-mode 1")
+  (lsp-ui-peek-mode 1)
+  (message "lsp-mode 2")
+  (message "lsp-mode :config - done")
+  :bind
+  ("C-c C-?" . lsp-ui-sideline-toggle-symbols-info)
+  )
+
+(defun my-lsp-hook()
+  (interactive)
+  (message "my-lsp-hook 0")
+  (lsp)
+  (message "my-lsp-hook 1")
+  )
+
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
 
