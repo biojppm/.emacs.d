@@ -1266,6 +1266,7 @@
 (defun company--my-insert-equal() (interactive)(company-abort)(insert-char #10r61))
 (defun company--my-setup()
   (interactive)
+  (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 3)
   (setq company-idle-delay nil) ;; disable auto popup
   ;;(setq company-auto-complete t)
@@ -2170,6 +2171,13 @@ original line and use the absolute value."
 (load "cmany-new")
 ;;(global-cmany-mode 1)
 ;;(add-hook 'c-mode-common-hook 'cmany-mode)
+
+
+;; Rust
+;; https://www.reddit.com/r/rust/comments/a3da5g/my_entire_emacs_config_for_rust_in_fewer_than_20/
+(use-package toml-mode)
+(use-package rust-mode
+  :hook (rust-mode . my-lsp-hook))
 
 
 ;;; PHP
@@ -3481,6 +3489,7 @@ mode.
      find-file-in-project
      find-file-in-repository
      flycheck
+     flycheck-rust
      flycheck-ycmd
      flymake-yaml
      flymake-cppcheck
@@ -3529,6 +3538,7 @@ mode.
      rg
      rtags
      rtags-xref
+     rust-mode
      slime
      smart-mode-line
      smart-shift
@@ -3538,6 +3548,7 @@ mode.
      string-inflection
      syntax-subword
      tango-plus-theme
+     toml-mode
      term-run
      transient
      undo-tree
