@@ -23,7 +23,7 @@ PIP ?= pip
 
 CMANY_COMPILER ?=
 
-CLANG_VERSION ?= 10.0.1
+CLANG_VERSION ?= 11.0.0
 CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
 CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
 CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
@@ -120,7 +120,20 @@ wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 
 #----------------------------------------------------------------------
 
-all: ripgrep ag fzf fd pandoc image_magick markdown_toc cmany pip_packages clang_install cquery_install ccls_install system_only
+all: ripgrep \
+	ag \
+	fzf \
+	fd \
+	pandoc \
+	image_magick \
+	markdown_toc \
+	cmany \
+	pip_packages \
+	clang_install \
+	cquery_install \
+	ccls_install \
+	system_only \
+	marp
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
