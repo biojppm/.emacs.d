@@ -3405,29 +3405,6 @@ mode.
 
 
 ;;-----------------------------------------------------------------------------
-(if this-is-windows
-  (progn
-    ;;if in Windows run this block
-    (set-face-attribute 'default nil :font "Consolas-10")
-    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-    ;;                                          :height 100 :family "Consolas")))))
-  )
-  (progn
-    ;;otherwise run this block
-    ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
-    (set-face-attribute 'default nil :font "Consolas-11")
-    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
-    ;;(set-face-attribute 'default nil :font "Consolas-11")
-    ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
-    ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
-    ;;                                          ;;:height 120 :family "Inconsolata")))))
-    ;;                                          ;;:height 120 :family "Consolas")))))
-    ;;                                          :height 100 :family "Monospace")))))
-  )
-)
-
-
-;;-----------------------------------------------------------------------------
 
 ;; https://www.reddit.com/r/emacs/comments/981khz/emacs_music_player_with_emms/
 (use-package emms
@@ -3460,8 +3437,7 @@ mode.
   (progn
     ;;otherwise run this block
     ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
-    (set-face-attribute 'default nil :font "Consolas-11")
-    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
+    (set-face-attribute 'default nil :font "Inconsolata-12")
     ;;(set-face-attribute 'default nil :font "Consolas-11")
     ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
     ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
