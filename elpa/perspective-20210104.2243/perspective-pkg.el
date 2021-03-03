@@ -1,0 +1,2 @@
+;;; Generated package description from /home/jpmag/.emacs.d/elpa/perspective-20210104.2243/perspective.el  -*- no-byte-compile: t -*-
+(define-package "perspective" "20210104.2243" "switch between named \"perspectives\" of the editor" '((emacs "24.4") (cl-lib "0.5")) :commit "697d95f24e055eb9725781d179d7db63d6afd2b5" :authors '(("Natalie Weizenbaum" . "nex342@gmail.com")) :maintainer '("Natalie Weizenbaum" . "nex342@gmail.com") :keywords '("workspace" "convenience" "frames") :url "http://github.com/nex3/perspective-el")

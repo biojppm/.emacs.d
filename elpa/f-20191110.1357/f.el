@@ -6,6 +6,7 @@
 ;; Maintainer: Johan Andersson <johan.rejeep@gmail.com>
 ;; Version: 0.20.0
 ;; Package-Version: 20191110.1357
+;; Package-Commit: c4dbf8c8e83df834f5d6f72cd5649b9d8a8812ec
 ;; Keywords: files, directories
 ;; URL: http://github.com/rejeep/f.el
 ;; Package-Requires: ((s "1.7.0") (dash "2.2.0"))
