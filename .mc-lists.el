@@ -51,6 +51,7 @@
         end-of-buffer
         enlarge-window-horizontally
         gud-tooltip-mouse-motion
+        handle-switch-frame
         help-for-help
         ido-find-file
         ivy-switch-buffer
