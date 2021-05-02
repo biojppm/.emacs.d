@@ -3214,6 +3214,24 @@ and doesn't work in windows"
 
 (setq ediff-split-window-function 'split-window-horizontally)
 
+(defun ediff-dynamic ()
+    (interactive)
+    (let ((buf-l (generate-new-buffer (generate-new-buffer-name "ediff-dynamic-l")))
+          (buf-r (generate-new-buffer (generate-new-buffer-name "ediff-dynamic-r"))))
+      (ediff-buffers buf-l buf-r)
+      )
+  )
+
+(defun ediff-dynamic3 ()
+    (interactive)
+    (let ((buf-l (generate-new-buffer (generate-new-buffer-name "ediff-dynamic-l")))
+          (buf-c (generate-new-buffer (generate-new-buffer-name "ediff-dynamic-c")))
+          (buf-r (generate-new-buffer (generate-new-buffer-name "ediff-dynamic-r"))))
+      (ediff-buffers3 buf-l buf-c buf-r)
+      )
+  )
+
+
 ;;-----------------------------------------------------------------------------
 ;;Step through historic versions of git controlled file
 ;;https://github.com/pidu/git-timemachine
