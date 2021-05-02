@@ -2603,6 +2603,7 @@ original line and use the absolute value."
   (disable-line-wrapping)
   (local-set-key (kbd "w") 'visual-line-mode)
   (local-set-key (kbd "k") 'my-kill-compilation)
+  (local-set-key (kbd "i") 'my-interrupt-compilation)
   )
 (add-hook 'compilation-mode-hook 'my-compilation-mode-hook)
 
@@ -2689,11 +2690,25 @@ original line and use the absolute value."
     )
   )
 (defun my-kill-compilation()
-  "Kill the process made by the \\[compile] or \\[grep] commands. The original kill-compilation uses (interrupt-process), and doesn't work in windows"
+  "Kill the process made by the \\[compile] or \\[grep]
+commands. The original kill-compilation uses (interrupt-process),
+and doesn't work in windows"
   (interactive)
   (let ((buffer (compilation-find-buffer)))
     (if (get-buffer-process buffer)
 	(delete-process (get-buffer-process buffer))
+      (error "The %s process is not running" (downcase mode-name))
+      )
+    )
+  )
+(defun my-interrupt-compilation()
+  "Interrupt the process made by the \\[compile] or \\[grep]
+commands. The original kill-compilation uses (interrupt-process),
+and doesn't work in windows"
+  (interactive)
+  (let ((buffer (compilation-find-buffer)))
+    (if (get-buffer-process buffer)
+	(interrupt-process (get-buffer-process buffer))
       (error "The %s process is not running" (downcase mode-name))
       )
     )
@@ -2706,6 +2721,7 @@ original line and use the absolute value."
 (global-set-key [f6] 'my-recompile)
 (global-set-key [f8] 'next-error)
 (global-set-key [S-f8] 'previous-error)
+
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
