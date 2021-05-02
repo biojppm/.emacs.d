@@ -142,6 +142,7 @@
   (setq standard-indent 4)
   (setq c-basic-offset 4)                  ;; Default is 2
   (setq c-indent-level 4)                  ;; Default is 2
+  (setq c-noise-macro-names '("constexpr")) ;; fix indentation of if constexpr
   (setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80))
   (setq tab-width 4)
   (setq indent-tabs-mode nil)  ; use spaces only if nil
@@ -207,18 +208,19 @@
   )
 
 (defun my-c++-completion-hook()
-  (if this-is-windows
-      (progn
-        ;;(my-universal-tags-hook)
-        ;;(my-cquery-hook)
-        (my-lsp-hook)
-        )
-    (progn
-      ;;(my-rtags-hook)
-      ;;(my-cquery-hook)
-      (my-lsp-hook)
-      )
-    )
+  (my-lsp-hook)
+  ;;(if this-is-windows
+  ;;    (progn
+  ;;      ;;(my-universal-tags-hook)
+  ;;      ;;(my-cquery-hook)
+  ;;      (my-lsp-hook)
+  ;;      )
+  ;;  (progn
+  ;;    ;;(my-rtags-hook)
+  ;;    ;;(my-cquery-hook)
+  ;;    (my-lsp-hook)
+  ;;    )
+  ;;  )
   )
 
 (defun my-universal-tags-hook ()
