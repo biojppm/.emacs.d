@@ -2508,6 +2508,15 @@ original line and use the absolute value."
   :mode ("\\.ahk$" . xahk-mode)
   )
 
+;;; *.vcxproj: Visual Studio project files
+(defun -my-vcxproj-hook()
+  (interactive)
+  (nxml-mode)
+  ;; keep this after loading nxml-mode:
+  (setq require-final-newline nil) ;; do not tamper with the terminating newline
+  )
+(add-to-list 'auto-mode-alist '("\\.vcxproj\\'" . -my-vcxproj-hook))
+
 ;;; PowerShell
 (use-package powershell
   :mode ("\\.ps1$" . powershell-mode)
