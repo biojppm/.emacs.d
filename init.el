@@ -139,19 +139,19 @@
     (byte-compile-file (expand-file-name file)))
   )
 
-(add-hook 'after-save-hook
-          (lambda ()
-            (when (string= (file-truename init-el)
-                           (file-truename (buffer-file-name)))
-              (message "NOTE: recompile with (byte-compile-init-files %s)" init-el)
-              ;;(byte-compile-init-files init-el)
-              )
-            )
-          )
-
+;;(add-hook 'after-save-hook
+;;          (lambda ()
+;;            (when (string= (file-truename init-el)
+;;                           (file-truename (buffer-file-name)))
+;;              (message "NOTE: recompile with (byte-compile-init-files %s)" init-el)
+;;              ;;(byte-compile-init-files init-el)
+;;              )
+;;            )
+;;          )
+;;
 ;; Byte-compile again to ~/.emacs.elc if it is outdated
-(when (file-newer-than-file-p (file-truename init-el) (file-truename (concat init-el "c")))
-  (byte-compile-init-files init-el))
+;;(when (file-newer-than-file-p (file-truename init-el) (file-truename (concat init-el "c")))
+;;  (byte-compile-init-files init-el))
 
 
 (defun byte-recompile-emacs-dir ()
