@@ -1,0 +1,2 @@
+;;; Generated package description from c:/Users/jmagalhaes/.emacs.d/elpa/searcher-20201010.641/searcher.el  -*- no-byte-compile: t -*-
+(define-package "searcher" "20201010.641" "Searcher in pure elisp" '((emacs "25.1") (dash "2.10") (f "0.20.0")) :commit "432d2ea9f7d0ab7274ff2927d26e7adca85be169" :authors '(("Shen, Jen-Chieh" . "jcs090218@gmail.com")) :maintainer '("Shen, Jen-Chieh" . "jcs090218@gmail.com") :url "https://github.com/jcs-elpa/searcher")

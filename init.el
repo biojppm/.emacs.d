@@ -3570,6 +3570,7 @@ mode.
      ido-vertical-mode
      iedit
      ivy
+     ivy-searcher
      levenshtein
      lsp-mode
      lsp-ui

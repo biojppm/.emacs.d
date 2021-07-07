@@ -1,0 +1,2 @@
+;;; Generated package description from c:/Users/jmagalhaes/.emacs.d/elpa/ivy-searcher-20210124.1641/ivy-searcher.el  -*- no-byte-compile: t -*-
+(define-package "ivy-searcher" "20210124.1641" "Ivy interface to use searcher" '((emacs "25.1") (ivy "0.8.0") (searcher "0.1.8") (s "1.12.0") (f "0.20.0")) :commit "46a461eb873083bc53d7fd3a15b266c52b3cbfb4" :authors '(("Shen, Jen-Chieh" . "jcs090218@gmail.com")) :maintainer '("Shen, Jen-Chieh" . "jcs090218@gmail.com") :url "https://github.com/jcs-elpa/ivy-searcher")
