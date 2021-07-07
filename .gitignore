@@ -7,6 +7,7 @@
 .lsp-session-*
 .python-version
 .yas-compiled-snippets.el
+.cache/
 __pycache__
 ac-comphist.dat
 auto-save-list/
@@ -36,3 +37,4 @@ smex-items
 tramp
 transient/
 tmp/
+url/
