@@ -19,6 +19,7 @@ TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
 MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-win.zip"
 MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
+SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.0.2.zip"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -133,14 +134,15 @@ all: ripgrep \
 	cquery_install \
 	ccls_install \
 	system_only \
-	marp
+	marp \
+	swig
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
 else
 system_only: linux_only
 endif
-windows_only: tcpview
+windows_only: tcpview iperf
 linux_only: rtags_install
 
 #----------------------------------------------------------------------
@@ -304,6 +306,22 @@ iperf: $(LOCAL_DIR)/bin
 	   $(call wininstallzip,$(IPERF_ZIP),iperf*/*) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   bbbbbbbb not done ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+.PHONY: swig
+swig: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(SWIG_ZIP),swig*/*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      pacman -S swig ; \
+	   else \
+	      apt-get install -Y swig ; \
+	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
 	fi
