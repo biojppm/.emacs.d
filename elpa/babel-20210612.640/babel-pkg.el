@@ -1,0 +1,2 @@
+;;; Generated package description from babel.el  -*- no-byte-compile: t -*-
+(define-package "babel" "20210612.640" "interface to web translation services such as Babelfish" 'nil :commit "946e69c61188bc41793402ac48466d8967ddb43d" :authors '(("Juergen Hoetzel" . "juergen@hoetzel.info") ("Eric Marsden" . "emarsden@laas.fr")) :maintainer '("Juergen Hoetzel" . "juergen@hoetzel.info") :keywords '("translation" "web") :url "http://github.com/juergenhoetzel/babel")
