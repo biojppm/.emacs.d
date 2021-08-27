@@ -946,8 +946,6 @@
 (require 'flx-ido) ; https://github.com/lewang/flx
 (require 'ido-hacks) ; https://github.com/scottjad/ido-hacks
 (require 'ido-vertical-mode) ; https://github.com/creichert/ido-vertical-mode.el
-(require 'ido-ubiquitous) ; https://github.com/DarwinAwardWinner/ido-ubiquitous
-;;(require 'ido-completing-read+) ; https://github.com/DarwinAwardWinner/ido-completing-read-plus
 (ido-mode 1)
 (flx-ido-mode)
 (ido-everywhere 1) ; enable basic IDO support for files and buffers
@@ -955,6 +953,7 @@
 (setq ido-use-faces t)
 (setq ido-vertical-show-count t)
 (ido-vertical-mode 1)
+(require 'ido-completing-read+) ; https://github.com/DarwinAwardWinner/ido-completing-read-plus
 (ido-ubiquitous-mode 1)
 (setq ido-enable-flex-matching t)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
