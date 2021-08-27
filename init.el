@@ -2515,7 +2515,10 @@ original line and use the absolute value."
   ;; keep this after loading nxml-mode:
   (setq require-final-newline nil) ;; do not tamper with the terminating newline
   )
-(add-to-list 'auto-mode-alist '("\\.vcxproj\\'" . -my-vcxproj-hook))
+(add-to-list 'auto-mode-alist
+             '("\\.vcxproj\\'"         . -my-vcxproj-hook)
+             '("\\.vcxproj.filters\\'" . -my-vcxproj-hook)
+             )
 
 ;;; PowerShell
 (use-package powershell
