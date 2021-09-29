@@ -20,6 +20,7 @@ MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp
 MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.0.2.zip"
+IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -142,7 +143,7 @@ system_only: windows_only
 else
 system_only: linux_only
 endif
-windows_only: tcpview iperf
+windows_only: tcpview iperf irfanview
 linux_only: rtags_install
 
 #----------------------------------------------------------------------
@@ -322,6 +323,14 @@ swig: $(LOCAL_DIR)/bin
 	   else \
 	      apt-get install -Y swig ; \
 	   fi ; \
+
+.PHONY: irfanview
+irfanview: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(IPERF_ZIP),iperf*/*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   bbbbbbbb not done ; \
 	else \
 	   bbbbbbbb not done ; \
 	fi
