@@ -531,15 +531,15 @@
 
 ;;-------------------------------------------
 
-(require 'column-marker)
+;;(require 'column-marker)
 ;;http://askubuntu.com/questions/4820/keeping-emacs-from-splitting-the-window-when-openning-multiple-files
 (add-hook 'emacs-startup-hook (lambda ()
   (if window-system
     (progn (maximize-toggle-frame-vmax))
     )
   (delete-other-windows)
-  (column-marker-1 80)
-  (column-marker-2 100)
+  ;;(column-marker-1 80)
+  ;;(column-marker-2 100)
   ;(set-frame-width (selected-frame) 130)
   )
 )
