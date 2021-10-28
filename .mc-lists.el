@@ -63,6 +63,7 @@
         my-open-cmany-el
         my-open-init-el
         my-recompile
+        next-buffer
         previous-buffer
         smex
         text-scale-adjust

@@ -16,11 +16,12 @@ PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_V
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
-MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-win.zip"
-MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v0.23.0/marp-cli-v0.23.0-linux.tar.gz"
+MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v1.4.1/marp-cli-v1.4.1-win.zip"
+MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v1.4.1/marp-cli-v1.4.1-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.0.2.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
+DEPENDS22_ZIP = "https://www.dependencywalker.com/depends22_x64.zip"
 PIP ?= pip
 
 CMANY_COMPILER ?=
@@ -143,7 +144,7 @@ system_only: windows_only
 else
 system_only: linux_only
 endif
-windows_only: tcpview iperf irfanview
+windows_only: tcpview iperf irfanview depends22_x86 depends22
 linux_only: rtags_install
 
 #----------------------------------------------------------------------
@@ -329,6 +330,17 @@ irfanview: $(LOCAL_DIR)/bin
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
 	   $(call wininstallzip,$(IPERF_ZIP),iperf*/*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   bbbbbbbb not done ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+.PHONY: depends22
+depends22: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(DEPENDS22_ZIP),*) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   bbbbbbbb not done ; \
 	else \
