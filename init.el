@@ -535,7 +535,7 @@
 ;;http://askubuntu.com/questions/4820/keeping-emacs-from-splitting-the-window-when-openning-multiple-files
 (add-hook 'emacs-startup-hook (lambda ()
   (if window-system
-    (progn (maximize-toggle-frame-vmax))
+    ;;(progn (maximize-toggle-frame-vmax))
     )
   (delete-other-windows)
   ;;(column-marker-1 80)
@@ -914,7 +914,7 @@
 ;;-------------------------------------------------------------------------
 ;; DIRED
 
-(setq dired-listing-switches "-l")
+(setq dired-listing-switches "-lFA")
 
 ;; enable dired-x: dired extensions
 (add-hook 'dired-load-hook
@@ -3527,10 +3527,10 @@ mode.
      clean-aindent-mode
      cmake-mode
      company-c-headers
-     counsel-etags
      company-lsp
      company-rtags
      company-ycmd
+     counsel-etags
      counsel-projectile
      cquery
      csharp-mode
@@ -3552,24 +3552,25 @@ mode.
      fd-dired
      find-file-in-project
      find-file-in-repository
+     flatbuffers-mode
+     flx-ido
      flycheck
      flycheck-rust
      flycheck-ycmd
-     flymake-yaml
      flymake-cppcheck
-     flx-ido
+     flymake-yaml
      fzf
+     ghc
      git-timemachine
      glsl-mode
-     ghc
      google-this
      hemisu-theme
      highlight-symbol
      hungry-delete
-     idomenu
      ido-completing-read+
      ido-hacks
      ido-vertical-mode
+     idomenu
      iedit
      ivy
      ivy-searcher
@@ -3599,8 +3600,8 @@ mode.
      pytest-pdb-break
      realgud
      realgud-ipdb
-     ripgrep
      rg
+     ripgrep
      rtags
      rtags-xref
      rust-mode
@@ -3613,8 +3614,8 @@ mode.
      string-inflection
      syntax-subword
      tango-plus-theme
-     toml-mode
      term-run
+     toml-mode
      transient
      undo-tree
      use-package

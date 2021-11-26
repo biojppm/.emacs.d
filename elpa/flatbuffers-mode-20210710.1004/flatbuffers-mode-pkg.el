@@ -1,0 +1,2 @@
+;;; Generated package description from flatbuffers-mode.el  -*- no-byte-compile: t -*-
+(define-package "flatbuffers-mode" "20210710.1004" "Major mode for editing flatbuffers" '((emacs "24.3")) :commit "8e7783db45a64c9456130fd0c108ac12d45a7789" :authors '(("Asal Mirzaieva" . "asalle.kim@gmail.com")) :maintainer '("Asal Mirzaieva" . "asalle.kim@gmail.com") :keywords '("flatbuffers" "languages") :url "https://github.com/Asalle/flatbuffers-mode")
