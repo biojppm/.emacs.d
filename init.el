@@ -1,11 +1,10 @@
-;; http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
 ;; see https://github.com/chrisdone/elisp-guide
 ;; see http://lisperati.com/casting.html
 ;; see http://ergoemacs.org/emacs/elisp_basics.html
 ;; see http://ergoemacs.org/emacs/emacs_make_modern.html for lots of goodies
 ;; see http://stackoverflow.com/questions/5795451/how-to-detect-that-emacs-is-in-terminal-mode
+;; see http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
 ;; Many of the use-package calls were taken from https://github.com/ljos/.emacs.d/blob/master/init.el
-
 ;; emacs on windows:
 ;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
 ;; https://github.com/hubisan/emacs-wsl
