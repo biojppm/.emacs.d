@@ -2,12 +2,12 @@
   '((emacs "25.1")
     (lsp-mode "3.4")
     (dash "0.13"))
-  :commit "555e50984ebda177421fdcdc8c76cb29235d9694" :keywords
-  ("languages" "lsp" "c++")
-  :authors
-  (("Tobias Pisani"))
+  :commit "555e50984ebda177421fdcdc8c76cb29235d9694" :authors
+  '(("Tobias Pisani"))
   :maintainer
-  ("Tobias Pisani")
+  '("Tobias Pisani")
+  :keywords
+  '("languages" "lsp" "c++")
   :url "https://github.com/jacobdufault/cquery")
 ;; Local Variables:
 ;; no-byte-compile: t

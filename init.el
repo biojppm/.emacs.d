@@ -1323,8 +1323,8 @@
   ;;(setq dumb-jump-rg-search-args "--pcre2")
   (add-hook 'xref-backend-functions 'dumb-jump-xref-activate)
   :bind (
-         ("M-j ," . dumb-jump-back)
          ("M-j ." . dumb-jump-go)
+         ("M-j ," . dumb-jump-back)
          ("M-j o" . dumb-jump-go-other-window)
          ("M-j q" . dumb-jump-quick-look)
          ("M-j x" . dumb-jump-go-prefer-external)
@@ -3526,7 +3526,6 @@ mode.
      clean-aindent-mode
      cmake-mode
      company-c-headers
-     company-lsp
      company-rtags
      company-ycmd
      counsel-etags
@@ -3534,6 +3533,7 @@ mode.
      cquery
      csharp-mode
      cython-mode
+     diminish
      dirtree
      dockerfile-mode
      drag-stuff
@@ -3556,10 +3556,8 @@ mode.
      flycheck
      flycheck-rust
      flycheck-ycmd
-     flymake-cppcheck
      flymake-yaml
      fzf
-     ghc
      git-timemachine
      glsl-mode
      google-this
@@ -3584,7 +3582,6 @@ mode.
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
-     omnisharp
      open-in-msvs
      org-babel-eval-in-repl
      paradox
@@ -3627,7 +3624,6 @@ mode.
      which-key
      window-number
      ws-butler
-     xahk-mode
      yaml-mode
      yasnippet-classic-snippets
      zenburn-theme

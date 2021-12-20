@@ -1,2 +1,0 @@
-;;; Generated package description from /home/jpmag/.emacs.d/elpa/flymake-cppcheck-20140415.1257/flymake-cppcheck.el  -*- no-byte-compile: t -*-
-(define-package "flymake-cppcheck" "20140415.1257" "Flymake work with Cppcheck for C/C++" '((flymake-easy "0.9")) :commit "7eac8c7b9c74ebb5e600686f1f3891767dc87bb2" :keywords '("flymake" "cppcheck" "c" "c++") :authors '(("Akiha Senda" . "senda.akiha@gmail.com")) :maintainer '("Akiha Senda" . "senda.akiha@gmail.com") :url "https://github.com/senda-akiha/flymake-cppcheck/")
