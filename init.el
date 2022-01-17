@@ -2156,7 +2156,10 @@ original line and use the absolute value."
   :hook (;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :init
-  (message "lsp-mode :init")
+  (message "lsp-mode: init")
+  ;; https://emacs.stackexchange.com/questions/58015/how-to-stop-lsp-mode-including-headers-automatically-for-c-c-code
+  (setq lsp-clients-clangd-args
+        '("--header-insertion=never"))
   ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
@@ -3643,3 +3646,4 @@ mode.
 (set-face-attribute 'ido-vertical-only-match-face nil :background nil :foreground nil)
 (set-face-attribute 'ido-vertical-match-face nil :foreground nil)
 (put 'downcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
