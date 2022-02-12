@@ -469,6 +469,11 @@ Entry point that defers server startup until buffer is visible.
 `lsp-deferred' will wait until the buffer is visible before invoking `lsp'.
 This avoids overloading the server with many files when starting Emacs." nil nil)
 
+(autoload 'lsp-start-plain "lsp-mode" "\
+Start `lsp-mode' using mininal configuration using the latest `melpa' version of the packages.
+
+In case the major-mode that you are using for " t nil)
+
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-mode" '("defcustom-lsp" "lsp-" "make-lsp-client" "when-lsp-workspace" "with-lsp-workspace")))
 
 ;;;***
@@ -604,6 +609,13 @@ mode otherwise.
 ;;; Generated autoloads from lsp-racket.el
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-racket" '("lsp-racket-lang")))
+
+;;;***
+
+;;;### (autoloads nil "lsp-remark" "lsp-remark.el" (0 0 0 0))
+;;; Generated autoloads from lsp-remark.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-remark" '("lsp-remark-server-command")))
 
 ;;;***
 

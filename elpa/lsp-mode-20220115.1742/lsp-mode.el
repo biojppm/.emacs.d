@@ -356,6 +356,8 @@ the server has requested that."
     ;; OCaml and Dune
     "[/\\\\]_opam\\'"
     "[/\\\\]_build\\'"
+    ;; Elixir
+    "[/\\\\]\\.elixir_ls\\'"
     ;; nix-direnv
     "[/\\\\]\\.direnv\\'")
   "List of regexps matching directory paths which won't be monitored when
@@ -644,8 +646,10 @@ are determined by the index of the element."
 ;; vibhavp: Should we use a lower value (5)?
 (defcustom lsp-response-timeout 10
   "Number of seconds to wait for a response from the language server before
-timing out."
-  :type 'number
+timing out. Nil if no timeout."
+  :type '(choice
+          (number :tag "Seconds")
+          (const :tag "No timeout" nil))
   :group 'lsp-mode)
 
 (defcustom lsp-tcp-connection-timeout 2
@@ -710,11 +714,13 @@ Changes take effect only when a new session is started."
                                         (".*\\.jsonc$" . "jsonc")
                                         (".*\\.php$" . "php")
                                         (".*\\.svelte$" . "svelte")
+                                        (".*\\.ebuild$" . "shellscript")
                                         (ada-mode . "ada")
                                         (nxml-mode . "xml")
                                         (sql-mode . "sql")
                                         (vimrc-mode . "vim")
                                         (sh-mode . "shellscript")
+                                        (ebuild-mode . "shellscript")
                                         (scala-mode . "scala")
                                         (julia-mode . "julia")
                                         (clojure-mode . "clojure")
@@ -2386,7 +2392,7 @@ BINDINGS is a list of (key def desc cond)."
                             item))))
                     (when (stringp ,key)
                       (setq lsp--binding-descriptions
-                            (nconc lsp--binding-descriptions '(,key ,desc)))))))
+                            (append lsp--binding-descriptions '(,key ,desc)))))))
        macroexp-progn))
 
 (defvar lsp--describe-buffer nil)
@@ -3082,7 +3088,10 @@ If NO-WAIT is non-nil send the request as notification."
       (lsp-notify method params)
     (let* ((send-time (time-to-seconds (current-time)))
            ;; max time by which we must get a response
-           (expected-time (+ send-time lsp-response-timeout))
+           (expected-time
+            (and
+             lsp-response-timeout
+             (+ send-time lsp-response-timeout)))
            resp-result resp-error done?)
       (unwind-protect
           (progn
@@ -3094,9 +3103,11 @@ If NO-WAIT is non-nil send the request as notification."
                                :cancel-token :sync-request)
             (while (not (or resp-error resp-result))
               (catch 'lsp-done
-                (accept-process-output nil (- expected-time send-time)))
+                (accept-process-output
+                 nil
+                 (if expected-time (- expected-time send-time) 1)))
               (setq send-time (time-to-seconds (current-time)))
-              (when (< expected-time send-time)
+              (when (and expected-time (< expected-time send-time))
                 (error "Timeout while waiting for response.  Method: %s" method)))
             (setq done? t)
             (cond
@@ -3114,7 +3125,10 @@ Return same value as `lsp--while-no-input' and respecting `non-essential'."
   (if non-essential
     (let* ((send-time (time-to-seconds (current-time)))
            ;; max time by which we must get a response
-           (expected-time (+ send-time lsp-response-timeout))
+           (expected-time
+            (and
+             lsp-response-timeout
+             (+ send-time lsp-response-timeout)))
            resp-result resp-error done?)
         (unwind-protect
             (progn
@@ -3125,9 +3139,10 @@ Return same value as `lsp--while-no-input' and respecting `non-essential'."
                                  :cancel-token :sync-request)
               (while (not (or resp-error resp-result (input-pending-p)))
                 (catch 'lsp-done
-                  (sit-for (- expected-time send-time)))
+                  (sit-for
+                   (if expected-time (- expected-time send-time) 1)))
                 (setq send-time (time-to-seconds (current-time)))
-                (when (< expected-time send-time)
+                (when (and expected-time (< expected-time send-time))
                   (error "Timeout while waiting for response.  Method: %s" method)))
               (setq done? (or resp-error resp-result))
               (cond
@@ -8563,7 +8578,7 @@ This avoids overloading the server with many files when starting Emacs."
                                     (let ((res (with-current-buffer buf
                                                  ,form)))
                                       (cond
-                                       ((eq res :optional) (propertize "NOT AVAILABLE (OPTIONAL)" 'face 'warning))
+                                       ((eq res :optional) (propertize "OPTIONAL" 'face 'warning))
                                        (res (propertize "OK" 'face 'success))
                                        (t (propertize "ERROR" 'face 'error)))))))
                  (-partition 2 checks))))))
@@ -8586,7 +8601,8 @@ This avoids overloading the server with many files when starting Emacs."
               nil)
      (error t))
    "`gc-cons-threshold' increased?" (> gc-cons-threshold 800000)
-   "Using gccemacs with emacs lisp native compilation (https://akrl.sdf.org/gccemacs.html)"
+   "Using `plist' for deserialized objects? (refer to https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization)" (or lsp-use-plists :optional)
+   "Using emacs 28+ with native compilation?"
    (or (and (fboundp 'native-comp-available-p)
             (native-comp-available-p))
        :optional)))
@@ -8844,6 +8860,24 @@ This avoids overloading the server with many files when starting Emacs."
         (lsp--virtual-buffer-update-position)
         (lsp--info "Disconnected from buffer %s" file-name))
     (lsp--error "Nothing to disconnect from?")))
+
+
+
+;;;###autoload
+(defun lsp-start-plain ()
+  "Start `lsp-mode' using mininal configuration using the latest `melpa' version of the packages.
+
+In case the major-mode that you are using for "
+  (interactive)
+  (let ((start-plain (make-temp-file "plain" nil ".el")))
+    (url-copy-file "https://raw.githubusercontent.com/emacs-lsp/lsp-mode/master/scripts/lsp-start-plain.el"
+                   start-plain t)
+    (async-shell-command
+     (format "%s -q -l %s %s"
+             (expand-file-name invocation-name invocation-directory)
+             start-plain
+             (or (buffer-file-name) ""))
+     (generate-new-buffer " *lsp-start-plain*"))))
 
 
 
