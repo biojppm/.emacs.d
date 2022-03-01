@@ -3454,23 +3454,23 @@ mode.
 ;;-----------------------------------------------------------------------------
 
 ;; https://www.reddit.com/r/emacs/comments/981khz/emacs_music_player_with_emms/
-(use-package emms
-  :defer t
-  :commands ()
-  :config
-  (require 'emms-setup)
-  (emms-all)
-  (emms-default-players)
-  (setq emms-source-file-default-directory "~/Dropbox/muzzik/tmp/")
-  (setq emms-playlist-buffer-name "*Music*")
-  (setq emms-info-asynchronously t)
-  ;; https://emacs.stackexchange.com/questions/45938/install-emms-and-missing-executable-emms-print-metadata
-  ;;(require 'emms-info-libtag) ;;; load functions that will talk to emms-print-metadata which in turn talks to libtag and gets metadata
-  ;;(setq emms-info-functions '(emms-info-libtag)) ;;; make sure libtag is the only thing delivering metadata
-  (require 'emms-mode-line)
-  (emms-mode-line 1)
-  (require 'emms-playing-time)
-  (emms-playing-time 1))
+;;(use-package emms
+;;  :defer t
+;;  :commands ()
+;;  :config
+;;  (require 'emms-setup)
+;;  (emms-all)
+;;  (emms-default-players)
+;;  (setq emms-source-file-default-directory "~/Dropbox/muzzik/tmp/")
+;;  (setq emms-playlist-buffer-name "*Music*")
+;;  (setq emms-info-asynchronously t)
+;;  ;; https://emacs.stackexchange.com/questions/45938/install-emms-and-missing-executable-emms-print-metadata
+;;  ;;(require 'emms-info-libtag) ;;; load functions that will talk to emms-print-metadata which in turn talks to libtag and gets metadata
+;;  ;;(setq emms-info-functions '(emms-info-libtag)) ;;; make sure libtag is the only thing delivering metadata
+;;  (require 'emms-mode-line)
+;;  (emms-mode-line 1)
+;;  (require 'emms-playing-time)
+;;  (emms-playing-time 1))
 
 
 ;;-----------------------------------------------------------------------------
@@ -3544,12 +3544,6 @@ mode.
      dumb-jump
      elisp-slime-nav
      elpy
-     emms
-     emms-info-mediainfo
-     emms-mark-ext
-     emms-mode-line-cycle
-     emms-player-simple-mpv
-     emms-state
      ess
      fd-dired
      find-file-in-project
