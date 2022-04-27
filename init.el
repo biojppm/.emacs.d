@@ -1692,6 +1692,8 @@ If point was already at that position, move point to beginning of line."
   (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
+  ;; https://www.reddit.com/r/emacs/comments/tejte0/undotree_bug_undotree_files_scattering_everywhere/
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
   )
 
 ;;-------------------------------------------------------------------------
