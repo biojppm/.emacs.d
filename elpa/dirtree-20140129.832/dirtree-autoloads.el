@@ -1,4 +1,4 @@
-;;; dirtree-autoloads.el --- automatically extracted autoloads
+;;; dirtree-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "dirtree" "dirtree.el" (0 0 0 0))
 ;;; Generated autoloads from dirtree.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "dirtree" '("dirtree")))
+(register-definition-prefixes "dirtree" '("dirtree"))
 
 ;;;***
 

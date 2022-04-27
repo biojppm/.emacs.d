@@ -1,4 +1,4 @@
-;;; term-run-autoloads.el --- automatically extracted autoloads
+;;; term-run-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -31,7 +31,7 @@ This function returns the buffer where the process starts running.
 
 \(fn COMMAND &optional NEW-BUFFER-P)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "term-run" '("term-run-shell-command-history")))
+(register-definition-prefixes "term-run" '("term-run-shell-command-history"))
 
 ;;;***
 

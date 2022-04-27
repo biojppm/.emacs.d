@@ -1,4 +1,4 @@
-;;; open-in-msvs-autoloads.el --- automatically extracted autoloads
+;;; open-in-msvs-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -12,7 +12,7 @@
 (autoload 'open-in-msvs "open-in-msvs" "\
 Opens current file:line:column within active instance of Visual Studio or start new one." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "open-in-msvs" '("open-in-msvs--path-to-vbs")))
+(register-definition-prefixes "open-in-msvs" '("open-in-msvs--path-to-vbs"))
 
 ;;;***
 

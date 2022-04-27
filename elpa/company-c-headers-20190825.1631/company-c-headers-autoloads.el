@@ -1,4 +1,4 @@
-;;; company-c-headers-autoloads.el --- automatically extracted autoloads
+;;; company-c-headers-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -15,7 +15,7 @@ Company backend for C/C++ header files.
 
 \(fn COMMAND &optional ARG &rest IGNORED)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "company-c-headers" '("call-if-function" "company-c-headers-")))
+(register-definition-prefixes "company-c-headers" '("call-if-function" "company-c-headers-"))
 
 ;;;***
 

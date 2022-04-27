@@ -1,17 +1,10 @@
-;;; lua-mode-autoloads.el --- automatically extracted autoloads
+;;; lua-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
 (add-to-list 'load-path (directory-file-name
                          (or (file-name-directory #$) (car load-path))))
 
-
-;;;### (autoloads nil "init-tryout" "init-tryout.el" (0 0 0 0))
-;;; Generated autoloads from init-tryout.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "init-tryout" '("add-trace-for")))
-
-;;;***
 
 ;;;### (autoloads nil "lua-mode" "lua-mode.el" (0 0 0 0))
 ;;; Generated autoloads from lua-mode.el
@@ -34,11 +27,7 @@ When called interactively, switch to the process buffer.
 
 \(fn &optional NAME PROGRAM STARTFILE &rest SWITCHES)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lua-mode" '("lua-")))
-
-;;;***
-
-;;;### (autoloads nil nil ("lua-mode-pkg.el") (0 0 0 0))
+(register-definition-prefixes "lua-mode" '("lua-"))
 
 ;;;***
 

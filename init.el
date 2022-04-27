@@ -2315,6 +2315,25 @@ original line and use the absolute value."
   :mode ("\\.py" . python-mode)
   :config
   (message "python mode: config")
+;;  (use-package lsp-mode
+;;    :config
+;;    (lsp-register-custom-settings
+;;     '(("pyls.plugins.pyls_mypy.enabled" t t)
+;;       ("pyls.plugins.pyls_mypy.live_mode" nil t)
+;;       ("pyls.plugins.pyls_black.enabled" t t)
+;;       ("pyls.plugins.pyls_isort.enabled" t t)))
+;;    :hook
+;;    ((python-mode . lsp)))
+;;  (use-package lsp-ui
+;;    :commands lsp-ui-mode)
+;;-------
+;;  (use-package lsp-python-ms
+;;    :ensure t
+;;    :init (setq lsp-python-ms-auto-install-server t)
+;;    :hook (python-mode . (lambda ()
+;;                            (require 'lsp-python-ms)
+;;                            (lsp))))  ; or lsp-deferred
+;;-------- elpy
   (use-package elpy
     :commands elpy-enable
     :config
@@ -3524,6 +3543,7 @@ mode.
      babel-repl
      backward-forward
      bicycle
+     bitbake
      ccls
      clang-format
      clean-aindent-mode

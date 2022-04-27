@@ -1,4 +1,4 @@
-;;; persp-projectile-autoloads.el --- automatically extracted autoloads
+;;; persp-projectile-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -23,7 +23,7 @@ perspective.
 
 \(fn PROJECT-TO-SWITCH)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "persp-projectile" '("projectile-persp-bridge")))
+(register-definition-prefixes "persp-projectile" '("projectile-persp-bridge"))
 
 ;;;***
 

@@ -3,7 +3,7 @@
     (loc-changes "1.2")
     (test-simple "1.3.0")
     (emacs "25"))
-  :commit "978b455d7da4dc41995192bfabc32092622651dd" :authors
+  :commit "3c88611c4ed59069093187c2a039b8d05cbe53e8" :authors
   '(("Rocky Bernstein" . "rocky@gnu.org"))
   :maintainer
   '("Rocky Bernstein" . "rocky@gnu.org")

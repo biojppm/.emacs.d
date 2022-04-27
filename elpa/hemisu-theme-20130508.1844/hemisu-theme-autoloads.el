@@ -1,4 +1,4 @@
-;;; hemisu-theme-autoloads.el --- automatically extracted autoloads
+;;; hemisu-theme-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -10,7 +10,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from hemisu-dark-theme.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "hemisu-dark-theme" '("hemisu-dark")))
+(register-definition-prefixes "hemisu-dark-theme" '("hemisu-dark"))
 
 ;;;***
 
@@ -18,7 +18,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from hemisu-light-theme.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "hemisu-light-theme" '("hemisu-light")))
+(register-definition-prefixes "hemisu-light-theme" '("hemisu-light"))
 
 ;;;***
 
@@ -27,7 +27,7 @@
 
 (when (and (boundp 'custom-theme-load-path) load-file-name) (add-to-list 'custom-theme-load-path (file-name-as-directory (file-name-directory load-file-name))))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "hemisu-theme" '("create-hemisu-theme")))
+(register-definition-prefixes "hemisu-theme" '("create-hemisu-theme"))
 
 ;;;***
 

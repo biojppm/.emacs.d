@@ -1,4 +1,4 @@
-;;; counsel-projectile-autoloads.el --- automatically extracted autoloads
+;;; counsel-projectile-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -163,7 +163,7 @@ counterparts.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "counsel-projectile" '("counsel-projectile-")))
+(register-definition-prefixes "counsel-projectile" '("counsel-projectile-"))
 
 ;;;***
 

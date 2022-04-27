@@ -1,4 +1,4 @@
-;;; ccls-autoloads.el --- automatically extracted autoloads
+;;; ccls-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "ccls" "ccls.el" (0 0 0 0))
 ;;; Generated autoloads from ccls.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls" '("ccls-")))
+(register-definition-prefixes "ccls" '("ccls-"))
 
 ;;;***
 
@@ -17,7 +17,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from ccls-call-hierarchy.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-call-hierarchy" '("ccls-call-hierarchy")))
+(register-definition-prefixes "ccls-call-hierarchy" '("ccls-call-hierarchy"))
 
 ;;;***
 
@@ -25,7 +25,7 @@
 ;;;;;;  0))
 ;;; Generated autoloads from ccls-code-lens.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-code-lens" '("ccls-")))
+(register-definition-prefixes "ccls-code-lens" '("ccls-"))
 
 ;;;***
 
@@ -33,7 +33,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from ccls-inheritance-hierarchy.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-inheritance-hierarchy" '("ccls-inheritance-hierarchy")))
+(register-definition-prefixes "ccls-inheritance-hierarchy" '("ccls-inheritance-hierarchy"))
 
 ;;;***
 
@@ -41,7 +41,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from ccls-member-hierarchy.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-member-hierarchy" '("ccls-member-hierarchy")))
+(register-definition-prefixes "ccls-member-hierarchy" '("ccls-member-hierarchy"))
 
 ;;;***
 
@@ -49,14 +49,14 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from ccls-semantic-highlight.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-semantic-highlight" '("ccls-")))
+(register-definition-prefixes "ccls-semantic-highlight" '("ccls-"))
 
 ;;;***
 
 ;;;### (autoloads nil "ccls-tree" "ccls-tree.el" (0 0 0 0))
 ;;; Generated autoloads from ccls-tree.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ccls-tree" '("ccls-tree-")))
+(register-definition-prefixes "ccls-tree" '("ccls-tree-"))
 
 ;;;***
 

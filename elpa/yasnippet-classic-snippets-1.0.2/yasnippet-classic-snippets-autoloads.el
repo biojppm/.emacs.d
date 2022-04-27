@@ -1,4 +1,4 @@
-;;; yasnippet-classic-snippets-autoloads.el --- automatically extracted autoloads
+;;; yasnippet-classic-snippets-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -11,7 +11,7 @@
 ;;; Generated autoloads from yasnippet-classic-snippets.el
  (eval-after-load 'yasnippet '(require 'yasnippet-classic-snippets))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "yasnippet-classic-snippets" '("yasnippet-classic-snippets-dir")))
+(register-definition-prefixes "yasnippet-classic-snippets" '("yasnippet-classic-snippets-dir"))
 
 ;;;***
 

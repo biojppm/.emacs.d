@@ -1,4 +1,4 @@
-;;; glsl-mode-autoloads.el --- automatically extracted autoloads
+;;; glsl-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -22,7 +22,7 @@ Major mode for editing GLSL shader files.
 
 \(fn)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "glsl-mode" '("gl-version" "glsl-")))
+(register-definition-prefixes "glsl-mode" '("gl-version" "glsl-"))
 
 ;;;***
 

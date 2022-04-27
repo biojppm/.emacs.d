@@ -1,4 +1,4 @@
-;;; pdb-mode-autoloads.el --- automatically extracted autoloads
+;;; pdb-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "pdb-mode" "pdb-mode.el" (0 0 0 0))
 ;;; Generated autoloads from pdb-mode.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "pdb-mode" '("pdb-mode")))
+(register-definition-prefixes "pdb-mode" '("pdb-mode"))
 
 ;;;***
 

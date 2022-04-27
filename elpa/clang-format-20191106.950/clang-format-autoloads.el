@@ -1,4 +1,4 @@
-;;; clang-format-autoloads.el --- automatically extracted autoloads
+;;; clang-format-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -28,7 +28,7 @@ the function `buffer-file-name'.
 
 (defalias 'clang-format 'clang-format-region)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "clang-format" '("clang-format-")))
+(register-definition-prefixes "clang-format" '("clang-format-"))
 
 ;;;***
 

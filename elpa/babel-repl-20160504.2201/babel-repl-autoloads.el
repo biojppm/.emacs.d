@@ -1,4 +1,4 @@
-;;; babel-repl-autoloads.el --- automatically extracted autoloads
+;;; babel-repl-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -15,7 +15,7 @@ Start babel shell comint mode." t nil)
 (autoload 'babel-repl-switch-to-buffer "babel-repl" "\
 Switch to babel shell buffer." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "babel-repl" '("babel-")))
+(register-definition-prefixes "babel-repl" '("babel-"))
 
 ;;;***
 

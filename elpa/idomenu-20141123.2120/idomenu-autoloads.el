@@ -1,4 +1,4 @@
-;;; idomenu-autoloads.el --- automatically extracted autoloads
+;;; idomenu-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -12,7 +12,7 @@
 (autoload 'idomenu "idomenu" "\
 Switch to a buffer-local tag from Imenu via Ido." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "idomenu" '("idomenu--")))
+(register-definition-prefixes "idomenu" '("idomenu--"))
 
 ;;;***
 

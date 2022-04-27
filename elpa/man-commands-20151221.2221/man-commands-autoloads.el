@@ -1,4 +1,4 @@
-;;; man-commands-autoloads.el --- automatically extracted autoloads
+;;; man-commands-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "man-commands" "man-commands.el" (0 0 0 0))
 ;;; Generated autoloads from man-commands.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "man-commands" '("man-commands-")))
+(register-definition-prefixes "man-commands" '("man-commands-"))
 
 ;;;***
 

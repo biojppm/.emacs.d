@@ -1,4 +1,4 @@
-;;; flatbuffers-mode-autoloads.el --- automatically extracted autoloads
+;;; flatbuffers-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -19,7 +19,7 @@ Major mode for Flatbuffers code.
 
 (add-to-list 'auto-mode-alist '("\\.fbs\\'" . flatbuffers-mode))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "flatbuffers-mode" '("flatbuffers-")))
+(register-definition-prefixes "flatbuffers-mode" '("flatbuffers-"))
 
 ;;;***
 

@@ -1,4 +1,4 @@
-;;; realgud-ipdb-autoloads.el --- automatically extracted autoloads
+;;; realgud-ipdb-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 

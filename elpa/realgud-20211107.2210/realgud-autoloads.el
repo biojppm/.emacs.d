@@ -1,4 +1,4 @@
-;;; realgud-autoloads.el --- automatically extracted autoloads
+;;; realgud-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -16,7 +16,7 @@ Where to store autoloads for subdirectory contents.")
 
 (with-demoted-errors "Error in RealGUD's autoloads: %s" (load (expand-file-name realgud--recursive-autoloads-file-name realgud--recursive-autoloads-base-directory) t t))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "realgud" '("realgud--rebuild-recursive-autoloads")))
+(register-definition-prefixes "realgud" '("realgud--rebuild-recursive-autoloads"))
 
 ;;;***
 

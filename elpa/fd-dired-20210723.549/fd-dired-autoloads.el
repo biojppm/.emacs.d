@@ -1,4 +1,4 @@
-;;; fd-dired-autoloads.el --- automatically extracted autoloads
+;;; fd-dired-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -38,7 +38,7 @@ The command run (after changing into DIR) is
 
 \(fn DIR REGEXP)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "fd-dired" '("fd-")))
+(register-definition-prefixes "fd-dired" '("fd-"))
 
 ;;;***
 

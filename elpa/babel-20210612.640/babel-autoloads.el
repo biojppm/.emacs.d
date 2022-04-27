@@ -1,4 +1,4 @@
-;;; babel-autoloads.el --- automatically extracted autoloads
+;;; babel-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -45,7 +45,7 @@ If optional argument HERE is non-nil, insert version number at point.
 
 \(fn &optional HERE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "babel" '("babel-" "json-get" "mm-encode-coding-string")))
+(register-definition-prefixes "babel" '("babel-" "json-get" "mm-encode-coding-string"))
 
 ;;;***
 

@@ -1,4 +1,4 @@
-;;; pylint-autoloads.el --- automatically extracted autoloads
+;;; pylint-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -35,7 +35,7 @@ or \\<pylint-mode-map>\\[compile-goto-error] in the grep output buffer, to go to
 
 (autoload 'pylint-add-menu-items "pylint" nil nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "pylint" '("pylint-")))
+(register-definition-prefixes "pylint" '("pylint-"))
 
 ;;;***
 

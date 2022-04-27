@@ -1,0 +1,2 @@
+;;; Generated package description from bitbake.el  -*- no-byte-compile: t -*-
+(define-package "bitbake" "20190107.1155" "Running bitbake from emacs" '((emacs "24.1") (dash "2.6.0") (mmm-mode "0.5.4") (s "1.10.0")) :commit "ba58bd051457ba0abd2fbc955ea0e75e78ff2c64" :authors '(("Damien Merenne")) :maintainer '("Damien Merenne") :keywords '("convenience") :url "https://github.com/canatella/bitbake-el")

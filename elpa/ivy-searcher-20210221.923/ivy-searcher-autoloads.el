@@ -1,4 +1,4 @@
-;;; ivy-searcher-autoloads.el --- automatically extracted autoloads
+;;; ivy-searcher-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -21,7 +21,7 @@ Search and replace string in project." t nil)
 (autoload 'ivy-searcher-replace-file "ivy-searcher" "\
 Search and replace string in file." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ivy-searcher" '("ivy-searcher-")))
+(register-definition-prefixes "ivy-searcher" '("ivy-searcher-"))
 
 ;;;***
 

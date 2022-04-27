@@ -1,4 +1,4 @@
-;;; smart-shift-autoloads.el --- automatically extracted autoloads
+;;; smart-shift-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -35,10 +35,19 @@ Finish shifting and invoke the corresponding command." t nil)
 (autoload 'smart-shift-mode "smart-shift" "\
 Shift line/region to left/right.
 
-If called interactively, enable Smart-Shift mode if ARG is
-positive, and disable it if ARG is zero or negative.  If called
-from Lisp, also enable the mode if ARG is omitted or nil, and
-toggle it if ARG is `toggle'; disable the mode otherwise.
+This is a minor mode.  If called interactively, toggle the
+`Smart-Shift mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `smart-shift-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
 
 \(fn &optional ARG)" t nil)
 
@@ -57,16 +66,20 @@ or call the function `global-smart-shift-mode'.")
 (autoload 'global-smart-shift-mode "smart-shift" "\
 Toggle Smart-Shift mode in all buffers.
 With prefix ARG, enable Global Smart-Shift mode if ARG is positive;
-otherwise, disable it.  If called from Lisp, enable the mode if
-ARG is omitted or nil.
+otherwise, disable it.
 
-Smart-Shift mode is enabled in all buffers where
-`smart-shift-mode-on' would do it.
+If called from Lisp, toggle the mode if ARG is `toggle'.
+Enable the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+Smart-Shift mode is enabled in all buffers where `smart-shift-mode-on'
+would do it.
+
 See `smart-shift-mode' for more information on Smart-Shift mode.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "smart-shift" '("smart-")))
+(register-definition-prefixes "smart-shift" '("smart-"))
 
 ;;;***
 

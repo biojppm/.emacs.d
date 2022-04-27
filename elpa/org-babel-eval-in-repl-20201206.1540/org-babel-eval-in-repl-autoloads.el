@@ -1,4 +1,4 @@
-;;; org-babel-eval-in-repl-autoloads.el --- automatically extracted autoloads
+;;; org-babel-eval-in-repl-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -10,7 +10,7 @@
 ;;;;;;  0 0 0))
 ;;; Generated autoloads from eval-in-repl-ess.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "eval-in-repl-ess" '("ober-")))
+(register-definition-prefixes "eval-in-repl-ess" '("ober-"))
 
 ;;;***
 
@@ -18,7 +18,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from eval-in-repl-matlab.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "eval-in-repl-matlab" '("ober-eval-matlab")))
+(register-definition-prefixes "eval-in-repl-matlab" '("ober-eval-matlab"))
 
 ;;;***
 
@@ -32,7 +32,7 @@ Execute source code in a REPL. (The range to execute is determined by `eval-in-r
 (autoload 'ober-eval-block-in-repl "org-babel-eval-in-repl" "\
 Execute source code in a REPL. (The whole content in the block is evaluated)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-babel-eval-in-repl" '("ober-")))
+(register-definition-prefixes "org-babel-eval-in-repl" '("ober-"))
 
 ;;;***
 

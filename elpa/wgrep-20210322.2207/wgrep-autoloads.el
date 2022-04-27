@@ -1,4 +1,4 @@
-;;; wgrep-autoloads.el --- automatically extracted autoloads
+;;; wgrep-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -14,7 +14,7 @@ Setup wgrep preparation." nil nil)
 
 (add-hook 'grep-setup-hook 'wgrep-setup)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "wgrep" '("wgrep-")))
+(register-definition-prefixes "wgrep" '("wgrep-"))
 
 ;;;***
 

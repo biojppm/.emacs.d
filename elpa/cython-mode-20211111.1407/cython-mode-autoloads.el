@@ -1,4 +1,4 @@
-;;; cython-mode-autoloads.el --- automatically extracted autoloads
+;;; cython-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -30,7 +30,7 @@ Major mode for Cython development, derived from Python mode.
 
 \(fn)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cython-mode" '("cython-")))
+(register-definition-prefixes "cython-mode" '("cython-"))
 
 ;;;***
 

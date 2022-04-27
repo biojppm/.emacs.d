@@ -1,4 +1,4 @@
-;;; rtags-autoloads.el --- automatically extracted autoloads
+;;; rtags-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -384,7 +384,7 @@ Creates doxygen comment for function at point.
 Comment will be inserted before current line. It uses yasnippet to let
 the user enter missing field manually." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "rtags" '("rtags-")))
+(register-definition-prefixes "rtags" '("rtags-"))
 
 ;;;***
 

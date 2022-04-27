@@ -1,4 +1,4 @@
-;;; wgrep-ag-autoloads.el --- automatically extracted autoloads
+;;; wgrep-ag-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -13,7 +13,7 @@
 
 (add-hook 'ag-mode-hook 'wgrep-ag-setup)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "wgrep-ag" '("wgrep-ag-")))
+(register-definition-prefixes "wgrep-ag" '("wgrep-ag-"))
 
 ;;;***
 

@@ -1,4 +1,4 @@
-;;; window-number-autoloads.el --- automatically extracted autoloads
+;;; window-number-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "window-number" "window-number.el" (0 0 0 0))
 ;;; Generated autoloads from window-number.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "window-number" '("window-number")))
+(register-definition-prefixes "window-number" '("window-number"))
 
 ;;;***
 

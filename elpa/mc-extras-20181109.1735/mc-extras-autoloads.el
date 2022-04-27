@@ -1,4 +1,4 @@
-;;; mc-extras-autoloads.el --- automatically extracted autoloads
+;;; mc-extras-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -15,7 +15,7 @@ Turn CUA rectangle mode into multiple-cursors mode, keeping insert positions and
 (autoload 'mc/cua-rectangle-setup "mc-cua" "\
 Enable interaction between multiple cursors and CUA rectangle copy & paste." nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "mc-cua" '("mc/cua-saved-kill-ring")))
+(register-definition-prefixes "mc-cua" '("mc/cua-saved-kill-ring"))
 
 ;;;***
 
@@ -41,7 +41,7 @@ cursors.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "mc-freeze" '("mc-freeze--")))
+(register-definition-prefixes "mc-freeze" '("mc-freeze--"))
 
 ;;;***
 
@@ -65,7 +65,7 @@ Mark lines below until the cursor hits a line shorter than the current column po
 (autoload 'mc/mark-all-above "mc-mark-extras" "\
 Mark lines above until the cursor hits a line shorter than the current column position." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "mc-mark-extras" '("mc/mark-sexps")))
+(register-definition-prefixes "mc-mark-extras" '("mc/mark-sexps"))
 
 ;;;***
 

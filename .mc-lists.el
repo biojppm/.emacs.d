@@ -11,6 +11,7 @@
         c-electric-semi&comma
         c-electric-slash
         c-electric-star
+        c-end-of-statement
         c-hungry-delete-backwards
         c-hungry-delete-forward
         c-indent-line-or-region
@@ -33,7 +34,6 @@
         org-kill-line
         org-self-insert-command
         org-yank
-        overwrite-mode
         smart-beginning-of-line
         smart-shift-pass-through
         smart-shift-right
@@ -46,7 +46,6 @@
 (setq mc/cmds-to-run-once
       '(
         compile-goto-error
-        counsel-yank-pop
         duplicate-line-or-region
         electric-pair-delete-pair
         end-of-buffer

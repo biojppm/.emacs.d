@@ -1,4 +1,4 @@
-;;; company-rtags-autoloads.el --- automatically extracted autoloads
+;;; company-rtags-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "company-rtags" "company-rtags.el" (0 0 0 0))
 ;;; Generated autoloads from company-rtags.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "company-rtags" '("company-rtags")))
+(register-definition-prefixes "company-rtags" '("company-rtags"))
 
 ;;;***
 

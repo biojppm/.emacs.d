@@ -1,4 +1,4 @@
-;;; cquery-autoloads.el --- automatically extracted autoloads
+;;; cquery-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "cquery" "cquery.el" (0 0 0 0))
 ;;; Generated autoloads from cquery.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery" '("cquery-")))
+(register-definition-prefixes "cquery" '("cquery-"))
 
 ;;;***
 
@@ -17,7 +17,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from cquery-call-hierarchy.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-call-hierarchy" '("cquery-call-hierarchy")))
+(register-definition-prefixes "cquery-call-hierarchy" '("cquery-call-hierarchy"))
 
 ;;;***
 
@@ -25,14 +25,14 @@
 ;;;;;;  0 0 0))
 ;;; Generated autoloads from cquery-code-lens.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-code-lens" '("cquery-")))
+(register-definition-prefixes "cquery-code-lens" '("cquery-"))
 
 ;;;***
 
 ;;;### (autoloads nil "cquery-common" "cquery-common.el" (0 0 0 0))
 ;;; Generated autoloads from cquery-common.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-common" '("cquery--")))
+(register-definition-prefixes "cquery-common" '("cquery--"))
 
 ;;;***
 
@@ -40,7 +40,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from cquery-inheritance-hierarchy.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-inheritance-hierarchy" '("cquery-inheritance-hierarchy")))
+(register-definition-prefixes "cquery-inheritance-hierarchy" '("cquery-inheritance-hierarchy"))
 
 ;;;***
 
@@ -48,14 +48,14 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from cquery-semantic-highlighting.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-semantic-highlighting" '("cquery-")))
+(register-definition-prefixes "cquery-semantic-highlighting" '("cquery-"))
 
 ;;;***
 
 ;;;### (autoloads nil "cquery-tree" "cquery-tree.el" (0 0 0 0))
 ;;; Generated autoloads from cquery-tree.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cquery-tree" '("cquery-tree-")))
+(register-definition-prefixes "cquery-tree" '("cquery-tree-"))
 
 ;;;***
 

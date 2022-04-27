@@ -1,4 +1,4 @@
-;;; find-file-in-repository-autoloads.el --- automatically extracted autoloads
+;;; find-file-in-repository-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -23,7 +23,7 @@ find-file-in-repository will autocomplete all files in the
 
 (put 'ffir-avoid-HOME-repository 'safe-local-variable 'booleanp)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "find-file-in-repository" '("ffi")))
+(register-definition-prefixes "find-file-in-repository" '("ffi"))
 
 ;;;***
 

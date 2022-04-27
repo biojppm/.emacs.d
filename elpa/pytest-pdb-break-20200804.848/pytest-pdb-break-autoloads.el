@@ -1,4 +1,4 @@
-;;; pytest-pdb-break-autoloads.el --- automatically extracted autoloads
+;;; pytest-pdb-break-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -19,7 +19,7 @@ determined by `pytest-pdb-break-options-function'.
 
 \(fn SESSION-OPTS BREAKPOINT NODE-ID-PARTS)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "pytest-pdb-break" '("pytest-pdb-break-")))
+(register-definition-prefixes "pytest-pdb-break" '("pytest-pdb-break-"))
 
 ;;;***
 
@@ -38,7 +38,7 @@ This is experimental, but `elpy-shell-send-statement' and
 the Elpy versions echo the input to the REPL (with proper indentation
 and continuation ellipses)." nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "pytest-pdb-break-extra" '("pytest-pdb-break-")))
+(register-definition-prefixes "pytest-pdb-break-extra" '("pytest-pdb-break-"))
 
 ;;;***
 

@@ -1,4 +1,4 @@
-;;; ido-hacks-autoloads.el --- automatically extracted autoloads
+;;; ido-hacks-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "ido-hacks" "ido-hacks.el" (0 0 0 0))
 ;;; Generated autoloads from ido-hacks.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ido-hacks" '("ido-" "string-prefixp")))
+(register-definition-prefixes "ido-hacks" '("ido-" "string-prefixp"))
 
 ;;;***
 

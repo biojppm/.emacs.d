@@ -1,4 +1,4 @@
-;;; company-ycmd-autoloads.el --- automatically extracted autoloads
+;;; company-ycmd-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -12,7 +12,7 @@
 (autoload 'company-ycmd-setup "company-ycmd" "\
 Add company-ycmd to the front of company-backends." nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "company-ycmd" '("company-ycmd")))
+(register-definition-prefixes "company-ycmd" '("company-ycmd"))
 
 ;;;***
 

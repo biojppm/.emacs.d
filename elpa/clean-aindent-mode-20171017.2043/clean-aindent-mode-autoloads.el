@@ -1,4 +1,4 @@
-;;; clean-aindent-mode-autoloads.el --- automatically extracted autoloads
+;;; clean-aindent-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -24,10 +24,19 @@ or call the function `clean-aindent-mode'.")
 Activates clean auto indent for function 'newline-and-indent' and
 back-space unindent for M-DEL (meta-backspace).
 
-If called interactively, enable Clean-Aindent mode if ARG is
-positive, and disable it if ARG is zero or negative.  If called
-from Lisp, also enable the mode if ARG is omitted or nil, and
-toggle it if ARG is `toggle'; disable the mode otherwise.
+This is a minor mode.  If called interactively, toggle the
+`Clean-Aindent mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='clean-aindent-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
 
 clean-aindent mode is a global minor mode.
 
@@ -46,7 +55,7 @@ than the current.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "clean-aindent-mode" '("clean-aindent-")))
+(register-definition-prefixes "clean-aindent-mode" '("clean-aindent-"))
 
 ;;;***
 

@@ -1,4 +1,4 @@
-;;; flymake-yaml-autoloads.el --- automatically extracted autoloads
+;;; flymake-yaml-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -12,7 +12,7 @@
 (autoload 'flymake-yaml-load "flymake-yaml" "\
 Configure flymake mode to check the current buffer's YAML syntax." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "flymake-yaml" '("flymake-yaml-")))
+(register-definition-prefixes "flymake-yaml" '("flymake-yaml-"))
 
 ;;;***
 
