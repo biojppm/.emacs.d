@@ -35,6 +35,7 @@
         org-self-insert-command
         org-yank
         smart-beginning-of-line
+        smart-shift-left
         smart-shift-pass-through
         smart-shift-right
         wdired-next-line
