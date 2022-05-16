@@ -2225,6 +2225,18 @@ original line and use the absolute value."
 (use-package rust-mode
   :hook (rust-mode . my-lsp-hook))
 
+;; Bitbake/Yocto
+;; https://github.com/canatella/bitbake-el
+(defun my-bitbake-mode-setup()
+  )
+(use-package bitbake-mode
+  :defer t
+  :config
+  (use-snips)(add-hook 'bitbake-mode-hook #'hook-snips)
+  (add-hook 'bitbake-mode-hook 'my-bitbake-mode-setup t)
+  :mode (("\\.bb\\'" . bitbake-mode))
+  )
+
 
 ;;; PHP
 (use-package php-mode
