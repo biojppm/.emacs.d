@@ -3371,7 +3371,7 @@ and doesn't work in windows"
   (
    ("C-x g" . magit-status)
    ("C-x C-g" . my-magit-status)
-   ("C-x M-g" . magit-dispatch-popup))
+   ("C-x M-g" . magit-dispatch))
   )
 
 
@@ -3607,6 +3607,7 @@ mode.
      lsp-ui
      lua-mode
      magit
+     magit-section
      man-commands
      markdown-mode
      mc-extras
