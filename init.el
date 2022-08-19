@@ -3255,6 +3255,31 @@ and doesn't work in windows"
   (add-hook 'gfm-mode-hook 'my-text-hook)
   (add-hook 'gfm-mode-hook 'hook-snips)
   )
+(use-package markdown-toc
+  :defer t
+  :commands (markdown-toc-generate-toc markdown-toc-refresh-toc)
+  )
+
+;; speed up markdown mode
+;; https://emacs.stackexchange.com/questions/46110/help-needed-to-debug-very-slow-markdown-mode
+(defvar markdown--first-displayable-cache (make-hash-table :test #'equal))
+(defun markdown--first-displayable (seq)
+  "Return the first displayable character or string in SEQ.
+SEQ may be an atom or a sequence."
+  (let ((c (gethash seq markdown--first-displayable-cache t)))
+    (if (not (eq c t))
+        c
+      (puthash seq
+               (let ((seq (if (listp seq) seq (list seq))))
+                 (cond ((stringp (car seq))
+                        (cl-find-if
+                         (lambda (str)
+                           (and (mapcar #'char-displayable-p (string-to-list str))))
+                         seq))
+                       ((characterp (car seq))
+                        (cl-find-if #'char-displayable-p seq))))
+               markdown--first-displayable-cache))))
+
 
 ;;-----------------------------------------------------------------------------
 
@@ -3607,9 +3632,9 @@ mode.
      lsp-ui
      lua-mode
      magit
-     magit-section
      man-commands
      markdown-mode
+     markdown-toc
      mc-extras
      modern-cpp-font-lock
      monokai-theme

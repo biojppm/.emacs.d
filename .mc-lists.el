@@ -15,6 +15,7 @@
         c-hungry-delete-backwards
         c-hungry-delete-forward
         c-indent-line-or-region
+        counsel-yank-pop
         dired-next-line
         drag-stuff-down
         end-of-visual-line
@@ -28,16 +29,19 @@
         kill-visual-line
         kmacro-end-or-call-macro
         markdown-outdent-or-delete
+        my-cc-curly-brackets
         my-open-init-el
         nuke-line
         nxml-electric-slash
         org-kill-line
         org-self-insert-command
         org-yank
+        overwrite-mode
         smart-beginning-of-line
         smart-shift-left
         smart-shift-pass-through
         smart-shift-right
+        wdired--self-insert
         wdired-next-line
         xref-pop-marker-stack
         yaml-electric-backspace
