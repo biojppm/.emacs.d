@@ -17,6 +17,7 @@
         c-indent-line-or-region
         counsel-yank-pop
         dired-next-line
+        downcase-region
         drag-stuff-down
         end-of-visual-line
         gcm-scroll-down
