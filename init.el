@@ -2661,7 +2661,7 @@ original line and use the absolute value."
 (setq compilation-exit-message-function 'my-compilation-exit-message-function)
 
 
-(defun my-call-compile-or-recompile(which)
+(defun my-call-compile-or-recompile(callable)
   (setq my-compilation-buffer-exists
         (not (eq nil (get-buffer "*compilation*"))))
   (setq my-compilation-buffer-is-visible nil)
@@ -2676,7 +2676,8 @@ original line and use the absolute value."
   (message "compilation buffer is visible: %s" my-compilation-buffer-is-visible)
   (message "compilation buffer is current: %s" my-compilation-buffer-is-current)
   (setq my-compilation-curr-window (selected-window))
-  (call-interactively which)
+  (message "aqui 0" my-compilation-buffer-is-current)
+  (funcall callable)
   (setq my-compilation-comp-window (get-buffer-window "*compilation*"))
   (select-window my-compilation-comp-window)
   ;;(when (not my-compilation-buffer-exists)
@@ -2688,17 +2689,27 @@ original line and use the absolute value."
   (next-buffer)
   (select-window my-compilation-curr-window)
   )
-
 ;;see https://www.emacswiki.org/emacs/CompilationMode#toc4
 (defun my-compile()
   "run compile"
   (interactive)
-  (my-call-compile-or-recompile 'compile)
+  (my-call-compile-or-recompile (lambda () (call-interactively 'compile)))
   )
 (defun my-recompile()
   "run recompile"
   (interactive)
-  (my-call-compile-or-recompile 'recompile)
+  (my-call-compile-or-recompile (lambda () (recompile)))
+  )
+(defun my-compile-fuzzy()
+  ;; see https://xenodium.com/fuzzy-search-emacs-compile-history/
+  "Compile with completing options."
+  (interactive)
+  (let ((my-command (ido-completing-read "Compile command: " compile-history)))
+    (message "my-command: %s" my-command)
+    (setq compile-command my-command)
+    (add-to-list 'compile-history my-command)
+    (my-call-compile-or-recompile (lambda () (compile my-command)))
+    )
   )
 (defun my-compilation-hook()
   )
@@ -2763,6 +2774,7 @@ and doesn't work in windows"
 (add-hook 'compilation-finish-functions 'my-after-compilation-hook)
 (global-set-key [C-pause] 'my-kill-compilation)
 (global-set-key [C-f7] 'my-kill-compilation)
+(global-set-key [C-f6] 'my-compile-fuzzy)
 (global-set-key [S-f6] 'my-compile)
 (global-set-key [f6] 'my-recompile)
 (global-set-key [f8] 'next-error)
