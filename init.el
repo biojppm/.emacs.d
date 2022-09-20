@@ -2515,6 +2515,13 @@ original line and use the absolute value."
   )
 
 
+;;; Hex-mode
+(use-package nhexl-mode
+  :defer t
+  :commands nhexl-mode
+  )
+
+
 ;;; Arduino
 (use-package arduino-mode
   :config (use-snips)(add-hook 'arduino-mode-hook #'hook-snips)
@@ -3651,6 +3658,7 @@ mode.
      modern-cpp-font-lock
      monokai-theme
      multiple-cursors
+     nhexl-mode
      open-in-msvs
      org-babel-eval-in-repl
      paradox
