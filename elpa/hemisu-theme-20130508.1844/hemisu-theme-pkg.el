@@ -1,4 +1,4 @@
-(define-package "hemisu-theme" "20130508.1844" "Hemisu for Emacs." 'nil :commit "5c206561aa2c844ecdf3e3b672c3235e559ddd7f" :authors
+(define-package "hemisu-theme" "20130508.1844" "Hemisu for Emacs." 'nil :commit "ae593ac58e6bffef97467259c1d1472840385e84" :authors
   '(("Andrzej Sliwa"))
   :maintainer
   '("Andrzej Sliwa")
