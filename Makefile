@@ -16,8 +16,8 @@ PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_V
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
-MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v1.4.1/marp-cli-v1.4.1-win.zip"
-MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v1.4.1/marp-cli-v1.4.1-linux.tar.gz"
+MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-win.zip"
+MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.0.2.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
@@ -292,7 +292,7 @@ marp: $(LOCAL_DIR)/bin
 	   $(call wininstallzip,$(MARP_ZIP),*.exe) ; \
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
-	      yaourt -S marp-cli ; \
+	      yay -S marp-cli ; \
 	   else \
 	      bbbbbbb not done ; \
 	   fi ; \
