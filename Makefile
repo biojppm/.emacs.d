@@ -19,7 +19,7 @@ TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
 MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-win.zip"
 MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
-SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.0.2.zip"
+SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
 DEPENDS22_ZIP = "https://www.dependencywalker.com/depends22_x64.zip"
 PIP ?= pip
@@ -324,6 +324,8 @@ swig: $(LOCAL_DIR)/bin
 	   else \
 	      apt-get install -Y swig ; \
 	   fi ; \
+	fi
+
 
 .PHONY: irfanview
 irfanview: $(LOCAL_DIR)/bin
