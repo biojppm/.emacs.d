@@ -17,8 +17,10 @@
 (add-to-list 'load-path (concat emacs-dir "lisp"))
 (setenv "PYTHONIOENCODING" "UTF-8")
 
-;;http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
+;; http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
+;; https://emacs.stackexchange.com/questions/47782/is-there-a-way-emacs-can-infer-is-running-on-wsl-windows-subsystem-for-linux
+(defvar this-is-wsl (string-match "-microsoft-standard-WSL2" operating-system-release))
 
 ;; a shortcut for opening this file
 (defun my-open-init-el ()
@@ -2159,8 +2161,10 @@ original line and use the absolute value."
          (lsp-mode . lsp-enable-which-key-integration))
   :init
   (message "lsp-mode: init")
+  ;; important: see https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
   ;; https://emacs.stackexchange.com/questions/58015/how-to-stop-lsp-mode-including-headers-automatically-for-c-c-code
   (setq lsp-clients-clangd-args
+        ;;'("--header-insertion=never" "--log=verbose"))
         '("--header-insertion=never"))
   ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
@@ -2635,15 +2639,17 @@ original line and use the absolute value."
 (setq compilation-ask-about-save nil)
 ;;; Don't save *anything*
 (setq compilation-save-buffers-predicate '(lambda () nil))
-;;see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
-(setq compilation-scroll-output 'first-error)
+;; see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
+;;(setq compilation-scroll-output 'first-error)
 ;; add VS error regexes
-(add-to-list 'compilation-error-regexp-alist 'visual_studio)
-(add-to-list 'compilation-error-regexp-alist-alist
-             '(visual_studio
-               "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(fatal error +C[0-9]+\\|error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
-               1 2)
-             )
+(when this-is-windows
+  (add-to-list 'compilation-error-regexp-alist 'visual_studio)
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(visual_studio
+                 "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(fatal error +C[0-9]+\\|error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
+                 1 2)
+               )
+  )
 
 ;; always kill compile buffer http://user42.tuxfamily.org/compilation-always-kill/index.html
 (autoload 'compilation-always-kill-mode "compilation-always-kill" nil t)
@@ -3561,7 +3567,8 @@ mode.
   (progn
     ;;otherwise run this block
     ;; https://askubuntu.com/questions/690427/how-can-i-get-emacs24-fonts-to-smooth-like-in-the-terminal
-    (set-face-attribute 'default nil :font "Inconsolata-12")
+    ;;(set-face-attribute 'default nil :font "Consolas-10")
+    ;;(set-face-attribute 'default nil :font "Inconsolata-12")
     ;;(set-face-attribute 'default nil :font "Consolas-11")
     ;;(set-face-attribute 'default nil :font "Ubuntu Mono-12")
     ;;(custom-set-faces '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :width normal :foundry "unknown"
@@ -3575,12 +3582,10 @@ mode.
 ;;-----------------------------------------------------------------------------
 
 (let ((fn (concat emacs-dir "local.el")))
-  (if (file-exists-p fn)
-      (progn
-        (message "loading local config file: %s" fn)
-        (load-file fn)
-        )
-      )
+  (when (file-exists-p fn)
+    (message "loading local config file: %s" fn)
+    (load-file fn)
+    )
   )
 
 
