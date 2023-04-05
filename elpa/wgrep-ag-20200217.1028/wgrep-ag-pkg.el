@@ -1,2 +1,0 @@
-;;; Generated package description from wgrep-ag.el  -*- no-byte-compile: t -*-
-(define-package "wgrep-ag" "20200217.1028" "Writable ag buffer and apply the changes to files" '((wgrep "2.3.2")) :commit "253f93d2764b16a877ae83ecdba692c88eaded24" :authors '(("Masahiro Hayashi" . "mhayashi1120@gmail.com")) :maintainer '("Masahiro Hayashi" . "mhayashi1120@gmail.com") :keywords '("grep" "edit" "extensions") :url "http://github.com/mhayashi1120/Emacs-wgrep/raw/master/wgrep-ag.el")
