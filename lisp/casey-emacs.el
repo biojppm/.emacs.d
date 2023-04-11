@@ -563,7 +563,7 @@
 (define-key global-map [C-tab] 'indent-region)
 (define-key global-map "	" 'indent-region)
 
-(defun casey-never-split-a-window
+(defun casey-never-split-a-window()
     "Never, ever split a window.  Why would anyone EVER want you to do that??"
     nil)
 (setq split-window-preferred-function 'casey-never-split-a-window)
