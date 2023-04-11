@@ -2804,6 +2804,12 @@ and doesn't work in windows"
 
 ;;-------------------------------------------------------------------------
 ;; Debugging https://www.gnu.org/software/emacs/manual/html_node/emacs/GDB-Graphical-Interface.html#GDB-Graphical-Interface
+
+;; TODO: dap-mode
+;; https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/#debugging
+(use-package dap-mode)
+
+
 ;;
 ;; M-x gdb
 ;;    start an interactive gdb GUI session
@@ -3074,6 +3080,7 @@ and doesn't work in windows"
   "start a debugging session in a new frame"
   (interactive)
   (run-command-in-new-frame "" "gdb"))
+
 
 ;;-------------------------------------------------------------------------
 ;; Grepping under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Grep-Searching.html#Grep-Searching
@@ -3619,6 +3626,7 @@ mode.
      cquery
      csharp-mode
      cython-mode
+     dap-mode
      diminish
      dirtree
      dockerfile-mode
@@ -3665,7 +3673,6 @@ mode.
      multiple-cursors
      nhexl-mode
      open-in-msvs
-     org-babel-eval-in-repl
      paradox
      pdb-mode
      pdf-tools
