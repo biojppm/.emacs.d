@@ -55,7 +55,7 @@ deferred until the prefix key sequence is pressed.
 
 \(fn NAME KEYWORD ARG REST STATE)" nil nil)
 
-(register-definition-prefixes "use-package-bind-key" '("use-package-handler/:bind*"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-bind-key" '("use-package-handler/:bind*")))
 
 ;;;***
 
@@ -131,7 +131,7 @@ Usage:
 
 (function-put 'use-package 'lisp-indent-function 'defun)
 
-(register-definition-prefixes "use-package-core" '("use-package-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-core" '("use-package-")))
 
 ;;;***
 
@@ -149,7 +149,7 @@ Normalize arguments to delight.
 
 \(fn NAME KEYWORD ARGS REST STATE)" nil nil)
 
-(register-definition-prefixes "use-package-delight" '("use-package-normalize-delight"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-delight" '("use-package-normalize-delight")))
 
 ;;;***
 
@@ -167,7 +167,7 @@ Normalize arguments to delight.
 
 \(fn NAME KEYWORD ARG REST STATE)" nil nil)
 
-(register-definition-prefixes "use-package-diminish" '("use-package-normalize-diminish"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-diminish" '("use-package-normalize-diminish")))
 
 ;;;***
 
@@ -185,7 +185,7 @@ Normalize arguments to delight.
 
 \(fn NAME KEYWORD ENSURE REST STATE)" nil nil)
 
-(register-definition-prefixes "use-package-ensure" '("use-package-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-ensure" '("use-package-")))
 
 ;;;***
 
@@ -201,7 +201,7 @@ will jump to the file that originally required PACKAGE instead.
 
 \(fn PACKAGE)" t nil)
 
-(register-definition-prefixes "use-package-jump" '("use-package-find-require"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-jump" '("use-package-find-require")))
 
 ;;;***
 
@@ -214,7 +214,7 @@ Check for errors in `use-package' declarations.
 For example, if the module's `:if' condition is met, but even
 with the specified `:load-path' the module cannot be found." t nil)
 
-(register-definition-prefixes "use-package-lint" '("use-package-lint-declaration"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "use-package-lint" '("use-package-lint-declaration")))
 
 ;;;***
 
