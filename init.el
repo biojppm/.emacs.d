@@ -3564,6 +3564,10 @@ mode.
 
 
 ;;-----------------------------------------------------------------------------
+
+;; TODO
+;; DPI scaling: https://www.reddit.com/r/emacs/comments/u5wcq5/change_dpi_when_moving_screens/
+
 (if this-is-windows
   (progn
     ;;if in Windows run this block
