@@ -1,8 +1,16 @@
-(if (= (display-pixel-height) 1080)
+(message "SDS environment config")
+
+(if (or (= (display-pixel-height) 1080) (= (display-pixel-height) 1200))
     ;; Full HD
-    (set-face-attribute 'default nil :font "Inconsolata-13")
+    (progn
+      (message "setting font for FullHD")
+      (set-face-attribute 'default nil :font "Inconsolata-10")
+      )
   ;; 4K
-  (set-face-attribute 'default nil :font "Inconsolata-18")
+  (progn
+    (message "setting font for 4k")
+    (set-face-attribute 'default nil :font "Inconsolata-14")
+    )
   )
 
 ;; TEST(ValidationUnitTestsJson, Sony_Json_getRootFailsOnEmptyTree)./ValidationTests/UnitTests/ValidationUnitTests.c:275::FAIL: Expected 3 Was 0

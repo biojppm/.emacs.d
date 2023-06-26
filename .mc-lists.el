@@ -42,6 +42,7 @@
         smart-shift-left
         smart-shift-pass-through
         smart-shift-right
+        upcase-dwim
         wdired--self-insert
         wdired-next-line
         xref-pop-marker-stack
