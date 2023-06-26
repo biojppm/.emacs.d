@@ -4,6 +4,7 @@
 *~
 \#*
 .#*
+.dap-breakpoints
 .lsp-session-*
 .python-version
 .yas-compiled-snippets.el

@@ -1,4 +1,4 @@
-;;; lsp-mode-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
+;;; lsp-mode-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
 
@@ -10,56 +10,56 @@
 ;;;;;;  0 0 0))
 ;;; Generated autoloads from lsp-actionscript.el
 
-(register-definition-prefixes "lsp-actionscript" '("lsp-actionscript-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-actionscript" '("lsp-actionscript-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ada" "lsp-ada.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ada.el
 
-(register-definition-prefixes "lsp-ada" '("lsp-ada-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ada" '("lsp-ada-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-angular" "lsp-angular.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-angular.el
 
-(register-definition-prefixes "lsp-angular" '("lsp-client"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-angular" '("lsp-client")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ansible" "lsp-ansible.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ansible.el
 
-(register-definition-prefixes "lsp-ansible" '("lsp-ansible-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ansible" '("lsp-ansible-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-astro" "lsp-astro.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-astro.el
 
-(register-definition-prefixes "lsp-astro" '("lsp-astro--get-initialization-options"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-astro" '("lsp-astro--get-initialization-options")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-bash" "lsp-bash.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-bash.el
 
-(register-definition-prefixes "lsp-bash" '("lsp-bash-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-bash" '("lsp-bash-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-beancount" "lsp-beancount.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-beancount.el
 
-(register-definition-prefixes "lsp-beancount" '("lsp-beancount-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-beancount" '("lsp-beancount-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-camel" "lsp-camel.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-camel.el
 
-(register-definition-prefixes "lsp-camel" '("lsp-camel-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-camel" '("lsp-camel-")))
 
 ;;;***
 
@@ -71,7 +71,7 @@ Explain a clang-tidy ERROR by scraping documentation from llvm.org.
 
 \(fn ERROR)" nil nil)
 
-(register-definition-prefixes "lsp-clangd" '("lsp-c"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-clangd" '("lsp-c")))
 
 ;;;***
 
@@ -83,7 +83,7 @@ Show a test tree and focus on it if IGNORE-FOCUS? is nil.
 
 \(fn IGNORE-FOCUS\\=\\?)" t nil)
 
-(register-definition-prefixes "lsp-clojure" '("lsp-clojure-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-clojure" '("lsp-clojure-")))
 
 ;;;***
 
@@ -104,46 +104,44 @@ Enable LSP completion support." nil nil)
 (autoload 'lsp-completion-mode "lsp-completion" "\
 Toggle LSP completion support.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Completion mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-completion-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Completion mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
 (add-hook 'lsp-configure-hook (lambda nil (when (and lsp-auto-configure lsp-completion-enable) (lsp-completion--enable))))
 
-(register-definition-prefixes "lsp-completion" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-completion" '("lsp-")))
+
+;;;***
+
+;;;### (autoloads nil "lsp-credo" "lsp-credo.el" (0 0 0 0))
+;;; Generated autoloads from lsp-credo.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-credo" '("lsp-credo-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-crystal" "lsp-crystal.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-crystal.el
 
-(register-definition-prefixes "lsp-crystal" '("lsp-clients-crystal-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-crystal" '("lsp-clients-crystal-executable")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-csharp" "lsp-csharp.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-csharp.el
 
-(register-definition-prefixes "lsp-csharp" '("lsp-csharp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-csharp" '("lsp-csharp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-css" "lsp-css.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-css.el
 
-(register-definition-prefixes "lsp-css" '("lsp-css-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-css" '("lsp-css-")))
 
 ;;;***
 
@@ -163,25 +161,16 @@ Enable LSP checker support." nil nil)
 (autoload 'lsp-diagnostics-mode "lsp-diagnostics" "\
 Toggle LSP diagnostics integration.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Diagnostics mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-diagnostics-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Diagnostics mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
 (add-hook 'lsp-configure-hook (lambda nil (when lsp-auto-configure (lsp-diagnostics--enable))))
 
-(register-definition-prefixes "lsp-diagnostics" '("lsp-diagnostics-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-diagnostics" '("lsp-diagnostics-")))
 
 ;;;***
 
@@ -201,23 +190,14 @@ or call the function `lsp-dired-mode'.")
 (autoload 'lsp-dired-mode "lsp-dired" "\
 Display `lsp-mode' icons for each file in a dired buffer.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Dired mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='lsp-dired-mode)'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Dired mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
-(register-definition-prefixes "lsp-dired" '("lsp-dired-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dired" '("lsp-dired-")))
 
 ;;;***
 
@@ -225,56 +205,56 @@ it is disabled.
 ;;;;;;  0))
 ;;; Generated autoloads from lsp-dockerfile.el
 
-(register-definition-prefixes "lsp-dockerfile" '("lsp-dockerfile-language-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dockerfile" '("lsp-dockerfile-language-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-dot" "lsp-dot.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-dot.el
 
-(register-definition-prefixes "lsp-dot" '("lsp-dot--dot-ls-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dot" '("lsp-dot--dot-ls-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-elixir" "lsp-elixir.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-elixir.el
 
-(register-definition-prefixes "lsp-elixir" '("lsp-elixir-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-elixir" '("lsp-elixir-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-elm" "lsp-elm.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-elm.el
 
-(register-definition-prefixes "lsp-elm" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-elm" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-emmet" "lsp-emmet.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-emmet.el
 
-(register-definition-prefixes "lsp-emmet" '("lsp-emmet-ls-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-emmet" '("lsp-emmet-ls-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-erlang" "lsp-erlang.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-erlang.el
 
-(register-definition-prefixes "lsp-erlang" '("lsp-erlang-server-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-erlang" '("lsp-erlang-server-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-eslint" "lsp-eslint.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-eslint.el
 
-(register-definition-prefixes "lsp-eslint" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-eslint" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-fortran" "lsp-fortran.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-fortran.el
 
-(register-definition-prefixes "lsp-fortran" '("lsp-clients-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-fortran" '("lsp-clients-")))
 
 ;;;***
 
@@ -286,56 +266,63 @@ Load all of the provided PROJECTS.
 
 \(fn PROJECTS)" nil nil)
 
-(register-definition-prefixes "lsp-fsharp" '("lsp-fsharp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-fsharp" '("lsp-fsharp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-gdscript" "lsp-gdscript.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-gdscript.el
 
-(register-definition-prefixes "lsp-gdscript" '("lsp-gdscript-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-gdscript" '("lsp-gdscript-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-gleam" "lsp-gleam.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-gleam.el
 
-(register-definition-prefixes "lsp-gleam" '("lsp-gleam-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-gleam" '("lsp-gleam-executable")))
+
+;;;***
+
+;;;### (autoloads nil "lsp-glsl" "lsp-glsl.el" (0 0 0 0))
+;;; Generated autoloads from lsp-glsl.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-glsl" '("lsp-glsl-executable")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-go" "lsp-go.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-go.el
 
-(register-definition-prefixes "lsp-go" '("lsp-go-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-go" '("lsp-go-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-graphql" "lsp-graphql.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-graphql.el
 
-(register-definition-prefixes "lsp-graphql" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-graphql" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-groovy" "lsp-groovy.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-groovy.el
 
-(register-definition-prefixes "lsp-groovy" '("lsp-groovy-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-groovy" '("lsp-groovy-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-hack" "lsp-hack.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-hack.el
 
-(register-definition-prefixes "lsp-hack" '("lsp-clients-hack-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-hack" '("lsp-clients-hack-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-haxe" "lsp-haxe.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-haxe.el
 
-(register-definition-prefixes "lsp-haxe" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-haxe" '("lsp-")))
 
 ;;;***
 
@@ -346,20 +333,10 @@ Load all of the provided PROJECTS.
 (autoload 'lsp-headerline-breadcrumb-mode "lsp-headerline" "\
 Toggle breadcrumb on headerline.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Headerline-Breadcrumb mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-headerline-breadcrumb-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Headerline-Breadcrumb mode if
+ARG is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
@@ -373,21 +350,21 @@ Narrow to the symbol range on breadcrumb at SYMBOL-POSITION.
 
 \(fn SYMBOL-POSITION)" t nil)
 
-(register-definition-prefixes "lsp-headerline" '("lsp-headerline-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-headerline" '("lsp-headerline-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-html" "lsp-html.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-html.el
 
-(register-definition-prefixes "lsp-html" '("lsp-html-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-html" '("lsp-html-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-icons" "lsp-icons.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-icons.el
 
-(register-definition-prefixes "lsp-icons" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-icons" '("lsp-")))
 
 ;;;***
 
@@ -400,14 +377,14 @@ When called with prefix ARG the default selection will be symbol at point.
 
 \(fn ARG)" t nil)
 
-(register-definition-prefixes "lsp-ido" '("lsp-ido-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ido" '("lsp-ido-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-idris" "lsp-idris.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-idris.el
 
-(register-definition-prefixes "lsp-idris" '("lsp-idris2-lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-idris" '("lsp-idris2-lsp-")))
 
 ;;;***
 
@@ -440,7 +417,7 @@ Start `iedit-mode'. for `textDocument/documentHighlight'" t nil)
 (autoload 'lsp-evil-state-linked-ranges "lsp-iedit" "\
 Start `iedit-mode'. for `textDocument/linkedEditingRange'" t nil)
 
-(register-definition-prefixes "lsp-iedit" '("lsp-iedit--on-ranges"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-iedit" '("lsp-iedit--on-ranges")))
 
 ;;;***
 
@@ -448,21 +425,21 @@ Start `iedit-mode'. for `textDocument/linkedEditingRange'" t nil)
 ;;;;;;  0))
 ;;; Generated autoloads from lsp-javascript.el
 
-(register-definition-prefixes "lsp-javascript" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-javascript" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-json" "lsp-json.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-json.el
 
-(register-definition-prefixes "lsp-json" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-json" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-kotlin" "lsp-kotlin.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-kotlin.el
 
-(register-definition-prefixes "lsp-kotlin" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-kotlin" '("lsp-")))
 
 ;;;***
 
@@ -481,61 +458,52 @@ Delete all lenses." t nil)
 (autoload 'lsp-lens-mode "lsp-lens" "\
 Toggle code-lens overlays.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Lens mode' mode.  If the prefix argument is positive, enable
-the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-lens-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Lens mode if ARG is positive,
+and disable it if ARG is zero or negative.  If called from Lisp,
+also enable the mode if ARG is omitted or nil, and toggle it if
+ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
 (autoload 'lsp-avy-lens "lsp-lens" "\
 Click lsp lens using `avy' package." t nil)
 
-(register-definition-prefixes "lsp-lens" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-lens" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-lua" "lsp-lua.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-lua.el
 
-(register-definition-prefixes "lsp-lua" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-lua" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-magik" "lsp-magik.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-magik.el
 
-(register-definition-prefixes "lsp-magik" '("lsp-magik-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-magik" '("lsp-magik-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-markdown" "lsp-markdown.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-markdown.el
 
-(register-definition-prefixes "lsp-markdown" '("lsp-markdown-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-markdown" '("lsp-markdown-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-marksman" "lsp-marksman.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-marksman.el
 
-(register-definition-prefixes "lsp-marksman" '("lsp-marksman-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-marksman" '("lsp-marksman-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-mint" "lsp-mint.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-mint.el
 
-(register-definition-prefixes "lsp-mint" '("lsp-clients-mint-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-mint" '("lsp-clients-mint-executable")))
 
 ;;;***
 
@@ -609,7 +577,7 @@ of the packages.
 
 In case the major-mode that you are using for " t nil)
 
-(register-definition-prefixes "lsp-mode" '("defcustom-lsp" "lsp-" "make-lsp-client" "when-lsp-workspace" "with-lsp-workspace"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-mode" '("defcustom-lsp" "lsp-" "make-lsp-client" "when-lsp-workspace" "with-lsp-workspace")))
 
 ;;;***
 
@@ -621,20 +589,10 @@ In case the major-mode that you are using for " t nil)
 (autoload 'lsp-modeline-code-actions-mode "lsp-modeline" "\
 Toggle code actions on modeline.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Modeline-Code-Actions mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-modeline-code-actions-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Modeline-Code-Actions mode if
+ARG is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
@@ -643,86 +601,67 @@ it is disabled.
 (autoload 'lsp-modeline-diagnostics-mode "lsp-modeline" "\
 Toggle diagnostics modeline.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Modeline-Diagnostics mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-modeline-diagnostics-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Modeline-Diagnostics mode if
+ARG is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
 (autoload 'lsp-modeline-workspace-status-mode "lsp-modeline" "\
 Toggle workspace status on modeline.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Modeline-Workspace-Status mode' mode.  If the prefix
-argument is positive, enable the mode, and if it is zero or
-negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-modeline-workspace-status-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Modeline-Workspace-Status
+mode if ARG is positive, and disable it if ARG is zero or
+negative.  If called from Lisp, also enable the mode if ARG is
+omitted or nil, and toggle it if ARG is `toggle'; disable the
+mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
-(register-definition-prefixes "lsp-modeline" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-modeline" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-nginx" "lsp-nginx.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-nginx.el
 
-(register-definition-prefixes "lsp-nginx" '("lsp-nginx-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-nginx" '("lsp-nginx-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-nim" "lsp-nim.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-nim.el
 
-(register-definition-prefixes "lsp-nim" '("lsp-nim-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-nim" '("lsp-nim-l")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-nix" "lsp-nix.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-nix.el
 
-(register-definition-prefixes "lsp-nix" '("lsp-nix-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-nix" '("lsp-nix-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ocaml" "lsp-ocaml.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ocaml.el
 
-(register-definition-prefixes "lsp-ocaml" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ocaml" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-openscad" "lsp-openscad.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-openscad.el
 
-(register-definition-prefixes "lsp-openscad" '("lsp-openscad-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-openscad" '("lsp-openscad-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-perl" "lsp-perl.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-perl.el
 
-(register-definition-prefixes "lsp-perl" '("lsp-perl-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-perl" '("lsp-perl-")))
 
 ;;;***
 
@@ -730,35 +669,35 @@ it is disabled.
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from lsp-perlnavigator.el
 
-(register-definition-prefixes "lsp-perlnavigator" '("lsp-perlnavigator-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-perlnavigator" '("lsp-perlnavigator-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-php" "lsp-php.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-php.el
 
-(register-definition-prefixes "lsp-php" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-php" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-pls" "lsp-pls.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-pls.el
 
-(register-definition-prefixes "lsp-pls" '("lsp-pls-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-pls" '("lsp-pls-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-prolog" "lsp-prolog.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-prolog.el
 
-(register-definition-prefixes "lsp-prolog" '("lsp-prolog-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-prolog" '("lsp-prolog-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-protocol" "lsp-protocol.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-protocol.el
 
-(register-definition-prefixes "lsp-protocol" '("dash-expand:&RangeToPoint" "lsp"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-protocol" '("dash-expand:&RangeToPoint" "lsp")))
 
 ;;;***
 
@@ -766,63 +705,63 @@ it is disabled.
 ;;;;;;  0))
 ;;; Generated autoloads from lsp-purescript.el
 
-(register-definition-prefixes "lsp-purescript" '("lsp-purescript-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-purescript" '("lsp-purescript-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-pwsh" "lsp-pwsh.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-pwsh.el
 
-(register-definition-prefixes "lsp-pwsh" '("lsp-pwsh-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-pwsh" '("lsp-pwsh-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-pyls" "lsp-pyls.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-pyls.el
 
-(register-definition-prefixes "lsp-pyls" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-pyls" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-pylsp" "lsp-pylsp.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-pylsp.el
 
-(register-definition-prefixes "lsp-pylsp" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-pylsp" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-r" "lsp-r.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-r.el
 
-(register-definition-prefixes "lsp-r" '("lsp-clients-r-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-r" '("lsp-clients-r-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-racket" "lsp-racket.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-racket.el
 
-(register-definition-prefixes "lsp-racket" '("lsp-racket-lang"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-racket" '("lsp-racket-lang")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-remark" "lsp-remark.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-remark.el
 
-(register-definition-prefixes "lsp-remark" '("lsp-remark-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-remark" '("lsp-remark-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-rf" "lsp-rf.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-rf.el
 
-(register-definition-prefixes "lsp-rf" '("expand-start-command" "lsp-rf-language-server-" "parse-rf-language-server-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-rf" '("expand-start-command" "lsp-rf-language-server-" "parse-rf-language-server-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ruby-lsp" "lsp-ruby-lsp.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ruby-lsp.el
 
-(register-definition-prefixes "lsp-ruby-lsp" '("lsp-ruby-lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ruby-lsp" '("lsp-ruby-lsp-")))
 
 ;;;***
 
@@ -830,21 +769,21 @@ it is disabled.
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from lsp-ruby-syntax-tree.el
 
-(register-definition-prefixes "lsp-ruby-syntax-tree" '("lsp-ruby-syntax-tree-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ruby-syntax-tree" '("lsp-ruby-syntax-tree-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ruff-lsp" "lsp-ruff-lsp.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ruff-lsp.el
 
-(register-definition-prefixes "lsp-ruff-lsp" '("lsp-ruff-lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ruff-lsp" '("lsp-ruff-lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-rust" "lsp-rust.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-rust.el
 
-(register-definition-prefixes "lsp-rust" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-rust" '("lsp-")))
 
 ;;;***
 
@@ -883,31 +822,28 @@ Enable semantic tokens mode." nil nil)
 (autoload 'lsp-semantic-tokens-mode "lsp-semantic-tokens" "\
 Toggle semantic-tokens support.
 
-This is a minor mode.  If called interactively, toggle the
-`Lsp-Semantic-Tokens mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `lsp-semantic-tokens-mode'.
-
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+If called interactively, enable Lsp-Semantic-Tokens mode if ARG
+is positive, and disable it if ARG is zero or negative.  If
+called from Lisp, also enable the mode if ARG is omitted or nil,
+and toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 
-(register-definition-prefixes "lsp-semantic-tokens" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-semantic-tokens" '("lsp-")))
+
+;;;***
+
+;;;### (autoloads nil "lsp-semgrep" "lsp-semgrep.el" (0 0 0 0))
+;;; Generated autoloads from lsp-semgrep.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-semgrep" '("lsp-semgrep-" "semgrep-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-sml" "lsp-sml.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-sml.el
 
-(register-definition-prefixes "lsp-sml" '("lsp-sml-millet-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-sml" '("lsp-sml-millet-")))
 
 ;;;***
 
@@ -915,140 +851,140 @@ it is disabled.
 ;;;;;;  0))
 ;;; Generated autoloads from lsp-solargraph.el
 
-(register-definition-prefixes "lsp-solargraph" '("lsp-solargraph-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-solargraph" '("lsp-solargraph-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-sorbet" "lsp-sorbet.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-sorbet.el
 
-(register-definition-prefixes "lsp-sorbet" '("lsp-sorbet-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-sorbet" '("lsp-sorbet-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-sqls" "lsp-sqls.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-sqls.el
 
-(register-definition-prefixes "lsp-sqls" '("lsp-sql"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-sqls" '("lsp-sql")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-steep" "lsp-steep.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-steep.el
 
-(register-definition-prefixes "lsp-steep" '("lsp-steep-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-steep" '("lsp-steep-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-svelte" "lsp-svelte.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-svelte.el
 
-(register-definition-prefixes "lsp-svelte" '("lsp-svelte-plugin-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-svelte" '("lsp-svelte-plugin-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-terraform" "lsp-terraform.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-terraform.el
 
-(register-definition-prefixes "lsp-terraform" '("construct-tf-package" "lsp-t"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-terraform" '("construct-tf-package" "lsp-t")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-tex" "lsp-tex.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-tex.el
 
-(register-definition-prefixes "lsp-tex" '("lsp-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-tex" '("lsp-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-toml" "lsp-toml.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-toml.el
 
-(register-definition-prefixes "lsp-toml" '("lsp-toml-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-toml" '("lsp-toml-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-ttcn3" "lsp-ttcn3.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-ttcn3.el
 
-(register-definition-prefixes "lsp-ttcn3" '("lsp-ttcn3-lsp-server-command"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-ttcn3" '("lsp-ttcn3-lsp-server-command")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-typeprof" "lsp-typeprof.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-typeprof.el
 
-(register-definition-prefixes "lsp-typeprof" '("lsp-typeprof-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-typeprof" '("lsp-typeprof-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-v" "lsp-v.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-v.el
 
-(register-definition-prefixes "lsp-v" '("lsp-v-vls-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-v" '("lsp-v-vls-executable")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-vala" "lsp-vala.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-vala.el
 
-(register-definition-prefixes "lsp-vala" '("lsp-clients-vala-ls-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vala" '("lsp-clients-vala-ls-executable")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-verilog" "lsp-verilog.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-verilog.el
 
-(register-definition-prefixes "lsp-verilog" '("lsp-clients-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-verilog" '("lsp-clients-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-vetur" "lsp-vetur.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-vetur.el
 
-(register-definition-prefixes "lsp-vetur" '("lsp-vetur-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vetur" '("lsp-vetur-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-vhdl" "lsp-vhdl.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-vhdl.el
 
-(register-definition-prefixes "lsp-vhdl" '("ghdl-ls-bin-name" "hdl-checker-bin-name" "lsp-vhdl-" "vhdl-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vhdl" '("ghdl-ls-bin-name" "hdl-checker-bin-name" "lsp-vhdl-" "vhdl-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-vimscript" "lsp-vimscript.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-vimscript.el
 
-(register-definition-prefixes "lsp-vimscript" '("lsp-clients-vim-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vimscript" '("lsp-clients-vim-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-volar" "lsp-volar.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-volar.el
 
-(register-definition-prefixes "lsp-volar" '("lsp-volar-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-volar" '("lsp-volar-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-xml" "lsp-xml.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-xml.el
 
-(register-definition-prefixes "lsp-xml" '("lsp-xml-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-xml" '("lsp-xml-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-yaml" "lsp-yaml.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-yaml.el
 
-(register-definition-prefixes "lsp-yaml" '("lsp-yaml-"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-yaml" '("lsp-yaml-")))
 
 ;;;***
 
 ;;;### (autoloads nil "lsp-zig" "lsp-zig.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-zig.el
 
-(register-definition-prefixes "lsp-zig" '("lsp-zig-zls-executable"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-zig" '("lsp-zig-zls-executable")))
 
 ;;;***
 

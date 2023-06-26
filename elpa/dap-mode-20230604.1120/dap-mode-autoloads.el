@@ -76,6 +76,13 @@
 
 ;;;***
 
+;;;### (autoloads nil "dap-gdscript" "dap-gdscript.el" (0 0 0 0))
+;;; Generated autoloads from dap-gdscript.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "dap-gdscript" '("dap-gdscript-")))
+
+;;;***
+
 ;;;### (autoloads nil "dap-go" "dap-go.el" (0 0 0 0))
 ;;; Generated autoloads from dap-go.el
 
@@ -103,7 +110,7 @@ Run `dap-hydra/body'." t nil)
 ;;;### (autoloads nil "dap-launch" "dap-launch.el" (0 0 0 0))
 ;;; Generated autoloads from dap-launch.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "dap-launch" '("dap-launch-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "dap-launch" '("dap-")))
 
 ;;;***
 
