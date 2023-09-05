@@ -1,5 +1,7 @@
 (message "SDS environment config")
 
+(message "display-pixel-height is %s" (display-pixel-height))
+
 (if (or (= (display-pixel-height) 1080) (= (display-pixel-height) 1200))
     ;; Full HD
     (progn
@@ -20,3 +22,4 @@
                "^[ \t]*TEST([A-Za-z0-9_]+, [A-Za-z0-9_]+)[ \t]*\\([A-Za-z0-9_/.]+\\):\\([0-9]+\\):"
                  1 2)
                )
+

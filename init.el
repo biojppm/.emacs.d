@@ -3320,16 +3320,24 @@ and doesn't work in windows"
 (add-hook 'rst-mode-hook #'-my-rst-hook)
 (add-hook 'rst-mode-hook #'hook-snips)
 
+
 ;; Markdown
 ;; https://jblevins.org/projects/markdown-mode/
-;; to preview using the github style: https://github.com/joeyespo/grip
+;;
+;; to preview
+;;   using the github style: https://github.com/joeyespo/grip
+;;   grip -b --user=`whoami` "--pass=`cat ~/.netrc`" performance.md
+;;
+;; see also https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time
+
 (use-package markdown-mode
   :defer t
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
+  :init
+        (setq markdown-command "/usr/bin/pandoc");;(setq markdown-command "multimarkdown")
   :config
   (use-snips)
   (add-hook 'markdown-mode-hook 'my-text-hook)
