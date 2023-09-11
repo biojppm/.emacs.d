@@ -2796,9 +2796,9 @@ and doesn't work in windows"
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
-  (toggle-read-only)
+  (read-only-mode)
   (ansi-color-apply-on-region compilation-filter-start (point))
-  (toggle-read-only))
+  (read-only-mode))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 
