@@ -2157,8 +2157,10 @@ original line and use the absolute value."
 (use-package lsp-mode
   :defer t
   :commands lsp
-  :hook (;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
+  :hook (
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)
+         )
   :init
   (message "lsp-mode: init")
   ;; important: see https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
@@ -2194,6 +2196,8 @@ original line and use the absolute value."
   (message "lsp-mode 2")
   (message "lsp-mode :config - done")
   :bind
+  ("C-c g n" . lsp-ui-find-next-reference)
+  ("C-c g p" . lsp-ui-find-prev-reference)
   ("C-c C-?" . lsp-ui-sideline-toggle-symbols-info)
   )
 
