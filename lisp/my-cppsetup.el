@@ -147,8 +147,8 @@
   (setq tab-width 4)
   (setq indent-tabs-mode nil)  ; use spaces only if nil
 
-  ; open related files in other window (ff-find-other-file)
-  ; http://www.emacswiki.org/emacs/FindOtherFile
+  ;; open related files in other window (ff-find-other-file)
+  ;; http://www.emacswiki.org/emacs/FindOtherFile
   (defvar my-cpp-other-file-alist
     '(("\\.cpp\\'" (".hpp" ".h" ".def.hpp" ".test.cpp" ".ipp" ".inl"))
       ("\\.hpp\\'" (".cpp" ".ipp" ".def.hpp" ".test.cpp" ".inl"))

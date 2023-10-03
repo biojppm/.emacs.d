@@ -2332,30 +2332,8 @@ original line and use the absolute value."
   (subword-mode 1)
   (company--my-setup)
   )
-(use-package python
-  :defer t
-  :mode ("\\.py" . python-mode)
-  :config
-  (message "python mode: config")
-;;  (use-package lsp-mode
-;;    :config
-;;    (lsp-register-custom-settings
-;;     '(("pyls.plugins.pyls_mypy.enabled" t t)
-;;       ("pyls.plugins.pyls_mypy.live_mode" nil t)
-;;       ("pyls.plugins.pyls_black.enabled" t t)
-;;       ("pyls.plugins.pyls_isort.enabled" t t)))
-;;    :hook
-;;    ((python-mode . lsp)))
-;;  (use-package lsp-ui
-;;    :commands lsp-ui-mode)
-;;-------
-;;  (use-package lsp-python-ms
-;;    :ensure t
-;;    :init (setq lsp-python-ms-auto-install-server t)
-;;    :hook (python-mode . (lambda ()
-;;                            (require 'lsp-python-ms)
-;;                            (lsp))))  ; or lsp-deferred
-;;-------- elpy
+
+(defun my-python-setup-elpy ()
   (use-package elpy
     :commands elpy-enable
     :config
@@ -2385,13 +2363,47 @@ original line and use the absolute value."
   (message "python mode: enable elpy")
   (elpy-enable)
   (message "python mode: enable elpy finished")
+  )
+
+(defun my-python-setup-lsp ()
+  (message "python mode: lsp")
+  (use-package lsp-mode
+    :config
+    (lsp-register-custom-settings
+     '(("pyls.plugins.pyls_mypy.enabled" t t)
+       ("pyls.plugins.pyls_mypy.live_mode" nil t)
+       ("pyls.plugins.pyls_black.enabled" t t)
+       ("pyls.plugins.pyls_isort.enabled" t t)))
+    :hook
+    ((python-mode . lsp)))
+  (message "python mode: lsp ui")
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
+  (message "python mode: lsp ms")
+  (use-package lsp-python-ms
+    :ensure t
+    :init (setq lsp-python-ms-auto-install-server t)
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-python-ms)
+                           (lsp))))  ; or lsp-deferred
+  (message "python mode: lsp finished")
+  )
+
+(use-package python
+  :defer t
+  :mode ("\\.py" . python-mode)
+  :config
+  (message "python mode: config")
   (use-snips)
   (add-hook 'python-mode-hook #'hook-snips)
   (setq gud-pdb-command-name "pdb3")
   ;(add-hook 'python-mode-hook #'smartparens-strict-mode)
   (company--my-setup)
+  ;;(my-python-setup-elpy)
+  (my-python-setup-lsp)
   (message "python mode: ready")
   )
+
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
 
@@ -3727,6 +3739,7 @@ mode.
      ivy
      ivy-searcher
      levenshtein
+     lsp-python-ms
      lsp-mode
      lsp-ui
      lua-mode
