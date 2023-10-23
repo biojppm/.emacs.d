@@ -23,3 +23,6 @@
                  1 2)
                )
 
+
+;; forge settings
+(load-file (concat emacs-dir "local.sds.gitlab.el"))

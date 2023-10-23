@@ -20,6 +20,8 @@ cmake-ide-build-dir.save
 cmany.save
 ede-projects.el
 eshell/
+eln-cache/
+forge-database.sqlite
 history
 ido.last
 local.el
@@ -39,3 +41,5 @@ tmp/
 tramp
 transient/
 url/
+elpa/*/*.so
+/local.sds.gitlab.el

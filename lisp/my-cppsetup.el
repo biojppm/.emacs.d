@@ -198,6 +198,11 @@
         )
   )
 
+;; TODO: use tree-sitter instead:
+;;   https://emacs-tree-sitter.github.io/languages/
+;;   https://github.com/emacs-tree-sitter/ts-fold
+;;   https://www.reddit.com/r/emacs/comments/15l61iu/treesitter_c_code_highlighting/
+;;
 ;; C++11 update to C++ syntax highlighting
 ;; https://github.com/ludwigpacifici/modern-cpp-font-lock
 (use-package modern-cpp-font-lock
