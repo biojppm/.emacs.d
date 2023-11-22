@@ -1217,6 +1217,23 @@
 
 
 ;;-------------------------------------------------------------------------
+;; https://endlessparentheses.com/quickly-search-for-occurrences-of-the-symbol-at-point.html
+
+(defun my/isearch-forward-symbol-with-prefix (p)
+  "Like isearch, unless prefix argument is provided.
+With a prefix argument P, isearch for the symbol at point."
+  (interactive "P")
+  (let ((current-prefix-arg nil))
+    (call-interactively
+     (if p #'isearch-forward-symbol-at-point
+       #'isearch-forward))))
+
+;; C-u C-s
+(global-set-key [remap isearch-forward]
+                #'my/isearch-forward-symbol-with-prefix)
+
+
+;;-------------------------------------------------------------------------
 ;; smex
 ;; https://github.com/nonsequitur/smex
 ;; use IDO for completion of commands in M-x with enhancements
@@ -2166,8 +2183,10 @@ original line and use the absolute value."
   ;; important: see https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
   ;; https://emacs.stackexchange.com/questions/58015/how-to-stop-lsp-mode-including-headers-automatically-for-c-c-code
   (setq lsp-clients-clangd-args
-        ;;'("--header-insertion=never" "--log=verbose"))
-        '("--header-insertion=never"))
+        '(
+          "--header-insertion=never"
+          ;;"--log=verbose"
+          ))
   ;; https://github.com/emacs-lsp/lsp-mode/issues/1529
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")

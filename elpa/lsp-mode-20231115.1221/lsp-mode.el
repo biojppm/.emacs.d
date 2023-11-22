@@ -176,18 +176,18 @@ As defined by the Language Server Protocol 3.16."
 (defcustom lsp-client-packages
   '( ccls lsp-actionscript lsp-ada lsp-angular lsp-ansible lsp-awk lsp-astro lsp-bash
      lsp-beancount lsp-clangd lsp-clojure lsp-cmake lsp-credo lsp-crystal lsp-csharp lsp-css
-     lsp-d lsp-dart lsp-dhall lsp-docker lsp-dockerfile lsp-elm lsp-elixir lsp-emmet
+     lsp-cypher lsp-d lsp-dart lsp-dhall lsp-docker lsp-dockerfile lsp-elm lsp-elixir lsp-emmet
      lsp-erlang lsp-eslint lsp-fortran lsp-fsharp lsp-gdscript lsp-go lsp-gleam
      lsp-glsl lsp-graphql lsp-hack lsp-grammarly lsp-groovy lsp-haskell lsp-haxe
      lsp-idris lsp-java lsp-javascript lsp-json lsp-kotlin lsp-latex lsp-ltex
      lsp-lua lsp-markdown lsp-marksman lsp-mdx lsp-mint lsp-move lsp-nginx lsp-nim lsp-nix lsp-magik
-     lsp-metals lsp-mssql lsp-ocaml lsp-openscad lsp-pascal lsp-perl lsp-perlnavigator
+     lsp-mojo lsp-metals lsp-mssql lsp-ocaml lsp-openscad lsp-pascal lsp-perl lsp-perlnavigator
      lsp-pls lsp-php lsp-pwsh lsp-pyls lsp-pylsp lsp-pyright lsp-python-ms lsp-purescript
      lsp-r lsp-racket lsp-remark lsp-ruff-lsp lsp-rf lsp-rubocop lsp-rust lsp-semgrep lsp-shader
      lsp-solargraph lsp-sorbet lsp-sourcekit lsp-sonarlint lsp-tailwindcss lsp-tex lsp-terraform
      lsp-toml lsp-ttcn3 lsp-typeprof lsp-v lsp-vala lsp-verilog lsp-vetur lsp-volar
      lsp-vhdl lsp-vimscript lsp-xml lsp-yaml lsp-ruby-lsp lsp-ruby-syntax-tree
-     lsp-sqls lsp-svelte lsp-steep lsp-tilt lsp-zig lsp-jq)
+     lsp-solidity lsp-sqls lsp-svelte lsp-steep lsp-tilt lsp-zig lsp-jq)
   "List of the clients to be automatically required."
   :group 'lsp-mode
   :type '(repeat symbol))
@@ -776,6 +776,7 @@ Changes take effect only when a new session is started."
     ("\\.php$" . "php")
     ("\\.rs\\'" . "rust")
     ("\\.sql$" . "sql")
+    ("\\.cypher$" . "cypher")
     ("\\.svelte$" . "svelte")
     ("\\.toml\\'" . "toml")
     ("\\.ts$" . "typescript")
@@ -812,6 +813,7 @@ Changes take effect only when a new session is started."
     (python-mode . "python")
     (python-ts-mode . "python")
     (cython-mode . "python")
+    ("\\(\\.mojo\\|\\.🔥\\)\\'" . "mojo")
     (lsp--render-markdown . "markdown")
     (move-mode . "move")
     (rust-mode . "rust")
@@ -886,6 +888,7 @@ Changes take effect only when a new session is started."
     (csharp-ts-mode . "csharp")
     (plain-tex-mode . "plaintex")
     (context-mode . "context")
+    (cypher-mode . "cypher")
     (latex-mode . "latex")
     (v-mode . "v")
     (vhdl-mode . "vhdl")
@@ -927,10 +930,12 @@ Changes take effect only when a new session is started."
     (gleam-mode . "gleam")
     (graphviz-dot-mode . "dot")
     (tiltfile-mode . "tiltfile")
+    (solidity-mode . "solidity")
     (bibtex-mode . "bibtex")
     (rst-mode . "restructuredtext")
     (glsl-mode . "glsl")
     (shader-mode . "shaderlab")
+    (wgsl-mode . "wgsl")
     (jq-mode . "jq")
     (jq-ts-mode . "jq"))
   "Language id configuration.")
@@ -1143,7 +1148,7 @@ calling `remove-overlays'.")
 
 (defvar-local lsp--virtual-buffer-point-max nil)
 
-(cl-defgeneric lsp-execute-command (server command arguments)
+(cl-defmethod lsp-execute-command (_server _command _arguments)
   "Ask SERVER to execute COMMAND with ARGUMENTS.")
 
 (defun lsp-elt (sequence n)
@@ -3147,6 +3152,22 @@ TYPE can either be `incoming' or `outgoing'"
    :type type
    :body body))
 
+(defun lsp--log-font-lock-json (body)
+  "Font lock JSON BODY."
+  (with-temp-buffer
+    (insert body)
+    ;; We set the temp buffer file-name extension to .json and call `set-auto-mode'
+    ;; so the users configured json mode is used which could be
+    ;; `json-mode', `json-ts-mode', `jsonian-mode', etc.
+    (let ((buffer-file-name "lsp-log.json"))
+      (delay-mode-hooks
+        (set-auto-mode)
+        (if (fboundp 'font-lock-ensure)
+            (font-lock-ensure)
+          (with-no-warnings
+            (font-lock-fontify-buffer)))))
+    (buffer-string)))
+
 (defun lsp--log-entry-pp (entry)
   (cl-assert (lsp--log-entry-p entry))
   (pcase-let (((cl-struct lsp--log-entry timestamp method id type process-time
@@ -3174,7 +3195,7 @@ TYPE can either be `incoming' or `outgoing'"
                   (if (memq type '(incoming-resp ougoing-resp))
                       "Result: "
                     "Params: ")
-                  (json-encode body)
+                  (lsp--log-font-lock-json (json-encode body))
                   "\n\n\n"))
     (setq str (propertize str 'mouse-face 'highlight 'read-only t))
     (insert str)))
@@ -3559,6 +3580,12 @@ and expand the capabilities section"
   (setf (lsp--workspace-shutdown-action lsp--cur-workspace) (or (and restart 'restart) 'shutdown))
   (lsp--uninitialize-workspace))
 
+(defcustom lsp-inlay-hint-enable nil
+  "If non-nil it will enable inlay hints."
+  :type 'boolean
+  :group 'lsp-mode
+  :package-version '(lsp-mode . "8.0.1"))
+
 (defun lsp--uninitialize-workspace ()
   "Cleanup buffer state.
 When a workspace is shut down, by request or from just
@@ -3568,7 +3595,7 @@ disappearing, unset all the variables related to it."
     (mapc (lambda (buf)
             (when (lsp-buffer-live-p buf)
               (lsp-with-current-buffer buf
-                (lsp-managed-mode -1))))
+                                       (lsp-managed-mode -1))))
           buffers)
     (lsp-diagnostics--workspace-cleanup lsp--cur-workspace)))
 
@@ -5049,6 +5076,29 @@ identifier and the position respectively."
                 (lsp--get-buffer-diagnostics))
                'vector)))
 
+(lsp-defun lsp-range-overlapping?((left &as &Range :start left-start :end left-end)
+                                  (right &as &Range :start right-start :end right-end))
+  (or (lsp-point-in-range? right-start left)
+      (lsp-point-in-range? right-end left)
+      (lsp-point-in-range? left-start right)
+      (lsp-point-in-range? left-end right)))
+
+(defun lsp-make-position-1 (position)
+  (lsp-make-position :line (plist-get position :line)
+                     :character (plist-get position :character)))
+
+(defun lsp-cur-possition-diagnostics ()
+  "Return any diagnostics that apply to the current line."
+  (-let* ((start (if (use-region-p) (region-beginning) (point)))
+          (end (if (use-region-p) (region-end) (point)))
+          (current-range (lsp-make-range :start (lsp-make-position-1 (lsp-point-to-position start))
+                                         :end (lsp-make-position-1 (lsp-point-to-position end)))))
+    (->> (lsp--get-buffer-diagnostics)
+         (-filter
+          (-lambda ((&Diagnostic :range))
+            (lsp-range-overlapping? range current-range)))
+         (apply 'vector))))
+
 (defalias 'lsp--cur-line-diagnotics 'lsp-cur-line-diagnostics)
 
 (defun lsp--extract-line-from-buffer (pos)
@@ -5404,6 +5454,12 @@ In addition, each can have property:
   :type 'boolean
   :package-version '(lsp-mode . "8.0.1"))
 
+(defcustom lsp-auto-register-remote-clients t
+  "When non-nil register remote when registering the local one."
+  :group 'lsp-mode
+  :type 'boolean
+  :package-version '(lsp-mode . "8.0.1"))
+
 (defun lsp--display-inline-image (mode)
   "Add image property if available."
   (let ((plist-list (cdr (assq mode lsp--display-inline-image-alist))))
@@ -5506,7 +5562,7 @@ When language is nil render as markup if `markdown-mode' is loaded."
     ;; render the first line.
     (_ (lsp-clients-extract-signature-on-hover contents nil))))
 
-(cl-defgeneric lsp-clients-extract-signature-on-hover (contents _server-id)
+(cl-defmethod lsp-clients-extract-signature-on-hover (contents _server-id)
   "Extract a representative line from CONTENTS, to show in the echo area."
   (car (s-lines (s-trim (lsp--render-element contents)))))
 
@@ -5850,7 +5906,7 @@ It will show up only if current point has signature help."
         :range (if (use-region-p)
                    (lsp--region-to-range (region-beginning) (region-end))
                  (lsp--region-to-range (point) (point)))
-        :context `( :diagnostics ,(lsp-cur-line-diagnostics)
+        :context `( :diagnostics ,(lsp-cur-possition-diagnostics)
                     ,@(when kind (list :only (vector kind))))))
 
 (defun lsp-code-actions-at-point (&optional kind)
@@ -7267,28 +7323,29 @@ Return a nested alist keyed by symbol names. e.g.
   (when menu-bar-mode
     (lsp--imenu-refresh)))
 
-(defun lsp-resolve-final-function (command)
+(defun lsp-resolve-final-command (command &optional test?)
   "Resolve final function COMMAND."
-  (-let [command (if (functionp command) (funcall command) command)]
-    (cl-etypecase command
-      (list
-       (cl-assert (seq-every-p (apply-partially #'stringp) command) nil
-                  "Invalid command list")
-       command)
-      (string (list command)))))
+  (let* ((command (lsp-resolve-value command))
+         (command (cl-etypecase command
+                    (list
+                     (cl-assert (seq-every-p (apply-partially #'stringp) command) nil
+                                "Invalid command list")
+                     command)
+                    (string (list command)))))
+    (if (and (file-remote-p default-directory) (not test?))
+        (list shell-file-name "-c"
+              (string-join (cons "stty raw > /dev/null;"
+                                 (mapcar #'shell-quote-argument command))
+                           " "))
+      command)))
 
 (defun lsp-server-present? (final-command)
   "Check whether FINAL-COMMAND is present."
-  ;; executable-find only gained support for remote checks after 27 release
-  (or (and (cond
-            ((not (file-remote-p default-directory))
-             (executable-find (cl-first final-command)))
-            ((version<= "27.0" emacs-version)
-             (with-no-warnings (executable-find (cl-first final-command) (file-remote-p default-directory))))
-            (t))
-           (prog1 t
-             (lsp-log "Command \"%s\" is present on the path." (s-join " " final-command))))
-      (ignore (lsp-log "Command \"%s\" is not present on the path." (s-join " " final-command)))))
+  (let ((binary-found? (executable-find (cl-first final-command) t)))
+    (if binary-found?
+        (lsp-log "Command \"%s\" is present on the path." (s-join " " final-command))
+      (lsp-log "Command \"%s\" is not present on the path." (s-join " " final-command)))
+    binary-found?))
 
 (defun lsp--value-to-string (value)
   "Convert VALUE to a string that can be set as value in an environment
@@ -7325,6 +7382,20 @@ corresponding to PATH, else returns `default-directory'."
       (lsp-workspace-root path)
     default-directory))
 
+(defun lsp--fix-remote-cmd (program)
+  "Helper for `lsp-stdio-connection'.
+Originally coppied from eglot."
+
+  (if (file-remote-p default-directory)
+      (list shell-file-name "-c"
+            (string-join (cons "stty raw > /dev/null;"
+                               (mapcar #'shell-quote-argument program))
+                         " "))
+    program))
+
+(defvar tramp-use-ssh-controlmaster-options)
+(defvar tramp-ssh-controlmaster-options)
+
 (defun lsp-stdio-connection (command &optional test-command)
   "Returns a connection property list using COMMAND.
 COMMAND can be: A string, denoting the command to launch the
@@ -7344,16 +7415,17 @@ returned by COMMAND is available via `executable-find'"
                                                               (stringp el))
                                                             l))))))
   (list :connect (lambda (filter sentinel name environment-fn workspace)
-                   (if (functionp 'json-rpc-connection)
-                       (lsp-json-rpc-connection
-                        workspace
-                        (lsp-resolve-final-function command))
-                     (let ((final-command (lsp-resolve-final-function command))
+                   (if (and (functionp 'json-rpc-connection)
+                            (not (file-remote-p default-directory)))
+                       (lsp-json-rpc-connection workspace (lsp-resolve-final-command command))
+                     (let ((final-command (lsp-resolve-final-command command))
                            (process-name (generate-new-buffer-name name))
                            (process-environment
                             (lsp--compute-process-environment environment-fn)))
-                       (let* ((stderr-buf (format "*%s::stderr*" process-name))
+                       (let* ((stderr-buf (get-buffer-create (format "*%s::stderr*" process-name)))
                               (default-directory (lsp--default-directory-for-connection))
+                              (tramp-use-ssh-controlmaster-options 'suppress)
+                              (tramp-ssh-controlmaster-options "-o ControlMaster=no -o ControlPath=none")
                               (proc (make-process
                                      :name process-name
                                      :connection-type 'pipe
@@ -7363,7 +7435,8 @@ returned by COMMAND is available via `executable-find'"
                                      :filter filter
                                      :sentinel sentinel
                                      :stderr stderr-buf
-                                     :noquery t)))
+                                     :noquery t
+                                     :file-handler t)))
                          (set-process-query-on-exit-flag proc nil)
                          (set-process-query-on-exit-flag (get-buffer-process stderr-buf) nil)
                          (with-current-buffer (get-buffer stderr-buf)
@@ -7372,7 +7445,8 @@ returned by COMMAND is available via `executable-find'"
                          (cons proc proc)))))
         :test? (or
                 test-command
-                (lambda () (-> command lsp-resolve-final-function lsp-server-present?)))))
+                (lambda ()
+                  (lsp-server-present? (lsp-resolve-final-command command t))))))
 
 (defun lsp--open-network-stream (host port name)
   "Open network stream to HOST:PORT.
@@ -7422,7 +7496,7 @@ process listening for TCP connections on the provided port."
                      (port (lsp--find-available-port host (cl-incf lsp--tcp-port)))
                      (command (funcall command-fn port))
                      (final-command (if (consp command) command (list command)))
-                     (_ (unless (executable-find (cl-first final-command))
+                     (_ (unless (lsp-server-present? final-command)
                           (user-error (format "Couldn't find executable %s" (cl-first final-command)))))
                      (process-environment
                       (lsp--compute-process-environment environment-fn))
@@ -7435,7 +7509,7 @@ process listening for TCP connections on the provided port."
                 (set-process-query-on-exit-flag tcp-proc nil)
                 (set-process-filter tcp-proc filter)
                 (cons tcp-proc proc)))
-   :test? (lambda () (executable-find (cl-first (funcall command-fn 0))))))
+   :test? (lambda () (lsp-server-present? (funcall command-fn 0)))))
 
 (defalias 'lsp-tcp-server 'lsp-tcp-server-command)
 
@@ -7486,37 +7560,9 @@ should return the command to start the LS server."
                 (set-process-filter tcp-client-connection filter)
                 (set-process-sentinel tcp-client-connection sentinel)
                 (cons tcp-client-connection cmd-proc)))
-   :test? (lambda () (executable-find (cl-first (funcall command-fn 0))))))
+   :test? (lambda () (lsp-server-present? (funcall command-fn 0)))))
 
-(defun lsp-tramp-connection (local-command &optional generate-error-file-fn)
-  "Create LSP stdio connection named name.
-LOCAL-COMMAND is either list of strings, string or function which
-returns the command to execute."
-  (list :connect (lambda (filter sentinel name environment-fn _workspace)
-                   (let* ((final-command (lsp-resolve-final-function local-command))
-                          ;; wrap with stty to disable converting \r to \n
-                          (process-name (generate-new-buffer-name name))
-                          (wrapped-command (s-join
-                                            " "
-                                            (append '("stty" "raw" ";")
-                                                    final-command
-                                                    (list
-                                                     (concat "2>"
-                                                             (or (when generate-error-file-fn
-                                                                   (funcall generate-error-file-fn name))
-                                                                 (format "/tmp/%s-%s-stderr" name
-                                                                         (cl-incf lsp--stderr-index))))))))
-                          (process-environment
-                           (lsp--compute-process-environment environment-fn)))
-                     (let ((proc (start-file-process-shell-command process-name
-                                                                   (format "*%s*" process-name)
-                                                                   wrapped-command)))
-                       (set-process-sentinel proc sentinel)
-                       (set-process-filter proc filter)
-                       (set-process-query-on-exit-flag proc nil)
-                       (set-process-coding-system proc 'binary 'binary)
-                       (cons proc proc))))
-        :test? (lambda () (-> local-command lsp-resolve-final-function lsp-server-present?))))
+(defalias 'lsp-tramp-connection 'lsp-stdio-connection)
 
 (defun lsp--auto-configure ()
   "Autoconfigure `company', `flycheck', `lsp-ui', etc if they are installed."
@@ -8045,10 +8091,11 @@ nil."
   ;; typescript-language-server). This is why we check for existence and not
   ;; that the path is executable.
   (let ((path (lsp-resolve-value path)))
-    (if (and (f-absolute? path)
-             (f-exists? path))
-        path
-      (executable-find path))))
+    (cond
+     ((and (f-absolute? path)
+           (f-exists? path))
+      path)
+     ((executable-find path t) path))))
 
 (defun lsp-package-path (dependency)
   "Path to the DEPENDENCY each of the registered providers."
@@ -8081,7 +8128,8 @@ nil."
                (f-join lsp-server-install-dir "npm" package
                        (cond ((eq system-type 'windows-nt) "")
                              (t "bin"))
-                       path))))
+                       path)
+               t)))
     (unless (and path (f-exists? path))
       (error "The package %s is not installed.  Unable to find %s" package path))
     path))
@@ -8344,10 +8392,7 @@ the next question until the queue is empty."
   (->> lsp-clients hash-table-values (-filter pred)))
 
 (defun lsp--find-clients ()
-  "Find clients which can handle BUFFER-MAJOR-MODE.
-SESSION is the currently active session. The function will also
-pick only remote enabled clients in case the FILE-NAME is on
-remote machine and vice versa."
+  "Find clients which can handle current buffer."
   (-when-let (matching-clients (lsp--filter-clients (-andfn #'lsp--supports-buffer?
                                                             #'lsp--server-binary-present?)))
     (lsp-log "Found the following clients for %s: %s"
@@ -8380,23 +8425,25 @@ remote machine and vice versa."
   (--each (lsp-session-folders (lsp-session))
     (lsp-workspace-folders-remove it)))
 
-
 (defun lsp-register-client (client)
   "Registers LSP client CLIENT."
-  (cl-assert (symbolp (lsp--client-server-id client)) t)
-  (cl-assert (or
-              (functionp (lsp--client-activation-fn client))
-              (and (listp (lsp--client-major-modes client))
-                   (seq-every-p (apply-partially #'symbolp)
-                                (lsp--client-major-modes client))))
-             nil "Invalid activation-fn and/or major-modes.")
   (let ((client-id (lsp--client-server-id client)))
     (puthash client-id client lsp-clients)
     (setplist (intern (format "lsp-%s-after-open-hook" client-id))
               `( standard-value (nil) custom-type hook
                  custom-package-version (lsp-mode . "7.0.1")
                  variable-documentation ,(format "Hooks to run after `%s' server is run." client-id)
-                 custom-requests nil))))
+                 custom-requests nil)))
+  (when (and lsp-auto-register-remote-clients
+             (not (lsp--client-remote? client)))
+    (let ((remote-client (copy-lsp--client client)))
+      (setf (lsp--client-remote? remote-client) t
+            (lsp--client-server-id remote-client) (intern
+                                                   (format "%s-tramp"
+                                                           (lsp--client-server-id client)))
+            ;; disable automatic download
+            (lsp--client-download-server-fn remote-client) nil)
+      (lsp-register-client remote-client))))
 
 (defun lsp--create-initialization-options (_session client)
   "Create initialization-options from SESSION and CLIENT.
@@ -8563,24 +8610,24 @@ When ALL is t, erase all log buffers of the running session."
 
 
 
-(cl-defgeneric lsp-process-id ((process process))
+(cl-defmethod lsp-process-id ((process process))
   (process-id process))
 
-(cl-defgeneric lsp-process-name ((process process)) (process-name process))
+(cl-defmethod lsp-process-name ((process process)) (process-name process))
 
-(cl-defgeneric lsp-process-status ((process process)) (process-status process))
+(cl-defmethod lsp-process-status ((process process)) (process-status process))
 
-(cl-defgeneric lsp-process-kill ((process process))
+(cl-defmethod lsp-process-kill ((process process))
   (when (process-live-p process)
     (kill-process process)))
 
-(cl-defgeneric lsp-process-send ((process process) message)
+(cl-defmethod lsp-process-send ((process process) message)
   (condition-case err
       (process-send-string process (lsp--make-message message))
     ('error (lsp--error "Sending to process failed with the following error: %s"
                         (error-message-string err)))))
 
-(cl-defgeneric lsp-process-cleanup (process)
+(cl-defmethod lsp-process-cleanup (process)
   ;; Kill standard error buffer only if the process exited normally.
   ;; Leave it intact otherwise for debugging purposes.
   (let ((buffer (-> process process-name get-buffer)))
@@ -9565,12 +9612,6 @@ call-site)."
   "If non-nil update inlay hints immediately when scrolling or
 modifying window sizes."
   :type 'boolean
-  :package-version '(lsp-mode . "8.0.1"))
-
-(defcustom lsp-inlay-hint-enable nil
-  "If non-nil it will enable inlay hints."
-  :type 'boolean
-  :group 'lsp-mode
   :package-version '(lsp-mode . "8.0.1"))
 
 (defun lsp--format-inlay (text kind)
