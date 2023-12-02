@@ -22,6 +22,16 @@ After stopping or killing the process, retry to update." t nil)
 ;;;### (autoloads nil nil ("lsp-python-ms-pkg.el") (0 0 0 0))
 
 ;;;***
+
+
+;;; Generated autoloads from lsp-python-ms.el
+
+(autoload 'lsp-python-ms-update-server "lsp-python-ms" "\
+Update Microsoft Python Language Server.
+
+On Windows, if the server is running, the updating will fail.
+After stopping or killing the process, retry to update." t)
+(register-definition-prefixes "lsp-python-ms" '("lsp-python-ms-"))
 
 ;; Local Variables:
 ;; version-control: never
