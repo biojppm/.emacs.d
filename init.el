@@ -95,28 +95,12 @@
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 
+
 ;;-------------------------------------------------------------------------------
-;; set garbage-collection threshold to 10MB to speed up flx-ido:
-;; see https://github.com/lewang/flx
-(setq gc-cons-threshold 10000000)
-;; restore after startup
-(add-hook 'after-init-hook
-          #'(lambda () (setq gc-cons-threshold 800000)))
+(setq gc-cons-threshold (* 100 1024 1024) ;; advised for lsp
+      read-process-output-max (* 1024 1024) ;; advised for lsp
+      )
 
-;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
-(defun run-command-in-new-frame-simple (command)
-  (select-frame (make-frame))
-  (funcall #'command))
-
-(defun run-command-in-new-frame (prefixarg command-name)
-  "open a new frame and interactively run a command in it"
-  (interactive (list current-prefix-arg (read-extended-command)))
-  (let ((command (intern-soft command-name)))
-    (unless command
-      (error "%s is not a valid command name" command-name))
-    (select-frame (make-frame))
-    (let ((prefix-arg prefixarg))
-      (command-execute command))))
 
 ;;-------------------------------------------------------------------------------
 ;; Automatically compile and save ~/.emacs.el
@@ -185,8 +169,6 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives
-             '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 ;(when (not package-archive-contents)
 ;; (package-refresh-contents))
 (package-initialize)
@@ -288,6 +270,15 @@
   :ensure t
   :config
   (require 'vlf-setup))
+
+
+;;-------------------------------------------------------------------------------
+;; https://melpa.org/#/sudo-edit
+(use-package sudo-edit
+  :defer t
+  :commands (sudo)
+  )
+
 
 ;;-------------------------------------------------------------------------------
 
@@ -932,16 +923,15 @@
             (local-set-key (kbd "M-<up>") 'dired-up-directory)
             ))
 
-(setq completion-ignored-extensions (delete ".pg" completion-ignored-extensions))
-(setq completion-ignored-extensions (delete ".pgs" completion-ignored-extensions))
-(setq completion-ignored-extensions (delete ".pgc" completion-ignored-extensions))
-
 ;; use fd in dired
 (use-package fd-dired)
+
 
 ;;-------------------------------------------------------------------------
 ;; IDO mode: (Interactively DO things)
 ;; https://www.masteringemacs.org/article/introduction-to-ido-mode
+;; TODO: tryout ido, helm and ivy:
+;; https://www.reddit.com/r/emacs/comments/c0gt96/ido_vs_helm_vs_ivy_which_is_ones_are_the_best/
 
 (require 'ido)
 (require 'flx-ido) ; https://github.com/lewang/flx
@@ -1047,6 +1037,31 @@
 ;;
 ;; If Ido is getting in your way, remember the fallback commands:
 ;;  C-f for files; C-b for buffers.
+
+
+;;-------------------------------------------------------------------------
+;; smex
+;; https://github.com/nonsequitur/smex
+;; use IDO for completion of commands in M-x with enhancements
+;; like putting your most-used commands at the front of the list
+
+(use-package smex
+  :config
+  (smex-initialize)
+  :commands
+  (smex smex-major-mode-commands)
+  :bind
+  (("M-x"   . smex)
+   ("M-X"   . smex-major-mode-commands)
+   ("C-M-x" . execute-extended-command)
+   ;;:map ido-completion-map
+   ;;("<tab>" . minibuffer-complete)
+   ;;("C-h f" . smex-describe-function) ;; fails with missing symbol ido-require-match
+   ;;("C-h w" . smex-where-is)
+   ;;("M-."   . smex-find-function)
+   ;;("C-a"   . move-beginning-of-line)
+   )
+  )
 
 
 ;;-----------------------------------------------------------------------------
@@ -1232,30 +1247,6 @@ With a prefix argument P, isearch for the symbol at point."
 (global-set-key [remap isearch-forward]
                 #'my/isearch-forward-symbol-with-prefix)
 
-
-;;-------------------------------------------------------------------------
-;; smex
-;; https://github.com/nonsequitur/smex
-;; use IDO for completion of commands in M-x with enhancements
-;; like putting your most-used commands at the front of the list
-
-(use-package smex
-  :config
-  (smex-initialize)
-  :commands
-  (smex smex-major-mode-commands)
-  :bind
-  (("M-x"   . smex)
-   ("M-X"   . smex-major-mode-commands)
-   ("C-M-x" . execute-extended-command)
-   ;;:map ido-completion-map
-   ;;("<tab>" . minibuffer-complete)
-   ;;("C-h f" . smex-describe-function) ;; fails with missing symbol ido-require-match
-   ;;("C-h w" . smex-where-is)
-   ;;("M-."   . smex-find-function)
-   ;;("C-a"   . move-beginning-of-line)
-   )
-  )
 
 ;;-------------------------------------------------------------------------
 ;; Auto complete
@@ -1516,7 +1507,9 @@ If point was already at that position, move point to beginning of line."
 
 (win-nav-rsz)
 
+;; buffer list
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+
 
 ;;=========================================================================
 ;; EDITING
@@ -1577,6 +1570,7 @@ If point was already at that position, move point to beginning of line."
 ;; There are also some other facilities you may never think about. Refer to
 ;; the document of function ‘iedit-mode’ (C-h f iedit-mode RET) for more
 ;; details.
+
 
 ;;------------------------------------------------------------------
 ;; multiple-cursors. https://github.com/magnars/multiple-cursors.el
@@ -2193,6 +2187,7 @@ original line and use the absolute value."
   (setq lsp-enable-on-type-formatting nil)
   (setq lsp-signature-auto-activate nil)
   (setq lsp-enable-file-watchers nil)
+  (setq lsp-use-plists t)  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
   ;; fix M-? fail: https://github.com/emacs-lsp/lsp-java/issues/122
   (setq xref-prompt-for-identifier
         '(not xref-find-definitions
@@ -2211,7 +2206,7 @@ original line and use the absolute value."
   (lsp-ui-mode 0)
   ;;(lsp-signature-mode 0)
   (message "lsp-mode 1")
-  (lsp-ui-peek-mode 1)
+  (lsp-ui-peek-mode 0)
   (message "lsp-mode 2")
   (message "lsp-mode :config - done")
   :bind
@@ -2818,29 +2813,17 @@ and doesn't work in windows"
       )
     )
   )
-(add-hook 'compilation-mode-hook 'my-compilation-hook)
-(add-hook 'compilation-finish-functions 'my-after-compilation-hook)
-(global-set-key [C-pause] 'my-kill-compilation)
-(global-set-key [C-f7] 'my-kill-compilation)
-(global-set-key [C-f6] 'my-compile-fuzzy)
-(global-set-key [S-f6] 'my-compile)
-(global-set-key [f6] 'my-recompile)
-(global-set-key [f8] 'next-error)
-(global-set-key [S-f8] 'previous-error)
-
-
 (require 'ansi-color)
-(defun colorize-compilation-buffer ()
+(defun my-colorize-compilation-buffer ()
   (read-only-mode)
   (ansi-color-apply-on-region compilation-filter-start (point))
   (read-only-mode))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+(add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer)
+(add-hook 'compilation-mode-hook 'my-compilation-hook)
+(add-hook 'compilation-finish-functions 'my-after-compilation-hook)
 
 
-;;-------------------------------------------------------------------------
-;; Debugging
-
-;; TODO: dap-mode
+;; dap-mode
 ;; https://emacs-lsp.github.io/dap-mode/page/configuration/
 ;; https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/#debugging
 (use-package dap-mode
@@ -2858,10 +2841,11 @@ and doesn't work in windows"
      )
    )
   (dap-ui-mode 1)
+  (dap-ui-repl-mode 1)
   ;; enables mouse hover support
   (dap-tooltip-mode 1)
   ;; use tooltips for mouse hover
-  ;; if it is not enabled `dap-mode' will use the minibuffer.
+  ;; if this is not enabled, dap-mode will use the minibuffer.
   (tooltip-mode 1)
   ;; displays floating panel with debug buttons
   ;; requires emacs 26+
@@ -2893,6 +2877,111 @@ and doesn't work in windows"
   ;;;;  )
   )
 
+(require 'frame-fns) ;; for (get-a-frame)
+(defun my-dap-get-frame ()
+  (interactive)
+  (let ((frame (get-a-frame "--dap-debug--"))) ;; https://emacs.stackexchange.com/questions/19035/finding-frames-by-name
+    (if frame
+        (progn (select-frame frame) frame)
+      (progn
+        (message "my-dap: debug frame '--dap-debug--': not found.")
+        nil
+        )
+      )
+    )
+  )
+(defun my-dap-start-or-continue-or-restart ()
+  (interactive)
+  (if (not (my-dap-get-frame))
+      (progn
+        (message "my-dap: debug frame '--dap-debug--': not found. start!")
+        ;; https://emacs.stackexchange.com/questions/58815/how-to-set-name-of-an-emacs-frame
+        (select-frame (make-frame '((name . "--dap-debug--")))) ;; the name needs to be hardcoded!!!
+        (command-execute 'dap-debug) ;; run interactively
+        )
+    (progn
+      (message "my-dap: debug frame '--dap-debug--': found. continue.")
+      (if (dap--session-running (dap--cur-session))
+          (progn
+            (message "my-dap: session alive. continue.")
+            (command-execute 'dap-continue)
+            )
+        (progn
+          (warn "my-dap: session terminated. start again.")
+          (command-execute 'dap-debug-last)
+          )
+        )
+      )
+    )
+  )
+(defun my-dap-stop ()
+  (interactive)
+  (when (my-dap-get-frame)
+    (command-execute 'dap-disconnect)
+    (delete-frame)
+    )
+  )
+(defun my-dap-restart ()
+  (interactive)
+  (when (my-dap-get-frame)
+    (command-execute 'dap-disconnect)
+    (command-execute 'dap-debug-last)
+    )
+  )
+(defun my-dap-continue () (interactive) (when (my-dap-get-frame) (command-execute 'dap-continue)))
+(defun my-dap-next () (interactive) (when (my-dap-get-frame) (command-execute 'dap-next)))
+(defun my-dap-step-in () (interactive) (when (my-dap-get-frame) (command-execute 'dap-step-in)))
+(defun my-dap-step-out () (interactive) (when (my-dap-get-frame) (command-execute 'dap-step-out)))
+(defun my-dap-stack-up () (interactive) (when (my-dap-get-frame) (command-execute 'dap-up-stack-frame)))
+(defun my-dap-stack-down () (interactive) (when (my-dap-get-frame) (command-execute 'dap-down-stack-frame)))
+(defun my-dap-stack-goto () (interactive) (when (my-dap-get-frame) (command-execute 'dap-switch-stack-frame)))
+(defun my-dap-thread-goto () (interactive) (when (my-dap-get-frame) (command-execute 'dap-ui-thread-select)))
+(defun my-dap-expr-add () (interactive) (when (my-dap-get-frame) (command-execute 'dap-ui-expressions-add)))
+(global-set-key [f5] 'my-dap-start-or-continue-or-restart)
+(global-set-key [S-f5] 'my-dap-stop)
+(global-set-key [C-S-f5] 'my-dap-restart)
+(global-set-key [f6] 'my-recompile)
+(global-set-key [S-f6] 'my-compile)
+(global-set-key [C-f6] 'my-compile-fuzzy)
+(global-set-key [S-C-f6] 'my-kill-compilation)
+(global-set-key [f7] 'my-dap-expr-add)
+(global-set-key [f8] 'next-error)
+(global-set-key [S-f8] 'previous-error)
+(global-set-key [f9] 'dap-breakpoint-toggle)
+;;(global-set-key [S-f9]   'gud-print)  ;; print var under cursor or region
+;;(global-set-key [C-S-f9] 'gud-watch)  ;; watch var under cursor or region
+(global-set-key [f10]    'my-dap-next)
+;;(global-set-key [C-f10]  'gud-until)  ;; execute until current line
+(global-set-key [f11]    'my-dap-step-in)
+(global-set-key [S-f11]  'my-dap-step-out)
+(global-set-key [f12]    'my-dap-stack-down)
+(global-set-key [S-f12]  'my-dap-stack-up)
+(global-set-key [C-f12]  'my-dap-stack-goto)
+(global-set-key [C-S-f12]  'my-dap-thread-goto)
+
+
+
+;;-------------------------------------------------------------------------
+;; Debugging
+
+;; see DAP-mode above
+
+
+;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
+(defun run-command-in-new-frame-simple (command)
+  (select-frame (make-frame))
+  (funcall #'command)
+  )
+(defun run-command-in-new-frame (prefixarg command-name)
+  "open a new frame and interactively run a command in it"
+  (interactive (list current-prefix-arg (read-extended-command)))
+  (let ((command (intern-soft command-name)))
+    (unless command
+      (error "%s is not a valid command name" command-name))
+    (select-frame (make-frame))
+    (let ((prefix-arg prefixarg))
+      (command-execute command)))
+  )
 
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/GDB-Graphical-Interface.html#GDB-Graphical-Interface
 ;;
@@ -3159,7 +3248,7 @@ and doesn't work in windows"
   ;;   )
   )
 (add-hook 'gdb-mode-hook 'my-gdb-hook)
-(global-set-key [f5] 'gdb)
+;;(global-set-key [f5] 'gdb)
 
 (defun edb ()
   "start a debugging session in a new frame"
@@ -3814,6 +3903,7 @@ mode.
      solarized-theme
      sqlite3
      string-inflection
+     sudo-edit
      syntax-subword
      tango-plus-theme
      term-run
