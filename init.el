@@ -3827,7 +3827,6 @@ mode.
      counsel-etags
      counsel-projectile
      cquery
-     csharp-mode
      cython-mode
      dap-mode
      diminish
