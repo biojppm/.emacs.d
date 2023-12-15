@@ -2823,7 +2823,11 @@ and doesn't work in windows"
 (add-hook 'compilation-finish-functions 'my-after-compilation-hook)
 
 
-;; dap-mode
+;;-------------------------------------------------------------------------
+;; Debugging
+
+;; dap-mode (Debug Application Protocol)
+;; https://emacs-lsp.github.io/dap-mode/page/features/
 ;; https://emacs-lsp.github.io/dap-mode/page/configuration/
 ;; https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/#debugging
 (use-package dap-mode
@@ -2916,7 +2920,7 @@ and doesn't work in windows"
         (command-execute 'dap-debug) ;; run interactively
         )
     (progn
-      (message "my-dap: debug frame '--dap-debug--': found. continue.")
+      (message "my-dap: debug frame '--dap-debug--': frame found. continue.")
       (if (dap--session-running (dap--cur-session))
           (progn
             (message "my-dap: session alive. continue.")
@@ -2974,13 +2978,6 @@ and doesn't work in windows"
 (global-set-key [S-f12]  'my-dap-stack-up)
 (global-set-key [C-f12]  'my-dap-stack-goto)
 (global-set-key [C-S-f12]  'my-dap-thread-goto)
-
-
-
-;;-------------------------------------------------------------------------
-;; Debugging
-
-;; see DAP-mode above
 
 
 ;; http://emacs.stackexchange.com/questions/7126/run-command-in-new-frame
