@@ -2852,6 +2852,7 @@ and doesn't work in windows"
   (dap-ui-controls-mode 1)
   :config
   ;; dap for c++
+  (my-dap-ensure-cpptools-setup)
   (use-package dap-cpptools)
   ;;;;(require 'dap-lldb)
   ;;;;;;; set the debugger executable (c++)
@@ -2877,6 +2878,21 @@ and doesn't work in windows"
   ;;;;  )
   )
 
+(defun my-dap-ensure-cpptools-setup ()
+  (let ((-cpptoolsdir (concat user-emacs-directory ".extension/vscode/cpptools")))
+    (if (file-directory-p -cpptoolsdir)
+      (progn
+        (message "cpptools found: %s" -cpptoolsdir)
+        )
+      (progn
+        (message "cpptools does not exist yet: %s" -cpptoolsdir)
+        (message "cpptools: setting up!")
+        (dap-cpptools-setup)
+        (message "cpptools: setting up: OK!")
+        )
+      )
+    )
+  )
 (require 'frame-fns) ;; for (get-a-frame)
 (defun my-dap-get-frame ()
   (interactive)

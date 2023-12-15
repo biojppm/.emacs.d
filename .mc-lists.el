@@ -15,10 +15,12 @@
         c-hungry-delete-backwards
         c-hungry-delete-forward
         c-indent-line-or-region
+        company-complete
         counsel-yank-pop
         dired-next-line
         downcase-region
         drag-stuff-down
+        electric-newline-and-maybe-indent
         end-of-visual-line
         gcm-scroll-down
         gcm-scroll-up
