@@ -3922,7 +3922,6 @@ mode.
      toml-mode
      transient
      undo-tree
-     use-package
      vlf
      volatile-highlights
      vscode-dark-plus-theme
