@@ -2041,72 +2041,6 @@ original line and use the absolute value."
               )
   )
 
-;;-------------------------------------------------------------------------
-;; https://github.com/atilaneves/cmake-ide
-
-;;(defun cmake-ide--get-default-build-dir ()
-;;  "get a default value for cmake-ide-build-dir"
-;;  (if (and (boundp 'cmake-ide-build-dir)
-;;           (not (string-equal 'cmake-ide-build-dir "")))
-;;      ;; if there's a current cmake-ide-build-dir, use it
-;;      (progn
-;;        ;;(message "cmake-ide-build-dir already defined")
-;;        cmake-ide-build-dir)
-;;      ;; otherwise...
-;;    (progn
-;;      ;; is there a result from a previous session?
-;;      (let ((fn (concat emacs-dir "cmake-ide-build-dir.save")))
-;;        (if (file-exists-p fn)
-;;          (progn
-;;            ;; load the file into a string
-;;            ;;(message "found a previous session at %s: %s" fn
-;;            ;;         (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-;;            (with-temp-buffer (insert-file-contents fn)(buffer-string)))
-;;          ;; otherwise, just use the current directory
-;;          (progn
-;;            ;;(message "cmake-ide-build-dir from current directory: %s"
-;;            ;;         (setq fonix (file-name-directory (buffer-file-name))))
-;;            (file-name-directory (buffer-file-name))
-;;            )
-;;          )
-;;        )
-;;      )
-;;    )
-;;  )
-;;
-;;(defun cmake-ide--set-build-dir (dir)
-;;  "set cmake-ide-build-dir, and store the value to a persistent file"
-;;  (if (and (boundp 'cmake-ide-build-dir)
-;;           (not (string-equal 'cmake-ide-build-dir "")))
-;;      (progn (message "cmake-ide-build-dir was %s" cmake-ide-build-dir))
-;;      (progn (message "cmake-ide-build-dir was empty"))
-;;    )
-;;  (setq cmake-ide-build-dir dir)
-;;  (message "cmake-ide-build-dir is now %s" dir)
-;;  ;; save this value to a file for use in future sessions
-;;  (write-region cmake-ide-build-dir nil
-;;                (concat user-emacs-directory "cmake-ide-build-dir.save"))
-;;  )
-;;
-;;(defun cmake-ide-set-build-dir (dir)
-;;  (interactive
-;;   (list (read-directory-name "Enter the cmake-ide build directory: "
-;;                              (cmake-ide--get-default-build-dir))))
-;;  (cmake-ide--set-build-dir dir)
-;;  )
-;;
-;;(defun my-cmake-ide-setup()
-;;  (interactive)
-;;  (require 'rtags)
-;;  (call-interactively 'cmake-ide-set-build-dir)
-;;  )
-;;
-;;(use-package cmake-ide
-;;  :defer t
-;;  :init
-;;;;  :bind ("s-p" . projectile-command-map)
-;;  :commands (cmake-ide-setup)
-;;  )
 
 ;;-------------------------------------------------------------------------
 ;;MODES
@@ -2230,8 +2164,13 @@ original line and use the absolute value."
   :defer t
   :commands cmake-mode
   :config
-  (company-mode t)
-  (add-to-list 'company-backends 'company-cmake)
+  (use-package cmake-font-lock
+    :ensure t
+    :after cmake-mode
+    :config (cmake-font-lock-activate)
+    )
+  ;; pip install cmake-language-server
+  :hook (cmake-mode . lsp-deferred)
   )
 
 ;; cmany
@@ -3822,137 +3761,10 @@ mode.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '(
-     "80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c"
-     "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65"
-     "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc"
-     "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5"
-     "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4"
-     "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990"
-     "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553"
-     "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4"
-     "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
-     default
-     )
-   )
+   '("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c" "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default))
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(
-     ag
-     anzu
-     arduino-mode
-     babel
-     babel-repl
-     backward-forward
-     bicycle
-     bitbake
-     ccls
-     clang-format
-     clean-aindent-mode
-     cmake-mode
-     company-c-headers
-     company-rtags
-     company-ycmd
-     counsel-etags
-     counsel-projectile
-     cquery
-     cython-mode
-     dap-mode
-     diminish
-     dirtree
-     dockerfile-mode
-     drag-stuff
-     dtrt-indent
-     dumb-jump
-     elisp-slime-nav
-     elpy
-     ess
-     fd-dired
-     find-file-in-project
-     find-file-in-repository
-     flatbuffers-mode
-     flx-ido
-     flycheck
-     flycheck-rust
-     flycheck-ycmd
-     flymake-yaml
-     forge
-     fzf
-     git-timemachine
-     glsl-mode
-     google-this
-     hemisu-theme
-     highlight-symbol
-     hungry-delete
-     ido-completing-read+
-     ido-hacks
-     ido-vertical-mode
-     idomenu
-     iedit
-     ivy
-     ivy-searcher
-     levenshtein
-     lsp-mode
-     lsp-python-ms
-     lsp-ui
-     lua-mode
-     magit
-     man-commands
-     markdown-mode
-     markdown-toc
-     mc-extras
-     modern-cpp-font-lock
-     monokai-theme
-     multiple-cursors
-     nhexl-mode
-     open-in-msvs
-     paradox
-     pdb-mode
-     pdf-tools
-     persp-mode
-     persp-projectile
-     php-mode
-     powershell
-     protobuf-mode
-     pylint
-     pytest-pdb-break
-     realgud
-     realgud-ipdb
-     rg
-     ripgrep
-     rtags
-     rtags-xref
-     rust-mode
-     slime
-     smart-mode-line
-     smart-shift
-     smartparens
-     smex
-     solarized-theme
-     sqlite3
-     string-inflection
-     sudo-edit
-     syntax-subword
-     tango-plus-theme
-     term-run
-     toml-mode
-     transient
-     undo-tree
-     vlf
-     volatile-highlights
-     vscode-dark-plus-theme
-     web-mode
-     wgrep
-     wgrep-ag
-     which-key
-     window-number
-     ws-butler
-     yaml-mode
-     yasnippet-classic-snippets
-     zenburn-theme
-     )
-   )
- )
+   '(cmake-font-lock ag anzu arduino-mode babel babel-repl backward-forward bicycle bitbake ccls clang-format clean-aindent-mode cmake-mode company-c-headers company-rtags company-ycmd counsel-etags counsel-projectile cquery cython-mode dap-mode diminish dirtree dockerfile-mode drag-stuff dtrt-indent dumb-jump elisp-slime-nav elpy ess fd-dired find-file-in-project find-file-in-repository flatbuffers-mode flx-ido flycheck flycheck-rust flycheck-ycmd flymake-yaml forge fzf git-timemachine glsl-mode google-this hemisu-theme highlight-symbol hungry-delete ido-completing-read+ ido-hacks ido-vertical-mode idomenu iedit ivy ivy-searcher levenshtein lsp-mode lsp-python-ms lsp-ui lua-mode magit man-commands markdown-mode markdown-toc mc-extras modern-cpp-font-lock monokai-theme multiple-cursors nhexl-mode open-in-msvs paradox pdb-mode pdf-tools persp-mode persp-projectile php-mode powershell protobuf-mode pylint pytest-pdb-break realgud realgud-ipdb rg ripgrep rtags rtags-xref rust-mode slime smart-mode-line smart-shift smartparens smex solarized-theme sqlite3 string-inflection sudo-edit syntax-subword tango-plus-theme term-run toml-mode transient undo-tree vlf volatile-highlights vscode-dark-plus-theme web-mode wgrep wgrep-ag which-key window-number ws-butler yaml-mode yasnippet-classic-snippets zenburn-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
