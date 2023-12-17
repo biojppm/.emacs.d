@@ -2826,15 +2826,41 @@ and doesn't work in windows"
 ;;-------------------------------------------------------------------------
 ;; Debugging
 
+(defun my-dap-ensure-cpptools-setup ()
+  (message "my-dap-ensure 0")
+  (let ((-cpptoolsdir (concat user-emacs-directory ".extension/vscode/cpptools")))
+    (if (file-directory-p -cpptoolsdir)
+      (progn
+        (message "cpptools found: %s" -cpptoolsdir)
+        )
+      (progn
+        (message "cpptools does not exist yet: %s" -cpptoolsdir)
+        (message "cpptools: setting up!")
+        (dap-cpptools-setup)
+        (message "cpptools: setting up: OK!")
+        )
+      )
+    )
+  (message "my-dap-ensure 1")
+  )
+
 ;; dap-mode (Debug Application Protocol)
 ;; https://emacs-lsp.github.io/dap-mode/page/features/
 ;; https://emacs-lsp.github.io/dap-mode/page/configuration/
 ;; https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/#debugging
 (use-package dap-mode
   :defer t
+  :commands (
+   dap-debug
+   dap-debug-last
+   dap-disconnect
+   dap-continue
+   )
   :custom
   ;; Automatically configure dap
+  (message "dap-custom 0")
   (dap-auto-configure-mode t)
+  (message "dap-custom 1")
   (dap-auto-configure-features
    '(
      sessions
@@ -2844,6 +2870,7 @@ and doesn't work in windows"
      tooltip
      )
    )
+  (message "dap-custom 2")
   (dap-ui-mode 1)
   (dap-ui-repl-mode 1)
   ;; enables mouse hover support
@@ -2854,10 +2881,14 @@ and doesn't work in windows"
   ;; displays floating panel with debug buttons
   ;; requires emacs 26+
   (dap-ui-controls-mode 1)
-  :config
+  (message "dap-custom 3")
+  :config ;; eval after loading
+  (message "dap-config 0")
   ;; dap for c++
   (my-dap-ensure-cpptools-setup)
+  (message "dap-config 1")
   (use-package dap-cpptools)
+  (message "dap-config 2")
   ;;;;(require 'dap-lldb)
   ;;;;;;; set the debugger executable (c++)
   ;;;;(setq dap-lldb-debug-program '("/usr/bin/lldb-vscode"))
@@ -2880,22 +2911,7 @@ and doesn't work in windows"
   ;;;;      (copy-file default filename))
   ;;;;    (find-file-existing filename))
   ;;;;  )
-  )
-
-(defun my-dap-ensure-cpptools-setup ()
-  (let ((-cpptoolsdir (concat user-emacs-directory ".extension/vscode/cpptools")))
-    (if (file-directory-p -cpptoolsdir)
-      (progn
-        (message "cpptools found: %s" -cpptoolsdir)
-        )
-      (progn
-        (message "cpptools does not exist yet: %s" -cpptoolsdir)
-        (message "cpptools: setting up!")
-        (dap-cpptools-setup)
-        (message "cpptools: setting up: OK!")
-        )
-      )
-    )
+  (message "dap-config 3")
   )
 (require 'frame-fns) ;; for (get-a-frame)
 (defun my-dap-get-frame ()
