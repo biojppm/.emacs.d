@@ -133,8 +133,6 @@ all: ripgrep \
 	cmany \
 	pip_packages \
 	clang_install \
-	cquery_install \
-	ccls_install \
 	system_only \
 	marp \
 	swig
@@ -145,7 +143,8 @@ else
 system_only: linux_only
 endif
 windows_only: tcpview iperf irfanview depends22_x86 depends22
-linux_only: rtags_install
+linux_only:
+
 
 #----------------------------------------------------------------------
 
