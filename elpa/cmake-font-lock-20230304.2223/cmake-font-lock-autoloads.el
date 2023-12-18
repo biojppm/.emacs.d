@@ -23,6 +23,7 @@ To activate this every time a CMake file is opened, use the following:
     (add-hook 'cmake-mode-hook 'cmake-font-lock-activate)" t)
 (add-hook 'change-major-mode-after-body-hook (lambda nil (when (apply #'derived-mode-p cmake-font-lock-modes) (cmake-font-lock-activate))))
 (register-definition-prefixes "cmake-font-lock" '("cmake-font-lock-"))
+
 
 ;;; End of scraped data
 
