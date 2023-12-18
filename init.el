@@ -2164,6 +2164,8 @@ original line and use the absolute value."
   :defer t
   :commands cmake-mode
   :config
+  ;;(company-mode t)
+  ;;(add-to-list 'company-backends 'company-cmake)
   (use-package cmake-font-lock
     :ensure t
     :after cmake-mode
@@ -2185,6 +2187,7 @@ original line and use the absolute value."
 (use-package toml-mode)
 (use-package rust-mode
   :hook (rust-mode . my-lsp-hook))
+
 
 ;; Bitbake/Yocto
 ;; https://github.com/canatella/bitbake-el
