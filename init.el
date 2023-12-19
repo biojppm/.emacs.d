@@ -694,9 +694,22 @@
 )
 
 ;------------------------------------------------------------------
+;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Resizing-Windows.html
+(defun my-set-window-width (w n)
+  "Set the window's width."
+  (window-resize w (- n (window-width)) t)
+  )
+(defun my-set-window-height (w n)
+  "Set the window's height."
+  (window-resize w (- n (window-height)) nil)
+  )
 (defun set-window-width (n)
-  "Set the selected window's width."
-  (adjust-window-trailing-edge (selected-window) (- n (window-width)) t))
+  (my-set-window-width (selected-window) n)
+  )
+(defun set-window-height (n)
+  (my-set-window-height (selected-window) n)
+  )
+
 
 ;;http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
 (define-minor-mode sticky-buffer-mode
@@ -2772,9 +2785,9 @@ and doesn't work in windows"
   (message "my-dap-ensure 0")
   (let ((-cpptoolsdir (concat user-emacs-directory ".extension/vscode/cpptools")))
     (if (file-directory-p -cpptoolsdir)
-      (progn
-        (message "cpptools found: %s" -cpptoolsdir)
-        )
+        (progn
+          (message "cpptools found: %s" -cpptoolsdir)
+          )
       (progn
         (message "cpptools does not exist yet: %s" -cpptoolsdir)
         (message "cpptools: setting up!")
@@ -2784,6 +2797,101 @@ and doesn't work in windows"
       )
     )
   (message "my-dap-ensure 1")
+  )
+
+(require 'frame-fns) ;; for (get-a-frame)
+(defun my-dap-get-frame ()
+  (interactive)
+  (let ((fr (get-a-frame "--dap-debug--"))) ;; https://emacs.stackexchange.com/questions/19035/finding-frames-by-name
+    (if fr
+        (progn
+          (when (not (equal fr (selected-frame)))
+            (select-frame fr)
+            )
+          fr
+          )
+      (progn
+        (message "my-dap: debug frame '--dap-debug--': not found.")
+        (my-dap-window-tweaks-reset nil)
+        nil
+        )
+      )
+    )
+  )
+(defun my-map-window-by-buffer-name- (pattern mapfn matchfn)
+  (let* ((fr (my-dap-get-frame)))
+    (when fr
+      (message "tweaking: frame ok")
+      (dolist (w (window-list))
+        (let* ((name (buffer-name (window-buffer w))))
+          (message "'%s': '%s': checking..." pattern name)
+          (when (funcall matchfn name)
+            (message "'%s': '%s': apply!" pattern name)
+            (select-window w)
+            (funcall mapfn w)
+            )
+          (message "'%s': '%s': checked" pattern name)
+          )
+        )
+      )
+    )
+  )
+(defun my-map-window-by-buffer-name-eq (name fn)
+  (my-map-window-by-buffer-name- name fn `(lambda (bufname) (string-equal ,name bufname))))
+(defun my-map-window-by-buffer-name-suffix (name fn)
+  (my-map-window-by-buffer-name- name fn `(lambda (bufname) (string-suffix-p ,name bufname))))
+(defun my-map-window-by-buffer-name-search (name fn)
+  (my-map-window-by-buffer-name- name fn `(lambda (bufname) (string-search ,name bufname))))
+(defun my-dap-window-tweaks-reset (frame)
+  (message "reset dap window tweak!")
+  (setq my-dap-window-tweaks-done nil)
+  )
+(defun my-dap-window-tweaks- (session)
+  (when (not my-dap-window-tweaks-done)
+    (my-dap-window-tweaks)
+    (setq my-dap-window-tweaks-done t)
+    )
+  )
+(defun my-dap-window-tweaks ()
+  (message "tweaking dap window!")
+  ;;
+  (message "tweak 0")
+  (my-map-window-by-buffer-name-eq "*dap-ui-locals*" (lambda (w)
+                                                       (message "tweak locals '%s'" (buffer-name (window-buffer w)))
+                                                       ))
+  ;;
+  (message "tweak 1")
+  (my-map-window-by-buffer-name-eq "*dap-ui-expressions*" (lambda (w)
+                                                            (message "tweak expr '%s'" (buffer-name (window-buffer w)))
+                                                            ))
+  ;;
+  (message "tweak 2")
+  (my-map-window-by-buffer-name-eq "*dap-ui-sessions*" (lambda (w)
+                                                         (message "tweak sessions '%s'" (buffer-name (window-buffer w)))
+                                                         (text-scale-adjust -1)
+                                                         (my-set-window-height w 10)
+                                                         ))
+  ;;
+  (message "tweak 3")
+  (my-map-window-by-buffer-name-eq "*dap-ui-breakpoints*" (lambda (w)
+                                                            (message "tweak breakpoints '%s'" (buffer-name (window-buffer w)))
+                                                            (text-scale-adjust -1)
+                                                            (my-set-window-width w 40)
+                                                            ))
+  ;;
+  (message "tweak 4")
+  (my-map-window-by-buffer-name-suffix " out*" (lambda (w)
+                                                 (message "tweak out '%s'" (buffer-name (window-buffer w)))
+                                                 (text-scale-adjust -1)
+                                                 (my-set-window-height w 12)
+                                                 ))
+  ;;
+  (message "tweak 5")
+  (my-map-window-by-buffer-name-search " - cppdbg: " (lambda (w)
+                                                       (message "tweak cppdbg '%s'" (buffer-name (window-buffer w)))
+                                                       ))
+  ;;
+  (message "tweak 6")
   )
 
 ;; dap-mode (Debug Application Protocol)
@@ -2810,6 +2918,7 @@ and doesn't work in windows"
      breakpoints
      expressions
      tooltip
+     repl
      )
    )
   (message "dap-custom 2")
@@ -2854,19 +2963,9 @@ and doesn't work in windows"
   ;;;;    (find-file-existing filename))
   ;;;;  )
   (message "dap-config 3")
-  )
-(require 'frame-fns) ;; for (get-a-frame)
-(defun my-dap-get-frame ()
-  (interactive)
-  (let ((frame (get-a-frame "--dap-debug--"))) ;; https://emacs.stackexchange.com/questions/19035/finding-frames-by-name
-    (if frame
-        (progn (select-frame frame) frame)
-      (progn
-        (message "my-dap: debug frame '--dap-debug--': not found.")
-        nil
-        )
-      )
-    )
+  (add-hook 'dap-session-created-hook 'my-dap-window-tweaks-)
+  (add-hook 'delete-frame-functions 'my-dap-window-tweaks-reset)
+  (message "dap-config 4")
   )
 (defun my-dap-start-or-continue-or-restart ()
   (interactive)
@@ -2874,8 +2973,10 @@ and doesn't work in windows"
       (progn
         (message "my-dap: debug frame '--dap-debug--': not found. start!")
         ;; https://emacs.stackexchange.com/questions/58815/how-to-set-name-of-an-emacs-frame
-        (select-frame (make-frame '((name . "--dap-debug--")))) ;; the name needs to be hardcoded!!!
-        (command-execute 'dap-debug) ;; run interactively
+        (let* ((fr (make-frame '((name . "--dap-debug--"))))) ;; the name needs to be hardcoded!!! (?)
+          (select-frame fr)
+          (command-execute 'dap-debug) ;; run interactively
+          )
         )
     (progn
       (message "my-dap: debug frame '--dap-debug--': frame found. continue.")
