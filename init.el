@@ -75,6 +75,11 @@
 ;;http://www.gnu.org/software/emacs/manual/html_node/emacs/General-VC-Options.html
 ;;http://stackoverflow.com/questions/15390178/emacs-and-symbolic-links
 (setq vc-follow-symlinks t)
+;; native compilation creates noisy warnings:
+;; Set this variable to nil to suppress warnings altogether, or to
+;; the symbol `silent' to log warnings but not pop up the *Warnings*
+;; buffer.
+(setq native-comp-async-report-warnings-errors 'silent)
 
 ;; quick yes: bind M-y to answer "yes" to a yes-or-no-p question
 (require 'quick-yes)
@@ -494,32 +499,37 @@
                      (not (eq sym 'keymap))
                      (throw 'gotit sym))))))
 
+
 ;;------------------------------------------------------------------------------
 
 (global-unset-key (kbd "C-z")) ;; disable Ctrl-z
 
+;; turn on highlighting current line
+(global-hl-line-mode 1)
+
 (if window-system
   (progn
-    ; turn on highlighting current line
-    (global-hl-line-mode 1)
 
     (scroll-bar-mode 0)
 
 ;;   ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
     (require 'maximize)
-;;   (require 'frame-cmds)
-;
+    (require 'frame-cmds)
+;;
 ;;   (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
 ;;   (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
 ;;   (global-set-key (kbd   "C-<f10>") 'shrink-frame)
-;
+;;
 ;;   (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
 ;;   (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
 ;;   (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
-;
+;;
 ;;   (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
+
+    (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen))
   )
 )
+
 
 ;;-------------------------------------------
 
