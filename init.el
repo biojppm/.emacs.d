@@ -526,9 +526,9 @@
 ;;
 ;;   (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
 
-    (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen))
+    (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen)
+    )
   )
-)
 
 
 ;;-------------------------------------------
@@ -2181,6 +2181,9 @@ original line and use the absolute value."
 
 ;;; C/C++
 (load "my-cppsetup") ; needs cleanup
+
+;; makefile
+(add-to-list 'auto-mode-alist '("\\.mak\\'" . makefile-mode))
 
 ;; cmake
 (use-package cmake-mode
