@@ -2639,6 +2639,7 @@ original line and use the absolute value."
 (setq compilation-save-buffers-predicate '(lambda () nil))
 ;; see https://stackoverflow.com/questions/4657142/how-do-i-encourage-emacs-to-follow-the-compilation-buffer
 ;;(setq compilation-scroll-output 'first-error)
+(setq compilation-scroll-output t)
 ;; add VS error regexes
 (when this-is-windows
   (add-to-list 'compilation-error-regexp-alist 'visual_studio)
