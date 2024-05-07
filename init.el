@@ -1,3 +1,4 @@
+;; see https://www.masteringemacs.org/article/demystifying-emacs-window-manager
 ;; see https://github.com/chrisdone/elisp-guide
 ;; see http://lisperati.com/casting.html
 ;; see http://ergoemacs.org/emacs/elisp_basics.html
@@ -3524,7 +3525,8 @@ and doesn't work in windows"
 (defun -my-rst-hook()
   (use-snips)
   )
-(autoload 'rst-mode "rst-mode" nil t)
+
+(autoload 'rst-mode "rst" nil t)
 (setq auto-mode-alist
       (cons '("\\.rst$" . rst-mode) auto-mode-alist))
 (add-hook 'rst-mode-hook #'-my-rst-hook)
@@ -3652,27 +3654,28 @@ SEQ may be an atom or a sequence."
 ;; git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 ;;
 
+;; smerge for addressing conflicts:
 (use-package smerge-mode
   :init
   ;; the default prefix for smerge sucks: C-c ^ --- change to C-c d
   (setq smerge-command-prefix "\C-cd")
   ;; smerge commands:
-  ;; C-c ^ RET       smerge-keep-current
-  ;; C-c ^ =         Prefix Command
-  ;; C-c ^ C         smerge-combine-with-next
-  ;; C-c ^ E         smerge-ediff
-  ;; C-c ^ R         smerge-refine
-  ;; C-c ^ a         smerge-keep-all
-  ;; C-c ^ b         smerge-keep-base
-  ;; C-c ^ m         smerge-keep-mine
-  ;; C-c ^ n         smerge-next
-  ;; C-c ^ o         smerge-keep-other
-  ;; C-c ^ p         smerge-prev
-  ;; C-c ^ r         smerge-resolve
+  ;; C-c d RET       smerge-keep-current
+  ;; C-c d =         Prefix Command
+  ;; C-c d C         smerge-combine-with-next
+  ;; C-c d E         smerge-ediff
+  ;; C-c d R         smerge-refine
+  ;; C-c d a         smerge-keep-all
+  ;; C-c d b         smerge-keep-base
+  ;; C-c d m         smerge-keep-mine
+  ;; C-c d n         smerge-next
+  ;; C-c d o         smerge-keep-other
+  ;; C-c d p         smerge-prev
+  ;; C-c d r         smerge-resolve
   ;;
-  ;; C-c ^ = <       smerge-diff-base-mine
-  ;; C-c ^ = =       smerge-diff-mine-other
-  ;; C-c ^ = >       smerge-diff-base-other
+  ;; C-c d = <       smerge-diff-base-mine
+  ;; C-c d = =       smerge-diff-mine-other
+  ;; C-c d = >       smerge-diff-base-other
   )
 
 (use-package magit
