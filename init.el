@@ -510,27 +510,25 @@
 ;; turn on highlighting current line
 (global-hl-line-mode 1)
 
-(if window-system
-  (progn
+(when window-system
 
-    (scroll-bar-mode 0)
+  (scroll-bar-mode 0)
 
-;;   ;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
-    (require 'maximize)
-    (require 'frame-cmds)
-;;
-;;   (global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
-;;   (global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
-;;   (global-set-key (kbd   "C-<f10>") 'shrink-frame)
-;;
-;;   (global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
-;;   (global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
-;;   (global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
-;;
-;;   (global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
+  ;;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
+  (require 'maximize)
+  (require 'frame-cmds)
+  ;;
+  ;;(global-set-key (kbd "S-C-<f10>") 'maximize-toggle-frame-vmax)
+  ;;(global-set-key (kbd "S-M-<f10>") 'enlarge-frame)
+  ;;(global-set-key (kbd   "C-<f10>") 'shrink-frame)
+  ;;
+  ;;(global-set-key (kbd "S-C-<f11>") 'maximize-toggle-frame-hmax)
+  ;;(global-set-key (kbd "S-M-<f11>") 'enlarge-frame-horizontally)
+  ;;(global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
+  ;;
+  ;;(global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
 
-    (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen)
-    )
+  (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen)
   )
 
 
