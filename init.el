@@ -3889,16 +3889,17 @@ mode.
      ag
      anzu
      arduino-mode
+     auto-highlight-symbol
      babel
      babel-repl
      backward-forward
      bicycle
      bitbake
      ccls
-     cmake-mode
-     cmake-font-lock
      clang-format
      clean-aindent-mode
+     cmake-font-lock
+     cmake-mode
      company-c-headers
      company-ycmd
      counsel-etags

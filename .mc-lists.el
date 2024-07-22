@@ -18,6 +18,7 @@
         company-complete
         counsel-yank-pop
         dired-next-line
+        downcase-dwim
         downcase-region
         drag-stuff-down
         electric-newline-and-maybe-indent
@@ -55,6 +56,9 @@
 (setq mc/cmds-to-run-once
       '(
         compile-goto-error
+        dired-find-file-other-window
+        dired-previous-line
+        dired-toggle-read-only
         duplicate-line-or-region
         electric-pair-delete-pair
         end-of-buffer
@@ -63,6 +67,7 @@
         handle-switch-frame
         help-for-help
         ido-find-file
+        ido-switch-buffer
         ivy-switch-buffer
         lsp-ui-doc--handle-mouse-movement
         mouse-drag-vertical-line
@@ -77,4 +82,6 @@
         smex
         text-scale-adjust
         wdired-finish-edit
+        xref-find-definitions
+        yas-expand
         ))
