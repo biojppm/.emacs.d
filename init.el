@@ -61,7 +61,9 @@
    version-control t)       ; use versioned backups
 
 ;; save command history
+(require 'savehist)
 (savehist-mode 1)
+(setq history-length t)
 
 ;;reload files automatically
 ;;http://www.emacswiki.org/emacs/RevertBuffer
