@@ -16,8 +16,8 @@ PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_V
 IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
-MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-win.zip"
-MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v2.2.2/marp-cli-v2.2.2-linux.tar.gz"
+MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-win.zip"
+MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-linux.tar.gz"
 IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
@@ -78,15 +78,17 @@ CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
     OS := Windows
-    WIN_DL_DIR = "$(SYSTEMDRIVE)/Users/$(USERNAME)/Downloads"
+    DL_DIR = "$(SYSTEMDRIVE)/Users/$(USERNAME)/Downloads"
 else
     UNAME_S := $(shell uname -s)
+    DL_DIR := $(HOME)/tmp/download
     # https://askubuntu.com/questions/279168/detect-if-its-ubuntu-linux-os-in-makefile
     ifeq ($(UNAME_S),Linux)
         OS := Linux
 	ifeq ($(shell ls /etc/arch-release),/etc/arch-release)
 	    DISTRO := Arch
 	else
+	    # Ubuntu?
 	    DISTRO := $(shell lsb_release -si | sed 's/Linux//' | sed 's/[[:blank:]]//g')
 	endif
     else
@@ -101,7 +103,7 @@ endif
 
 # define a function to copy file trees
 # usage: $(call copy_tree,src_root,pattern(s),dst_root)
-copy_tree = set -e ; set -x ; cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
+copy_tree = set -xe ; cd $1 && (tar cfp - $2 | (cd $3 ; tar xvf -))
 
 # define a function to make a directory and parents
 makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
@@ -115,10 +117,30 @@ pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) inst
 # download and unpack a windows zip
 # $1=url
 # $2=unpack pattern
-wininstallzip = set -e ; set -x ; fn=`basename $1 | sed 's:\.zip$$::g'` ; \
-	curl -o $(WIN_DL_DIR)/$$fn.zip -L -s "$1" ; \
-	7z x $(WIN_DL_DIR)/$$fn.zip -y -o$(WIN_DL_DIR)/$$fn ; \
-        ( cd $(WIN_DL_DIR)/$$fn && cp -favr $2 $(LOCAL_DIR)/bin/ )
+wininstallzip = \
+	set -xe ; \
+	mkdir -p $(DL_DIR) ; \
+	fn=`basename $1 | sed 's:\.zip$$::g'` ; \
+	curl -o $(DL_DIR)/$$fn.zip -L -s "$1" ; \
+	7z x $(DL_DIR)/$$fn.zip -y -o$(DL_DIR)/$$fn ; \
+        ( cd $(DL_DIR)/$$fn && cp -favr $2 $(LOCAL_DIR)/bin/ )
+
+# download and unpack a tgz
+# $1=url
+# $2=extension (eg tgz or tar.gz)
+# $3=unpack pattern
+linuxinstalltgz = \
+	set -xe ; \
+	mkdir -p $(DL_DIR) ; \
+	fn=`basename $1 | sed "s:\.$2$$::g"` ; \
+	curl -o $(DL_DIR)/$$fn.$2 -L -s "$1" ; \
+	mkdir -p $(DL_DIR)/$$fn.extract ; \
+	( \
+	  cd $(DL_DIR)/$$fn.extract ; \
+	  tar xvfz $(DL_DIR)/$$fn.$2 ; \
+	  cp -favr $3 $(LOCAL_DIR)/bin/ \
+	) ; \
+	rm -rf $(DL_DIR)/$$fn.extract
 
 
 #----------------------------------------------------------------------
@@ -293,7 +315,7 @@ marp: $(LOCAL_DIR)/bin
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      yay -S marp-cli ; \
 	   else \
-	      bbbbbbb not done ; \
+	      $(call linuxinstalltgz,$(MARP_TGZ),tgz,marp) ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \

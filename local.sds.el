@@ -6,7 +6,7 @@
     ;; Full HD
     (progn
       (message "setting font for FullHD")
-      (set-face-attribute 'default nil :font "Inconsolata-11")
+      (set-face-attribute 'default nil :font "Inconsolata-12")
       )
   ;; 4K
   (progn
