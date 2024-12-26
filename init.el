@@ -2954,6 +2954,7 @@ and doesn't work in windows"
   (my-dap-ensure-cpptools-setup)
   (message "dap-config 1")
   (use-package dap-cpptools)
+  ;;(use-package dap-lldb)
   (message "dap-config 2")
   ;;;;(require 'dap-lldb)
   ;;;;;;; set the debugger executable (c++)
