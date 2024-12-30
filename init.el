@@ -931,6 +931,22 @@
 ;; DIRED
 
 (setq dired-listing-switches "-lFA")
+(defun my-dired-toggle-hidden ()
+  (interactive)
+  (if (string-match "[Aa]" dired-actual-switches)
+      (progn
+        (message "dired: hide hidden files")
+        (setq dired-listing-switches (string-replace "A" "" dired-listing-switches))
+        (setq dired-actual-switches (string-replace "A" "" dired-actual-switches))
+        )
+    (progn
+      (message "dired: show hidden files")
+      (setq dired-listing-switches (concat dired-listing-switches "A"))
+      (setq dired-actual-switches (concat dired-actual-switches "A"))
+      )
+    )
+  (revert-buffer)
+  )
 
 ;; enable dired-x: dired extensions
 (add-hook 'dired-load-hook
@@ -945,6 +961,7 @@
             ;; Set dired-x buffer-local variables here. For example:
             ;; (dired-omit-mode 1)
             (local-set-key (kbd "M-<up>") 'dired-up-directory)
+            (local-set-key (kbd ")") 'my-dired-toggle-hidden)
             ))
 
 ;; use fd in dired
