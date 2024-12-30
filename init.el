@@ -18,6 +18,11 @@
 (add-to-list 'load-path (concat emacs-dir "lisp"))
 (setenv "PYTHONIOENCODING" "UTF-8")
 
+(let ((envvar (getenv "LSP_USE_PLISTS")))
+  (message "checking: LSP_USE_PLISTS=%s" envvar)
+  (when (not (string-equal envvar "true"))
+    (warn "LSP_USE_PLISTS is not set to \"true\"")))
+
 ;; http://ikaruga2.wordpress.com/2011/04/11/testing-for-windows-in-emacs/
 (defvar this-is-windows (string-match "windows" (symbol-name system-type)))
 ;; https://emacs.stackexchange.com/questions/47782/is-there-a-way-emacs-can-infer-is-running-on-wsl-windows-subsystem-for-linux
