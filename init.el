@@ -2524,7 +2524,8 @@ original line and use the absolute value."
 (use-package yaml-mode
   :config (add-hook 'yaml-mode-hook #'my-yaml-hook)
   :mode (("\\.yml\\'" . yaml-mode)
-         ("\\.yaml\\'" . yaml-mode))
+         ("\\.yaml\\'" . yaml-mode)
+         ("\\.ys\\'" . yaml-mode))
 )
 
 
