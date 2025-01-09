@@ -74,7 +74,6 @@
 ;;http://www.emacswiki.org/emacs/RevertBuffer
 (global-auto-revert-mode 1)
 
-(setq scroll-preserve-screen-position t) ;; make PageUp+PageDown return to the departing pos
 (setq visible-bell t)       ; Disable bell
 (setq inhibit-startup-screen t) ; Disable startup screen
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)) ; remove toolbar
@@ -1463,6 +1462,7 @@ With a prefix argument P, isearch for the symbol at point."
 ;;=========================================================================
 ;; CURSOR MOVEMENT
 
+
 ;;-------------------------------------------------------------------------
 ;; Smooth scrolling
 ;; http://www.emacswiki.org/emacs/SmoothScrolling
@@ -1474,6 +1474,16 @@ With a prefix argument P, isearch for the symbol at point."
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-conservatively 10000) ;; scroll just one line when hitting bottom of window
 (setq auto-window-vscroll nil)
+(setq scroll-preserve-screen-position t) ;; make PageUp+PageDown return to the departing pos
+
+;; https://github.com/jdtsmith/ultra-scroll
+(use-package ultra-scroll
+  :load-path "./ultra-scroll" ;; if you git clone'd instead of package-vc-install
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
 
 ;; smooth horizontal scrolling
 ;; https://stackoverflow.com/questions/20628878/changing-horizontal-scrolling-in-emacs
@@ -1490,6 +1500,7 @@ With a prefix argument P, isearch for the symbol at point."
 (global-set-key (kbd "S-<down>") 'gcm-scroll-down)
 (global-set-key (kbd "S-<up>") 'gcm-scroll-up)
 
+
 ;; Recentering:
 ;; C-l
 ;;     Scroll the selected window so the current line is the
@@ -1503,6 +1514,8 @@ With a prefix argument P, isearch for the symbol at point."
 ;; C-M-l
 ;;     Scroll heuristically to bring useful information onto the
 ;;     screen (reposition-window).
+
+
 
 ;;-------------------------------------------------------------------------
 ;;Move to first non-whitespace or beginning of line
@@ -1518,6 +1531,7 @@ If point was already at that position, move point to beginning of line."
 
 (global-set-key [home] 'smart-beginning-of-line)
 (global-set-key "\C-a" 'smart-beginning-of-line)
+
 
 ;;-------------------------------------------------------------------------
 ;;Windows navigation + splitting

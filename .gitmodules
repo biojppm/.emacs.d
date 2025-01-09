@@ -1,3 +1,6 @@
 [submodule "cmany.el"]
 	path = cmany.el
 	url = https://github.com/biojppm/cmany.el.git
+[submodule "ultra-scroll"]
+	path = ultra-scroll
+	url = https://github.com/jdtsmith/ultra-scroll
