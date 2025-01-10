@@ -4027,7 +4027,6 @@ mode.
      vlf
      volatile-highlights
      vscode-dark-plus-theme
-     vterm
      web-mode
      wgrep
      wgrep-ag
