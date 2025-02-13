@@ -2687,6 +2687,16 @@ original line and use the absolute value."
                  1 2)
                )
   )
+;; add sanitizer error regexes
+(when (not this-is-windows)
+  (add-to-list 'compilation-error-regexp-alist 'sanitizer_backtrace_line)
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(sanitizer_backtrace_line
+                 ;;    #4 0x5e268d21fb4c in TEST_MarkerDiagnostics_MarkerDiagnostics_GetRadiusIntensities_ShouldDetectSaturation_run /home/user/proj/rgbsil/tests/rgb_safety/UnitTests/TestMarkerDiagnostics.c:443
+                 "^[ \t]*#[0-9]+ 0x[A-Fa-f0-9]+ in [A-Za-z0-9_]+ \\([A-Za-z0-9_/.]+\\):\\([0-9]+\\)"
+                 1 2)
+               )
+  )
 
 ;; always kill compile buffer http://user42.tuxfamily.org/compilation-always-kill/index.html
 (autoload 'compilation-always-kill-mode "compilation-always-kill" nil t)
@@ -3538,13 +3548,15 @@ and doesn't work in windows"
 (add-hook 'tex-mode-hook 'my-latex-hook)
 (add-hook 'latex-mode-hook 'my-latex-hook)
 
+(defun my-image-hook()
+  (message "my-image-hook: enter")
+  (auto-revert-mode)
+  (undo-tree-mode 0)
+  (message "my-image-hook: exit")
+  )
+(add-hook 'image-mode-hook 'my-image-hook)
 ;; save image from clipboard:
 (load-file (concat emacs-dir "imgsave/imgsave.el"))
-;; https://github.com/robinchenyu/image-paste/blob/master/bin/imagepaste.py
-;; https://stackoverflow.com/questions/17435995/paste-an-image-on-clipboard-to-emacs-org-mode-file-without-saving-it
-;; https://emacs.stackexchange.com/questions/41016/how-can-i-yank-images-from-emacs
-;; https://github.com/dnxbjyj/pasteex-mode
-;; https://github.com/mooreryan/markdown-dnd-images
 
 
 ;;; Restructured Text
