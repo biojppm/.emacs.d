@@ -4,14 +4,53 @@ export MYENV_PROCESSED=true
 
 export PATH=$PATH:$HOME/bin:$HOME/local/bin:$HOME/.local/bin
 export LSP_USE_PLISTS=true
+export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
+export C4_EXTERN_DIR=~/proj/c4extern
+
+
+#--------------------------------------------------------------------
+# conda
+#
+
+CONDA_DIR=$HOME/local/conda-forge
+
+# install with:
+#
+#   curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+#   bash Miniforge3-$(uname)-$(uname -m).sh
+#
+# see:
+#   https://github.com/conda-forge/miniforge/#download
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$($CONDA_DIR/bin/conda 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$CONDA_DIR/etc/profile.d/conda.sh" ]; then
+        . "$CONDA_DIR/etc/profile.d/conda.sh"
+    else
+        export PATH="$CONDA_DIR/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+#--------------------------------------------------------------------
+# interactive
 
 if [[ $- == *i* ]] ; then # is this interactive?
 
 # read this file in the kde session:
 # https://userbase.kde.org/Session_Environment_Variables
-if [ ! -L $HOME/.config/plasma-workspace/env/$(basename $(realpath ${BASH_SOURCE[0]})) ] ; then
-    echo "Creating env in $HOME/.config/plasma-workspace/env/$(basename $(realpath ${BASH_SOURCE[0]}))"
-    ln -fs $(realpath ${BASH_SOURCE[0]}) $HOME/.config/plasma-workspace/env/.
+if [ -d $HOME/.config/plasma-workspace/env ] ; then
+    if [ ! -L $HOME/.config/plasma-workspace/env/$(basename $(realpath ${BASH_SOURCE[0]})) ] ; then
+        echo "Creating env in $HOME/.config/plasma-workspace/env/$(basename $(realpath ${BASH_SOURCE[0]}))"
+        ln -fs $(realpath ${BASH_SOURCE[0]}) $HOME/.config/plasma-workspace/env/.
+    fi
 fi
 
 alias ll='ls -lFhp'
@@ -25,13 +64,13 @@ alias gitk='gitk --all &'
 alias cd..='cd ..'
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
+alias vnc='run_scaled --scale=1.75 vncviewer &'
+alias vi=vim
 
 export HISTSIZE=10000
-export PATH=$PATH:$HOME/bin:$HOME/local/bin:$HOME/.local/bin
-
+export HISTFILESIZE=10000
 export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
-export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
-#export C4_EXTERN_DIR=~/proj/c4extern
+
 
 #--------------------------------------------------------------------
 # set prompt string
