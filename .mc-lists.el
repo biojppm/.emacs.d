@@ -55,6 +55,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+        c-context-line-break
         compile-goto-error
         dired-find-file-other-window
         dired-previous-line
