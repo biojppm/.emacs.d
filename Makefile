@@ -4,6 +4,8 @@
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
+PIP ?= pip
+
 BAZEL_VERSION = 3.6.0
 BAZEL_VERSION_URL = "https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)/bazel-$(BAZEL_VERSION)-windows-x86_64.exe"
 RIPGREP_VERSION = 12.0.1
@@ -22,7 +24,9 @@ IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
 DEPENDS22_ZIP = "https://www.dependencywalker.com/depends22_x64.zip"
-PIP ?= pip
+
+GCC14 = https://github.com/xpack-dev-tools/gcc-xpack/releases/download/v14.2.0-2/xpack-gcc-14.2.0-2-linux-x64.tar.gz
+
 
 CMANY_COMPILER ?=
 
