@@ -291,6 +291,14 @@
   :commands (sudo)
   )
 
+(require 'dired-toggle-sudo)
+(define-key dired-mode-map (kbd "C-c C-s") 'dired-toggle-sudo)
+(eval-after-load 'tramp
+ '(progn
+    ;; Allow to use: /sudo:user@host:/path/to/file
+    (add-to-list 'tramp-default-proxies-alist
+	  '(".*" "\\`.+\\'" "/ssh:%h:"))))
+
 
 ;;-------------------------------------------------------------------------------
 
@@ -2427,6 +2435,26 @@ original line and use the absolute value."
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
 
+(let ((conda-dir (getenv "CONDA_DIR")))
+  (message "checking: CONDA_DIR=%s" conda-dir)
+  (cond
+   ((not conda-dir) (warn "CONDA_DIR not set"))
+   ((string= "" conda-dir) (warn "CONDA_DIR is empty"))
+   ((not (file-directory-p conda-dir)) (warn "CONDA_DIR=%s does not exist"))
+   (t
+    (progn
+      (message "ok: CONDA_DIR=%s" conda-dir)
+      (use-package conda
+        :ensure t
+        :init
+        (setq conda-anaconda-home conda-dir)
+        (setq conda-env-home-directory conda-dir)
+        )
+      )
+    )
+   )
+  )
+
 ;;; Haskell
 ;; http://www.mew.org/~kazu/proj/ghc-mod/en/preparation.html
 (autoload 'ghc-init "ghc" nil t)
@@ -3963,12 +3991,14 @@ mode.
      cmake-mode
      company-c-headers
      company-ycmd
+     conda
      counsel-etags
      counsel-projectile
      cquery
      cython-mode
      dap-mode
      diminish
+     dired-toggle-sudo
      dirtree
      dockerfile-mode
      drag-stuff
@@ -4064,8 +4094,7 @@ mode.
    )
  )
 
-;;
-fixing faces: https://emacs.stackexchange.com/questions/42318/why-are-code-blocks-and-code-literals-displaying-with-large-face-in-markdown
+;; fixing faces: https://emacs.stackexchange.com/questions/42318/why-are-code-blocks-and-code-literals-displaying-with-large-face-in-markdown
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

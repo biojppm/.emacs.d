@@ -40,9 +40,8 @@ unset __conda_setup
 
 
 #--------------------------------------------------------------------
-# interactive
-
-if [[ $- == *i* ]] ; then # is this interactive?
+# env
+#
 
 # read this file in the kde session:
 # https://userbase.kde.org/Session_Environment_Variables
@@ -52,6 +51,12 @@ if [ -d $HOME/.config/plasma-workspace/env ] ; then
         ln -fs $(realpath ${BASH_SOURCE[0]}) $HOME/.config/plasma-workspace/env/.
     fi
 fi
+
+
+#--------------------------------------------------------------------
+# interactive
+
+if [[ $- == *i* ]] ; then # is this interactive?
 
 alias ll='ls -lFhp'
 alias la='ls -lFhpA'
