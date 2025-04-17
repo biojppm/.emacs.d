@@ -13,7 +13,7 @@ export C4_EXTERN_DIR=~/proj/c4extern
 # conda
 #
 
-CONDA_DIR=$HOME/local/conda-forge
+export CONDA_DIR=$HOME/local/conda-forge
 
 # install with:
 #
