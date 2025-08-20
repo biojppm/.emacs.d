@@ -20,6 +20,7 @@ bookmarks
 cmake-ide-build-dir.save
 cmany.save
 dap-ui-repl-cppdbg-history
+eclipse.jdt.ls/
 ede-projects.el
 eln-cache/
 elpa/*/*.so

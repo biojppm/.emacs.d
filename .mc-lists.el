@@ -82,6 +82,7 @@
         previous-buffer
         smex
         text-scale-adjust
+        ultra-scroll
         wdired-finish-edit
         xref-find-definitions
         yas-expand

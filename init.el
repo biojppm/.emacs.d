@@ -4085,6 +4085,7 @@ mode.
      term-run
      toml-mode
      transient
+     ultra-scroll
      undo-tree
      use-package
      vlf
