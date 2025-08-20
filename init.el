@@ -3615,12 +3615,19 @@ and doesn't work in windows"
 ;; Markdown
 ;; https://jblevins.org/projects/markdown-mode/
 ;;
+;; gfm-mode is Github Flavored Mode
+;;
 ;; to preview
-;;   using the github style: https://github.com/joeyespo/grip
+;; * use M-x gfm-view-mode
+;; * use M-x markdown-view-mode
+;; * using the github style: https://github.com/joeyespo/grip
 ;;   grip -b --user=`whoami` "--pass=`cat ~/.netrc`" performance.md
 ;;
-;; see also https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time
-
+;; see also:
+;;
+;;   https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time
+;;   https://stackoverflow.com/questions/3409484/render-markdown-in-emacs-buffer
+;;
 (use-package markdown-mode
   :defer t
   :commands (markdown-mode gfm-mode)
@@ -3640,7 +3647,6 @@ and doesn't work in windows"
   :defer t
   :commands (markdown-toc-generate-toc markdown-toc-refresh-toc)
   )
-
 ;; speed up markdown mode
 ;; https://emacs.stackexchange.com/questions/46110/help-needed-to-debug-very-slow-markdown-mode
 (defvar markdown--first-displayable-cache (make-hash-table :test #'equal))
