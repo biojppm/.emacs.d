@@ -2260,6 +2260,47 @@ original line and use the absolute value."
 (use-package rust-mode
   :hook (rust-mode . my-lsp-hook))
 
+;; GO
+(use-package go-mode
+  :ensure t
+  :mode "\\.go\\'"
+  :preface
+   (defun vd/go-lsp-start()
+    (define-key go-ts-mode-map
+            ["RET"] 'newline-and-indent)
+    (define-key go-ts-mode-map
+            ["M-RET"] 'newline)
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t)
+    (lsp-deferred)
+    )
+  :hook
+  (go-ts-mode . vd/go-lsp-start)
+  :custom
+  (go-ts-mode-indent-offset 4)
+  :config
+  ;;(add-to-list 'exec-path "~/.local/bin")
+  (setq lsp-go-analyses '(
+                          (nilness . t)
+                          (shadow . t)
+                          (unusedwrite . t)
+                          (fieldalignment . t)
+                          )
+        lsp-go-codelenses '(
+                          (test . t)
+                          (tidy . t)
+                          (upgrade_dependency . t)
+                          (vendor . t)
+                          (run_govulncheck . t)
+                          )
+        )
+)
+(use-package go-tag
+  :ensure t
+)
+(use-package godoctor
+  :ensure t
+)
 
 ;; Bitbake/Yocto
 ;; https://github.com/canatella/bitbake-el
@@ -4029,6 +4070,9 @@ mode.
      fzf
      git-timemachine
      glsl-mode
+     go-mode
+     go-tag
+     godoctor
      google-this
      hemisu-theme
      highlight-symbol
