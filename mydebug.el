@@ -1,19 +1,20 @@
 ;; https://github.com/positron-solutions/transient-showcase
+;; https://jd.codes/posts/transient-emacs/
+
 
 (require 'transient)
 (require 'projectile)
 (require 'json)
 
 
-(defun my-debug--filter-dir (dir)
-  ;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
-  (string-replace (getenv "HOME") "~" dir))
+;;----------------------------------------------------
+;; helpers
 
-(defun my-debug--read-dir (prompt default-value)
+(defun --my-debug--read-dir (prompt default-value)
   (let ((base (file-name-base default-value)))
     (read-directory-name (format "%s: " prompt) default-value base)))
 
-(defun my-debug--read-file (prompt default-value fallback-dir)
+(defun --my-debug--read-file (prompt default-value fallback-dir)
   (let* (
          (fallback-dir (if (null fallback-dir) (file-name-directory (buffer-file-name (current-buffer))) fallback-dir))
          (dir (if (null default-value) fallback-dir (file-name-directory default-value)))
@@ -21,129 +22,211 @@
         )
     (read-file-name (format "%s: " prompt) dir base)))
 
+(defun --my-debug--filter-home (path)
+  ;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
+  (string-replace (getenv "HOME") "~" path))
+
+(defun --my-debug--describe (name var)
+  (if (and var (not (string-blank-p var)))
+      (format "%s: %s" name (propertize var 'face 'transient-value))
+    name))
+
 
 ;;----------------------------------------------------
-;; dir-proj
-(defvar my-debug--dir-proj nil "Project directory")
+;; proj-dir
 
-(defun my-debug--dir-proj--ensure ()
-  (when (null my-debug--dir-proj)
-    (my-debug--dir-proj--set
-     (my-debug--filter-dir
+(defvar my-debug--proj-dir nil "Project directory")
+
+(defun my-debug--proj-dir--ensure ()
+  (when (null my-debug--proj-dir)
+    (my-debug--proj-dir--set
+     (--my-debug--filter-home
       (or projectile-project-root
           (file-name-directory (buffer-file-name (current-buffer))))
       )
      )
     )
-  (my-debug--filter-dir my-debug--dir-proj)
+  (--my-debug--filter-home my-debug--proj-dir)
   )
 
-(defun my-debug--dir-proj--set (dir)
-  (interactive (list (my-debug--read-dir "proj-dir" (my-debug--dir-proj--ensure))))
-  (let ((dir (my-debug--filter-dir dir)))
-    (setq my-debug--dir-proj (my-debug--filter-dir dir))
-    (my-debug--dir-build--set nil) ;; reset the build dir
+(defun my-debug--proj-dir--set (dir)
+  (interactive (list (--my-debug--read-dir "proj-dir" (my-debug--proj-dir--ensure))))
+  (let ((dir (--my-debug--filter-home dir)))
+    (setq my-debug--proj-dir (--my-debug--filter-home dir))
+    ;; reset other proj vars
+    (my-debug--build-dir--set nil)
+    (my-debug--launch-json--set nil)
     )
   )
 
-(defun my-debug--dir-proj--describe ()
-  (format "proj-dir: %s"
-          (propertize (my-debug--dir-proj--ensure)
-                      'face 'transient-value)))
+(defun my-debug--proj-dir--describe ()
+  (--my-debug--describe "proj-dir" (my-debug--proj-dir--ensure)))
 
 
 ;;----------------------------------------------------
-;; dir-build
-(defvar my-debug--dir-build nil "Build directory")
+;; build-dir
 
-(defun my-debug--dir-build--ensure ()
-  (when (null my-debug--dir-build)
-    (setq my-debug--dir-build
-          (concat (my-debug--ensure-dir-proj) "build")
+(defvar my-debug--build-dir nil "Build directory")
+
+(defun my-debug--build-dir--ensure ()
+  (when (null my-debug--build-dir)
+    (setq my-debug--build-dir
+          (concat (my-debug--proj-dir--ensure) "build")
           )
     )
-  (my-debug--filter-dir my-debug--dir-build)
+  (--my-debug--filter-home my-debug--build-dir)
   )
 
-(defun my-debug--dir-build--set (dir)
-  (interactive (list (my-debug--read-dir "build-dir" (my-debug--dir-build--ensure))))
-  (let ((dir (if dir (my-debug--filter-dir dir) dir)))
-    (message "set-dir-build! %s -> %s" my-debug--dir-build dir)
-    (setq my-debug--dir-build dir)
+(defun my-debug--build-dir--set (dir)
+  (interactive (list (--my-debug--read-dir "build-dir" (my-debug--build-dir--ensure))))
+  (let ((dir (if dir (--my-debug--filter-home dir) dir)))
+    (message "set-build-dir! %s -> %s" my-debug--build-dir dir)
+    (setq my-debug--build-dir dir)
     )
   )
 
-(defun my-debug--dir-build--describe ()
-  (let* ((dir (string-replace my-debug--dir-proj "<proj>/" (my-debug--dir-build--ensure))))
-    (format "build-dir: %s"
-            (propertize dir
-                        'face 'transient-value)))
-  )
-
-;;----------------------------------------------------
-;; target
-
-(defvar my-debug--config--target nil "")
-
-(defun my-debug--config--target--set (target)
-  (interactive (list (my-debug--read-file
-                      "target"
-                      my-debug--config--target
-                      my-debug--dir-build)))
-  (message "set-target! %s -> %s" my-debug--config--target target)
-  (setq my-debug--config--target (my-debug--filter-dir target))
-  )
-
-(defun my-debug--config--target--describe ()
-  (let* ((target my-debug--config--target)
-         (target (or target " "))
-         (target (string-replace my-debug--dir-build "<build>/" target))
+(defun my-debug--build-dir--describe ()
+  (let* (
+         (dir (my-debug--build-dir--ensure))
+         (dir (string-replace my-debug--proj-dir "<proj>/" dir))
          )
-    (format "target: %s" (propertize target 'face 'transient-value)))
+    (--my-debug--describe "build-dir" dir)
+    )
   )
 
 
 ;;----------------------------------------------------
-;; target
+;; launch-json
 
-(defvar my-debug--config--cwd nil "")
+(defvar my-debug--launch-json nil "Path to launch.json")
 
-(defun my-debug--config--cwd--set (cwd)
-  (interactive (list (my-debug--read-dir
+(defun my-debug--launch-json--ensure ()
+  (when (null my-debug--launch-json)
+    (setq my-debug--launch-json
+          (concat (my-debug--proj-dir--ensure) "launch.json")
+          )
+    )
+  (--my-debug--filter-home my-debug--launch-json)
+  )
+
+(defun my-debug--launch-json--set (dir)
+  (interactive (list (--my-debug--read-dir "launch-json" (my-debug--launch-json--ensure))))
+  (let ((dir (if dir (--my-debug--filter-home dir) dir)))
+    (message "set-launch-json! %s -> %s" my-debug--launch-json dir)
+    (setq my-debug--launch-json dir)
+    )
+  )
+
+(defun my-debug--launch-json--describe ()
+  (let* (
+         (path (my-debug--launch-json--ensure))
+         (path (string-replace my-debug--proj-dir "<proj>/" path))
+         )
+    (--my-debug--describe "launch-json" path)
+    )
+  )
+
+
+;;----------------------------------------------------
+;; exe
+
+(defvar my-debug--exe nil "")
+
+(defun my-debug--exe--ensure ()
+  (when (null my-debug--exe)
+    (setq my-debug--exe (concat (my-debug--build-dir--ensure) "exe"))
+    )
+  (--my-debug--filter-home my-debug--exe)
+  )
+
+(defun my-debug--exe--set (exe)
+  (interactive (list (--my-debug--read-file
+                      "exe"
+                      (my-debug--exe--ensure)
+                      my-debug--build-dir)))
+  (message "set-exe! %s -> %s" my-debug--exe exe)
+  (setq my-debug--exe (--my-debug--filter-home exe))
+  )
+
+(defun my-debug--exe--describe ()
+  (let* ((exe (my-debug--exe--ensure))
+         (exe (string-replace my-debug--build-dir "<build>/" exe)))
+    (--my-debug--describe "exe" exe)
+    )
+  )
+
+
+;;----------------------------------------------------
+;; cwd
+
+(defvar my-debug--cwd nil "")
+
+(defun my-debug--cwd--ensure ()
+  (when (null my-debug--cwd)
+    (setq my-debug--cwd (my-debug--proj-dir--ensure))
+    )
+  (--my-debug--filter-home my-debug--cwd)
+  )
+
+(defun my-debug--cwd--set (cwd)
+  (interactive (list (--my-debug--read-dir
                       "cwd"
-                      my-debug--dir-build)))
-  (message "set-cwd! %s -> %s" my-debug--config--cwd cwd)
-  (setq my-debug--config--cwd (my-debug--filter-dir cwd))
+                      my-debug--build-dir)))
+  (message "set-cwd! %s -> %s" my-debug--cwd cwd)
+  (setq my-debug--cwd (--my-debug--filter-home cwd))
   )
 
-(defun my-debug--config--cwd--describe ()
-  (let* ((cwd my-debug--config--cwd)
-         (cwd (or cwd " "))
-         (cwd (string-replace my-debug--dir-proj "<proj>/" cwd))
+(defun my-debug--cwd--describe ()
+  (let* ((cwd (my-debug--cwd--ensure))
+         (cwd (string-replace my-debug--proj-dir "<proj>/" cwd))
          )
-    (format "cwd: %s" (propertize cwd 'face 'transient-value)))
+    (--my-debug--describe "cwd" cwd)
+    )
   )
 
 
-(defvar my-debug--config--args nil "")
+;;----------------------------------------------------
+;; args
 
-(defun my-debug--cwd--set ()
-  (interactive)
-  (message "set-cwd!")
-  )
-(defun my-debug--args--set ()
-  (interactive)
-  (message "set-args!")
-  )
+(defvar my-debug--args "" "")
 
-
-(defun my-debug--launch ()
-  (interactive)
-  (message "launch!")
+(defun my-debug--args--set (args)
+  (interactive (list (read-string "args: " my-debug--args)))
+  (message "set-args! %s -> %s" my-debug--args args)
+  (setq my-debug--args args)
   )
 
+(defun my-debug--args--describe ()
+  (let* ((args my-debug--args)
+         (args (or args ""))
+         )
+    (--my-debug--describe "args" args)
+    )
+  )
 
-(defvar my-debug--config--name nil "")
+
+;;----------------------------------------------------
+;; args
+
+(defvar my-debug--name "mycfg" "")
+
+(defun my-debug--name--set (name)
+  (interactive (list (read-string "name: " my-debug--name)))
+  (message "set-name! %s -> %s" my-debug--name name)
+  (setq my-debug--name name)
+  )
+
+(defun my-debug--name--describe ()
+  (let* ((name my-debug--name)
+         (name (or name ""))
+         )
+    (--my-debug--describe "name" name)
+    )
+  )
+
+
+;;----------------------------------------------------
+
 
 (defun my-debug--config--save ()
   (interactive)
@@ -163,33 +246,51 @@
   )
 
 
+(defun my-debug--launch ()
+  (interactive)
+  (message "launch!")
+  )
+
 (transient-define-prefix my-debug ()
   "My Debug"
-  ["My Debug"
-   ["Actions"
+
+  ["Edit config"
+   ("-n" "Set name" my-debug--name--set :transient t
+    :description my-debug--name--describe
+    )
+   ("-e" "Set exe" my-debug--exe--set :transient t
+    :description my-debug--exe--describe
+    )
+   ("-d" "Set cwd" my-debug--cwd--set :transient t
+    :description my-debug--cwd--describe
+    )
+   ("-a" "Set args" my-debug--args--set :transient t
+    :description my-debug--args--describe
+    )
+   ]
+
+  ["Edit proj"
+   ("-P" "Set proj dir" my-debug--proj-dir--set :transient t
+    :description my-debug--proj-dir--describe)
+   ("-B" "Set build dir" my-debug--build-dir--set :transient t
+    :description my-debug--build-dir--describe)
+   ("-L" "Set launch.json" my-debug--launch-json--set :transient t
+    :description my-debug--launch-json--describe)
+   ]
+
+  ["Actions"
+
+   ["Debug"
     ("d" "Start debug" my-debug--launch)
     ]
-   ["Edit config"
-    ("-t" "Set target" my-debug--config--target--set :transient t
-     :description my-debug--config--target--describe
-     )
-    ("-d" "Set cwd" my-debug--config--cwd--set :transient t
-     :description my-debug--config--cwd--describe)
-    ("-a" "Set args" my-debug--set-args)
-    ]
-   ["Edit proj"
-    ("-P" "Set proj dir" my-debug--dir-proj--set :transient t
-     :description my-debug--dir-proj--describe
-     )
-    ("-B" "Set build dir" my-debug--dir-build--set :transient t
-     :description my-debug--dir-build--describe)
-    ]
-   ["Config"
+
+   ["launch.json"
     ("S" "Save current config to launch.json" my-debug--config--save)
     ("L" "Load config from launch.json" my-debug--config--load)
     ("M" "Make config" my-debug--config--make)
     ("K" "Kill config" my-debug--config--kill)
     ]
+
    ]
   )
 ;;(global-set-key (kbd "s-,") 'mytransient-prefix)
