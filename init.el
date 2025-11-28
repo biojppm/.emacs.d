@@ -2315,6 +2315,14 @@ original line and use the absolute value."
   )
 
 
+;; epub
+;; https://depp.brause.cc/nov.el/
+(use-package nov-mode
+  :defer t
+  :mode (("\\.epub\\'" . nov-mode))
+  )
+
+
 ;;; PHP
 (use-package php-mode
   :defer t
@@ -4099,6 +4107,7 @@ mode.
      monokai-theme
      multiple-cursors
      nhexl-mode
+     nov
      open-in-msvs
      paradox
      pdb-mode
