@@ -1929,6 +1929,10 @@ original line and use the absolute value."
 
 (show-paren-mode 1)
 (require 'highlight-indentation)
+(defun my-setup-indentation ()
+  (set-face-background 'highlight-indentation-face "#272727")
+  (set-face-background 'highlight-indentation-current-column-face "#333333")
+  )
 (highlight-indentation-mode 1)
 
 (use-package highlight-symbol
@@ -3079,6 +3083,7 @@ and doesn't work in windows"
   (my-dap-ensure-cpptools-setup)
   (message "dap-config 1")
   (use-package dap-cpptools)
+  (use-package dap-lldb)
   ;;(use-package dap-lldb)
   (message "dap-config 2")
   ;;;;(require 'dap-lldb)

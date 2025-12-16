@@ -9,35 +9,6 @@ export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
 export C4_EXTERN_DIR=~/proj/c4extern
 
 
-#--------------------------------------------------------------------
-# conda
-#
-
-export CONDA_DIR=$HOME/local/conda-forge
-
-# install with:
-#
-#   curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-#   bash Miniforge3-$(uname)-$(uname -m).sh
-#
-# see:
-#   https://github.com/conda-forge/miniforge/#download
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$($CONDA_DIR/bin/conda 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "$CONDA_DIR/etc/profile.d/conda.sh" ]; then
-        . "$CONDA_DIR/etc/profile.d/conda.sh"
-    else
-        export PATH="$CONDA_DIR/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 
 #--------------------------------------------------------------------
 # env
