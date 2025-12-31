@@ -48,6 +48,7 @@
         upcase-dwim
         wdired--self-insert
         wdired-next-line
+        wdired-previous-line
         xref-pop-marker-stack
         yaml-electric-backspace
         yaml-electric-dash-and-dot

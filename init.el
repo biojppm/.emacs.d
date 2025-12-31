@@ -184,6 +184,7 @@
 ;(when (not package-archive-contents)
 ;; (package-refresh-contents))
 (package-initialize)
+(setq package-install-upgrade-built-in t)
 ;(setq package-enable-at-startup nil)
 
 ;;causes the package(s) to be installed automatically if not already present
