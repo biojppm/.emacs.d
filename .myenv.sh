@@ -9,6 +9,10 @@ export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
 export C4_EXTERN_DIR=~/proj/c4extern
 
 
+if [ -d $HOME/local/opt/venv/base ] ; then
+    source $HOME/local/opt/venv/base/bin/activate
+fi
+
 
 #--------------------------------------------------------------------
 # env

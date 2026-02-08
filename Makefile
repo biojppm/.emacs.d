@@ -4,7 +4,11 @@
 EMACS_DIR ?= $(shell pwd)
 LOCAL_DIR ?= $(shell if [ -f $(EMACS_DIR)/.local ] ; then echo $$(cat $(EMACS_DIR)/.local) ; else echo $(EMACS_DIR)/local ; fi)
 LOCAL_SRC_DIR ?= $(LOCAL_DIR)/src
-PIP ?= pip
+PIP ?= uv pip
+VENV_BASE_NAME ?= base
+VENV_ROOT ?= $(LOCAL_DIR)/opt/venv
+VENV_BASE = $(VENV_ROOT)/$(VENV_BASE_NAME)
+
 
 BAZEL_VERSION = 3.6.0
 BAZEL_VERSION_URL = "https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)/bazel-$(BAZEL_VERSION)-windows-x86_64.exe"
@@ -116,7 +120,12 @@ makedirs = if [ ! -d $1 ] ; then mkdir -p $1 ; fi
 download = curl -o $2 -L -s "$1"
 
 # install a pip package
-pipinstall = set -x ; if [ -z "$(shell pip list | grep $1)" ] ; then $(PIP) install $1 ; fi
+pipinstall = \
+	source $(VENV_BASE)/bin/activate ; \
+	set -xe ; \
+	if [ -z "$(shell pip list | grep $1)" ] ; then \
+	    $(PIP) install $1 ; \
+	fi
 
 # download and unpack a windows zip
 # $1=url
@@ -384,7 +393,7 @@ dropbox:
 	elif [ "$(OS)" == "Linux" ] ; then \
 	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
 	      gpg --recv-key --keyserver hkp://pgp.mit.edu FC918B335044912E ; \
-	      trizen -S dropbox dropbox-cli ; \
+	      yay -S dropbox dropbox-cli ; \
 	   else \
 	      sudo apt-get install dropbox ; \
 	   fi ; \
@@ -396,6 +405,17 @@ dropbox:
 .PHONY: tcpview
 tcpview:
 	$(call wininstallzip,$(TCPVIEW_URL),*.exe *.chm *.HLP)
+
+
+
+
+.PHONY: venv
+venv: venv_base
+venv_base: $(VENV_ROOT)
+	python -m venv --system-site-packages --symlinks $(VENV_BASE)
+	source $(VENV_BASE)/bin/activate && pip install uv
+
+
 
 
 #----------------------------------------------------------------------
