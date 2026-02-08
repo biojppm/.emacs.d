@@ -28,6 +28,8 @@ IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
 SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip"
 IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
 DEPENDS22_ZIP = "https://www.dependencywalker.com/depends22_x64.zip"
+DISCOUNT_REPO = https://github.com/Orc/discount
+
 
 GCC14 = https://github.com/xpack-dev-tools/gcc-xpack/releases/download/v14.2.0-2/xpack-gcc-14.2.0-2-linux-x64.tar.gz
 
@@ -170,7 +172,8 @@ all: ripgrep \
 	clang_install \
 	system_only \
 	marp \
-	swig
+	swig \
+	discount
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -407,6 +410,21 @@ tcpview:
 	$(call wininstallzip,$(TCPVIEW_URL),*.exe *.chm *.HLP)
 
 
+# discount: C utility to convert markdown to html
+# https://www.pell.portland.or.us/~orc/Code/discount/
+# https://github.com/Orc/discount/blob/main/cmake/CMakeLists.txt
+.PHONY: discount
+discount:
+	set -xe ; \
+	[ ! -d $(LOCAL_SRC_DIR)/discount ] && git clone $(DISCOUNT_REPO) $(LOCAL_SRC_DIR)/discount ; \
+	cmake -S $(LOCAL_SRC_DIR)/discount/cmake -B $(LOCAL_SRC_DIR)/discount/build \
+	    -DDISCOUNT_ONLY_LIBRARY=OFF \
+	    -DDISCOUNT_INSTALL_SAMPLES=ON \
+	    -DCMAKE_INSTALL_PREFIX=$(LOCAL_DIR) \
+	    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ; \
+	cmake --build $(LOCAL_SRC_DIR)/discount/build --parallel ; \
+	cmake --build $(LOCAL_SRC_DIR)/discount/build --target install ; \
+	rm -rf $(LOCAL_SRC_DIR)/discount
 
 
 .PHONY: venv
@@ -561,3 +579,6 @@ $(LOCAL_DIR):
 
 $(LOCAL_DIR)/bin:
 	$(call makedirs, $(LOCAL_DIR)/bin)
+
+$(VENV_ROOT):
+	$(call makedirs, $(VENV_ROOT))
