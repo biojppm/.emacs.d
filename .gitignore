@@ -24,6 +24,7 @@ eclipse.jdt.ls/
 ede-projects.el
 eln-cache/
 elpa/*/*.so
+elpa/*/build/
 eshell/
 forge-database.sqlite
 history
