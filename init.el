@@ -971,6 +971,7 @@
             ))
 (add-hook 'dired-mode-hook
           (lambda ()
+            (disable-line-wrapping)
             ;; Set dired-x buffer-local variables here. For example:
             ;; (dired-omit-mode 1)
             (local-set-key (kbd "M-<up>") 'dired-up-directory)
@@ -1023,7 +1024,11 @@
    ".hpp" ".h" ".cpp" ".c"
    ".py"
    ".cmake"
-   ".txt" ".el" ".ini" ".cfg" ".cnf"))
+   ".el"
+   ".ini" ".cfg" ".cnf"
+   ".txt" ".md"
+   ".yaml" ".json" ".xml"
+   ))
 ;;Takes a list of buffers to ignore in C-x b
 ;(setq ido-ignore-buffers '())
 ;;Takes a list of directories to ignore in C-x d and C-x C-f
