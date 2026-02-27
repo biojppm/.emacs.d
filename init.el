@@ -911,15 +911,15 @@
 ;; https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html
 (defun udf-windows-setup ()
   (interactive)
-  ;(setq git-shell-exe "C:\\Git\\bin\\sh")
+  ;;(setq git-shell-exe "C:\\Git\\bin\\sh")
   (setq git-shell-exe "C:\\Git\\bin\\bash.exe")
   (setq git-shell-dir "C:\\Git\\bin\\")
-  ;(setq git-shell-dir (file-name-directory git-shell-exe)) ; this turns \ into /
+  ;;(setq git-shell-dir (file-name-directory git-shell-exe)) ; this turns \ into /
   (add-to-list 'exec-path git-shell-dir)
   (setenv "PATH"
           (concat git-shell-dir ";"
                   (getenv "PATH")))
-  ; http://emacs.stackexchange.com/questions/22049/git-bash-in-emacs-on-windows
+  ;; http://emacs.stackexchange.com/questions/22049/git-bash-in-emacs-on-windows
   (prefer-coding-system 'utf-8)
   (setq explicit-shell-file-name git-shell-exe)
   (setq explicit-bash.exe-args '("--login" "-i"))
@@ -930,14 +930,14 @@
 ;;    (udf-windows-setup))
 
 (defun run-bash-windows ()
-      (interactive)
-      (let ((shell-file-name "C:\\Git\\bin\\bash.exe"))
-            (shell "*bash*")))
+  (interactive)
+  (let ((shell-file-name "C:\\Git\\bin\\bash.exe"))
+    (shell "*bash*")))
 
 (defun run-cmdexe-windows ()
-      (interactive)
-      (let ((shell-file-name "cmd.exe"))
-            (shell "*cmd.exe*")))
+  (interactive)
+  (let ((shell-file-name "cmd.exe"))
+    (shell "*cmd.exe*")))
 
 
 ;;-------------------------------------------------------------------------
@@ -966,8 +966,8 @@
           (lambda ()
             (load "dired-x")
             ;; Set dired-x global variables here. For example:
-            ;; (setq dired-guess-shell-gnutar "gtar")
-            ;; (setq dired-x-hands-off-my-keys nil)
+            ;;(setq dired-guess-shell-gnutar "gtar")
+            ;;(setq dired-x-hands-off-my-keys nil)
             ))
 (add-hook 'dired-mode-hook
           (lambda ()
