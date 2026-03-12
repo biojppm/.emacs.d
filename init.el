@@ -562,12 +562,30 @@
 
 
 ;;--------------------------------------------------------------------
+;; BOOKMARKS
+;; https://emacs.stackexchange.com/a/47645
+;; https://github.com/joodland/bm
+(use-package bm
+  :defer t
+  :commands
+  bm-toggle
+  bm-next
+  bm-previous
+  :config
+  :bind
+  ("C-c b t" . bm-toggle)
+  ("C-c b n" . bm-next)
+  ("C-c b p" . bm-previous)
+  )
+
+
+;;--------------------------------------------------------------------
 ;; ORG-MODE
 
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-cb" 'org-switchb)
+;;(global-set-key "\C-cl" 'org-store-link)
+;;(global-set-key "\C-ca" 'org-agenda)
+;;(global-set-key "\C-cc" 'org-capture)
+;;(global-set-key "\C-cb" 'org-switchb)
 
 ;; https://orgmode.org/manual/Clocking-work-time.html
 (setq org-clock-persist 'history)
@@ -2494,25 +2512,26 @@ original line and use the absolute value."
 (use-package cython-mode
   :mode (("\\.py[xdi]" . cython-mode)))
 
-(let ((conda-dir (getenv "CONDA_DIR")))
-  (message "checking: CONDA_DIR=%s" conda-dir)
-  (cond
-   ((not conda-dir) (warn "CONDA_DIR not set"))
-   ((string= "" conda-dir) (warn "CONDA_DIR is empty"))
-   ((not (file-directory-p conda-dir)) (warn "CONDA_DIR=%s does not exist"))
-   (t
-    (progn
-      (message "ok: CONDA_DIR=%s" conda-dir)
-      (use-package conda
-        :ensure t
-        :init
-        (setq conda-anaconda-home conda-dir)
-        (setq conda-env-home-directory conda-dir)
-        )
-      )
-    )
-   )
-  )
+;;(let ((conda-dir (getenv "CONDA_DIR")))
+;;  (message "checking: CONDA_DIR=%s" conda-dir)
+;;  (cond
+;;   ((not conda-dir) (warn "CONDA_DIR not set"))
+;;   ((string= "" conda-dir) (warn "CONDA_DIR is empty"))
+;;   ((not (file-directory-p conda-dir)) (warn "CONDA_DIR=%s does not exist"))
+;;   (t
+;;    (progn
+;;      (message "ok: CONDA_DIR=%s" conda-dir)
+;;      (use-package conda
+;;        :ensure t
+;;        :init
+;;        (setq conda-anaconda-home conda-dir)
+;;        (setq conda-env-home-directory conda-dir)
+;;        )
+;;      )
+;;    )
+;;   )
+;;  )
+
 
 ;;; Haskell
 ;; http://www.mew.org/~kazu/proj/ghc-mod/en/preparation.html
@@ -2527,7 +2546,8 @@ original line and use the absolute value."
 ;;  instructions on ESS: http://ess.r-project.org/Manual/ess.html
 ;;  http://cran.r-project.org/doc/FAQ/R-FAQ.html#R-and-Emacs
 (use-package ess-site
-  :ensure ess
+  :defer t
+  ;;:ensure ess
   :mode (("\\.R\\'" . R-mode)
          ("\\.r\\'" . R-mode))
   :commands R
@@ -4027,8 +4047,7 @@ mode.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '(
-     "80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c"
+   '("80ceeb45ccb797fe510980900eda334c777f05ee3181cb7e19cd6bb6fc7fda7c"
      "8abee8a14e028101f90a2d314f1b03bed1cde7fd3f1eb945ada6ffc15b1d7d65"
      "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc"
      "ba9be9caf9aa91eb34cf11ad9e8c61e54db68d2d474f99a52ba7e87097fa27f5"
@@ -4037,9 +4056,7 @@ mode.
      "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553"
      "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4"
      "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223"
-     default
-     )
-   )
+     default))
  '(ispell-dictionary nil)
  '(package-selected-packages
    '(
@@ -4167,7 +4184,7 @@ mode.
      ztree
      )
    )
- )
+ '(warning-suppress-types '((native-compiler))))
 
 ;; fixing faces: https://emacs.stackexchange.com/questions/42318/why-are-code-blocks-and-code-literals-displaying-with-large-face-in-markdown
 (custom-set-faces
