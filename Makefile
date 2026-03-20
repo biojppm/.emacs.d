@@ -11,25 +11,25 @@ VENV_BASE = $(VENV_ROOT)/$(VENV_BASE_NAME)
 
 
 BAZEL_VERSION = 3.6.0
-BAZEL_VERSION_URL = "https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)/bazel-$(BAZEL_VERSION)-windows-x86_64.exe"
+BAZEL_VERSION_URL = https://github.com/bazelbuild/bazel/releases/download/$(BAZEL_VERSION)/bazel-$(BAZEL_VERSION)-windows-x86_64.exe
 RIPGREP_VERSION = 12.0.1
-RIPGREP_VERSION_URL = "https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip"
-AG_VERSION_URL = "https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip"
-FZF_VERSION_URL = "https://github.com/junegunn/fzf-bin/releases/download/0.21.1/fzf-0.21.1-windows_amd64.zip"
-FD_VERSION_URL = "https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5.0-i686-pc-windows-msvc.zip"
+RIPGREP_VERSION_URL = https://github.com/BurntSushi/ripgrep/releases/download/$(RIPGREP_VERSION)/ripgrep-$(RIPGREP_VERSION)-i686-pc-windows-msvc.zip
+AG_VERSION_URL = https://github.com/k-takata/the_silver_searcher-win32/releases/download/2019-03-23%2F2.2.0-19-g965f71d/ag-2019-03-23_2.2.0-19-g965f71d-x64.zip
+FZF_VERSION_URL = https://github.com/junegunn/fzf-bin/releases/download/0.21.1/fzf-0.21.1-windows_amd64.zip
+FD_VERSION_URL = https://github.com/sharkdp/fd/releases/download/v7.5.0/fd-v7.5.0-i686-pc-windows-msvc.zip
 PANDOC_VERSION = 2.9.2
-PANDOC_VERSION_URL = "https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip"
-IMAGE_MAGICK_URL = "https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip"
+PANDOC_VERSION_URL = https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/pandoc-$(PANDOC_VERSION)-windows-x86_64.zip
+IMAGE_MAGICK_URL = https://imagemagick.org/download/binaries/ImageMagick-7.0.10-28-portable-Q16-x64.zip
 MARKDOWN_TOC = https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
 TCPVIEW_URL = https://download.sysinternals.com/files/TCPView.zip
-MARP_ZIP = "https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-win.zip"
-MARP_TGZ = "https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-linux.tar.gz"
-IPERF_ZIP = "https://iperf.fr/download/windows/iperf-3.1.3-win64.zip"
-SWIG_ZIP = "http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip"
-IRFANVIEW_ZIP = "https://www.irfanview.info/files/iview457_x64.zip"
-DEPENDS22_ZIP = "https://www.dependencywalker.com/depends22_x64.zip"
+MARP_ZIP = https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-win.zip
+MARP_TGZ = https://github.com/marp-team/marp-cli/releases/download/v4.0.2/marp-cli-v4.0.2-linux.tar.gz
+IPERF_ZIP = https://iperf.fr/download/windows/iperf-3.1.3-win64.zip
+SWIG_ZIP = http://prdownloads.sourceforge.net/swig/swigwin-4.1.1.zip
+IRFANVIEW_ZIP = https://www.irfanview.info/files/iview457_x64.zip
+DEPENDS22_ZIP = https://www.dependencywalker.com/depends22_x64.zip
+WGET_ZIP = http://downloads.sourceforge.net/gnuwin32/wget-1.11.4-1-bin.zip
 DISCOUNT_REPO = https://github.com/Orc/discount
-
 
 GCC14 = https://github.com/xpack-dev-tools/gcc-xpack/releases/download/v14.2.0-2/xpack-gcc-14.2.0-2-linux-x64.tar.gz
 
@@ -133,12 +133,19 @@ pipinstall = \
 # $1=url
 # $2=unpack pattern
 wininstallzip = \
+	$(call wininstallzip_custom,$1,$2,bin/)
+
+# download and unpack a windows zip, with custom path copy
+# $1=url
+# $2=unpacked files/folders to copy from inside the unpacked folder
+# $3=destination for the files
+wininstallzip_custom = \
 	set -xe ; \
 	mkdir -p $(DL_DIR) ; \
 	fn=`basename $1 | sed 's:\.zip$$::g'` ; \
 	curl -o $(DL_DIR)/$$fn.zip -L -s "$1" ; \
 	7z x $(DL_DIR)/$$fn.zip -y -o$(DL_DIR)/$$fn ; \
-        ( cd $(DL_DIR)/$$fn && cp -favr $2 $(LOCAL_DIR)/bin/ )
+        ( cd $(DL_DIR)/$$fn && cp -favr $2 $(LOCAL_DIR)/$3 )
 
 # download and unpack a tgz
 # $1=url
@@ -242,7 +249,7 @@ ag: $(LOCAL_DIR)/bin
 	   else \
 	      sudo add-apt-repository ppa:pgolm/the-silver-searcher ; \
 	      sudo apt-get update ; \
-	      sudo apt-get install the-silver-searcher ; \
+	      sudo apt-get install -y the-silver-searcher ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
@@ -278,6 +285,23 @@ fd: $(LOCAL_DIR)/bin
 	      sudo pacman -S fd ; \
 	   else \
 	      bbbbbbbb not done ; \
+	   fi ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
+
+
+.PHONY: wget
+wget: $(LOCAL_DIR)/bin
+	set -x ; set -e ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(WGET_ZIP),*/*) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   if [ "$(DISTRO)" == "Manjaro" ] || [ "$(DISTRO)" == "Arch" ] ; then \
+	      sudo pacman -S wget ; \
+	   else \
+	      sudo apt-get update ; \
+	      sudo apt-get install -y wget ; \
 	   fi ; \
 	else \
 	   bbbbbbbb not done ; \
