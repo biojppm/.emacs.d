@@ -2272,7 +2272,7 @@ original line and use the absolute value."
     :config (cmake-font-lock-activate)
     )
   ;; pip install cmake-language-server
-  :hook (cmake-mode . lsp-deferred)
+  ;;:hook (cmake-mode . lsp-deferred)
   )
 
 ;; cmany
@@ -3108,8 +3108,9 @@ and doesn't work in windows"
   ;; dap for c++
   (my-dap-ensure-cpptools-setup)
   (message "dap-config 1")
-  (use-package dap-cpptools)
-  (use-package dap-lldb)
+  (require 'dap-gdb)
+  ;;(use-package dap-gdb)
+  ;;(use-package dap-cpptools)
   ;;(use-package dap-lldb)
   (message "dap-config 2")
   ;;;;(require 'dap-lldb)
@@ -4184,7 +4185,7 @@ mode.
      ztree
      )
    )
- '(warning-suppress-types '((native-compiler))))
+ '(warning-suppress-types '((flycheck syntax-checker) (native-compiler))))
 
 ;; fixing faces: https://emacs.stackexchange.com/questions/42318/why-are-code-blocks-and-code-literals-displaying-with-large-face-in-markdown
 (custom-set-faces
