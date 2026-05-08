@@ -2794,6 +2794,11 @@ original line and use the absolute value."
                  "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+: +\\(fatal error +C[0-9]+\\|error +C[0-9]+\\|warning +C[0-9]+\\|message +\\):"
                  1 2)
                )
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(visual_studio
+                 "^[ \t]*\\([-A-Za-z0-9:_/\\\\. (),]+\\)(\\([0-9]+\\)\\(,[0-9]+\\)?)+:"
+                 1 2)
+               )
   )
 ;; add sanitizer error regexes
 (when (not this-is-windows)
