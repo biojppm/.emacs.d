@@ -3894,10 +3894,6 @@ SEQ may be an atom or a sequence."
     )
   )
 
-;; forge
-(use-package forge
-  :after magit)
-
 
 ;;-----------------------------------------------------------------------------
 ;; google-this
@@ -4164,7 +4160,6 @@ mode.
      smartparens
      smex
      solarized-theme
-     sqlite3
      string-inflection
      sudo-edit
      syntax-subword
