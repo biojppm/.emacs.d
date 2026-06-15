@@ -21,6 +21,7 @@
         downcase-dwim
         downcase-region
         drag-stuff-down
+        drag-stuff-up
         electric-newline-and-maybe-indent
         end-of-visual-line
         gcm-scroll-down
@@ -56,8 +57,10 @@
 
 (setq mc/cmds-to-run-once
       '(
+        backward-forward-previous-location
         c-context-line-break
         compile-goto-error
+        describe-key
         dired-find-file-other-window
         dired-previous-line
         dired-toggle-read-only
