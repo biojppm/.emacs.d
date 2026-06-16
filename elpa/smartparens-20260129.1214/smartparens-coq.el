@@ -1,11 +1,11 @@
-;;; smartparens-latex.el --- Additional configuration for text-mode.  -*- lexical-binding: t; -*-
+;;; smartparens-coq.el --- Additional configuration for Coq proof assistant -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2018 Matus Goljer
+;; Copyright (C) 2024 Matus Goljer
 
 ;; Author: Matus Goljer <matus.goljer@gmail.com>
 ;; Maintainer: Matus Goljer <matus.goljer@gmail.com>
-;; Created: 16 July 2017
-;; Keywords: abbrev convenience editing
+;; Created: 29 June 2024
+;; Keywords: smartparens, coq
 ;; URL: https://github.com/Fuco1/smartparens
 
 ;; This file is not part of GNU Emacs.
@@ -29,17 +29,17 @@
 
 ;;; Commentary:
 
-;; This file provides some additional configuration for `text-mode'.
-;; To use it, simply add:
+;; This file provides some additional configuration for Coq proof
+;; assistant.  To use it, simply add:
 ;;
-;; (require 'smartparens-text)
+;; (require 'smartparens-coq)
 ;;
 ;; into your configuration.  You can use this in conjunction with the
 ;; default config or your own configuration.
-
+;;
 ;; If you have good ideas about what should be added please file an
 ;; issue on the github tracker.
-
+;;
 ;; For more info, see github readme at
 ;; https://github.com/Fuco1/smartparens
 
@@ -47,19 +47,14 @@
 
 (require 'smartparens)
 
-(defun sp-text-mode-emoticon-p (_id action _context)
-  (when (memq action '(insert navigate))
-    (sp--looking-back-p ":-?[()]" 3)))
+(sp-with-modes '(coq-mode)
+  ;; Disable ' because it is used in pattern-matching
+  (sp-local-pair "'" nil :actions nil)
+  ;; Disable ` because it is used in polymorphic variants
+  (sp-local-pair "`" nil :actions nil)
+  (sp-local-pair "(*" "*)"
+                 :post-handlers '(("| " "SPC")
+                                  (" | " "*"))))
 
-(defun sp-text-mode-skip-emoticon (ms mb _me)
-  (when (member ms '("(" ")"))
-    (save-excursion
-      (goto-char mb)
-      (sp--looking-back-p ":-?" 2))))
-
-(sp-local-pair 'text-mode "(" nil
-               :unless '(:add sp-text-mode-emoticon-p)
-               :skip-match 'sp-text-mode-skip-emoticon)
-
-(provide 'smartparens-text)
-;;; smartparens-text.el ends here
+(provide 'smartparens-coq)
+;;; smartparens-coq.el ends here
