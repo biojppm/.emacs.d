@@ -4107,6 +4107,7 @@ mode.
      cquery
      cython-mode
      dap-mode
+     dape
      diminish
      dired-toggle-sudo
      dirtree
