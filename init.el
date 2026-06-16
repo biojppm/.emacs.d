@@ -4078,7 +4078,6 @@ mode.
      cmake-font-lock
      cmake-mode
      company-c-headers
-     company-ycmd
      conda
      counsel-etags
      counsel-projectile
@@ -4094,7 +4093,6 @@ mode.
      dumb-jump
      elisp-slime-nav
      elpy
-     ess
      fd-dired
      find-file-in-project
      find-file-in-repository
@@ -4149,8 +4147,6 @@ mode.
      protobuf-mode
      pylint
      pytest-pdb-break
-     realgud
-     realgud-ipdb
      rg
      ripgrep
      rust-mode
