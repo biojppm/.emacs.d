@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; lexical-binding: nil -*-
-(define-package "dap-mode" "20260208.1403"
+(define-package "dap-mode" "20260523.830"
   "Debug Adapter Protocol mode."
-  '((emacs        "28.1")
+  '((emacs        "29.1")
     (dash         "2.18.0")
     (lsp-mode     "6.0")
     (bui          "1.1.0")
@@ -12,8 +12,8 @@
     (ht           "2.3")
     (lsp-docker   "1.0.0"))
   :url "https://github.com/emacs-lsp/dap-mode"
-  :commit "b77d9bdb15d89e354b8a20906bebe7789e19fc9b"
-  :revdesc "b77d9bdb15d8"
+  :commit "fc78b2a1db5f30e65875653b4807b801c0ef23bc"
+  :revdesc "fc78b2a1db5f"
   :keywords '("languages" "debug")
   :authors '(("Ivan Yonchovski" . "yyoncho@gmail.com"))
   :maintainers '(("Ivan Yonchovski" . "yyoncho@gmail.com")))
