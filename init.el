@@ -173,6 +173,7 @@
 ;; C-c C-w     Copy Regular Expression (and convert where applicable) the expression to a string format suitable for use in elisp
 ;; C-c C-q     Quit re-builder
 
+
 ;;------------------------------------------------------------------------------
 ;; MELPA - package installer
 ;; https://melpa.org/#/getting-started
@@ -524,9 +525,7 @@
 (global-hl-line-mode 1)
 
 (when window-system
-
   (scroll-bar-mode 0)
-
   ;;(set-frame-width (selected-frame) 90) ; set the editor window width in columns
   (require 'maximize)
   (require 'frame-cmds)
@@ -540,7 +539,6 @@
   ;;(global-set-key (kbd   "C-<f11>") 'shrink-frame-horizontally)
   ;;
   ;;(global-set-key (kbd "S-C-<f12>") 'toggle-max-frame)
-
   (global-set-key (kbd "M-<return>") 'toggle-frame-fullscreen)
   )
 
@@ -1813,6 +1811,16 @@ If point was already at that position, move point to beginning of line."
   (global-set-key (kbd "S-C-RET"     ) "\C-p\C-e\C-m")
   )
 (my-newline-shortcuts)
+
+
+;;------------------------------------------------------------------
+;; ===== Use delete-selection-mode =====
+;; deletes a selected region when starting typing
+;; https://stackoverflow.com/a/637544
+;; also, backspace deletes a region without adding it to the kill ring
+
+(delete-selection-mode t)
+
 
 ;;------------------------------------------------------------------
 ;; ===== Delete the previous word without adding it to the killring =====
