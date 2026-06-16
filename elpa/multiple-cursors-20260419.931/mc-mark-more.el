@@ -1,4 +1,4 @@
-;;; mc-mark-more.el
+;;; mc-mark-more.el  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2012-2016 Magnar Sveen
 
@@ -29,6 +29,7 @@
 
 (require 'multiple-cursors-core)
 (require 'thingatpt)
+(require 'sgml-mode)
 
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
@@ -55,7 +56,7 @@
     beg))
 
 (defun mc/furthest-cursor-before-point ()
-  (let ((beg (if mark-active (min (mark) (point)) (point)))
+  (let ((beg (or (use-region-beginning) (point)))
         furthest)
     (mc/for-each-fake-cursor
      (when (< (mc/cursor-beg cursor) beg)
@@ -64,7 +65,7 @@
     furthest))
 
 (defun mc/furthest-cursor-after-point ()
-  (let ((end (if mark-active (max (mark) (point)) (point)))
+  (let ((end (or (use-region-end) (point)))
         furthest)
     (mc/for-each-fake-cursor
      (when (> (mc/cursor-end cursor) end)
@@ -96,8 +97,8 @@ to (point)), or nil."
   "How should mc/mark-more-* search for more matches?
 
 Match everything: nil
-Match only whole words: 'words
-Match only whole symbols: 'symbols
+Match only whole words: \\='words
+Match only whole symbols: \\='symbols
 
 Use like case-fold-search, don't recommend setting it globally.")
 
@@ -308,7 +309,7 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-previous-like-this arg)))
 
 (defun mc/mark-lines (num-lines direction)
-  (dotimes (i (if (= num-lines 0) 1 num-lines))
+  (dotimes (_ (if (= num-lines 0) 1 num-lines))
     (mc/save-excursion
      (let ((furthest-cursor (cl-ecase direction
                               (forwards  (mc/furthest-cursor-after-point))
@@ -497,20 +498,27 @@ remove the keymap depends on user input and KEEP-PRED:
 
       (push alist emulation-mode-map-alists))))
 
+(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
+
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") #'mc/mmlte--up)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") #'mc/mmlte--down)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<left>") #'mc/mmlte--left)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<right>") #'mc/mmlte--right)
+
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
   "Like mark-more-like-this, but then lets you adjust with arrow keys.
 The adjustments work like this:
 
-   <up>    Mark previous like this and set direction to 'up
-   <down>  Mark next like this and set direction to 'down
+   <up>    Mark previous like this and set direction to \\='up
+   <down>  Mark next like this and set direction to \\='down
 
-If direction is 'up:
+If direction is \\='up:
 
    <left>  Skip past the cursor furthest up
    <right> Remove the cursor furthest up
 
-If direction is 'down:
+If direction is \\='down:
 
    <left>  Remove the cursor furthest down
    <right> Skip past the cursor furthest down
@@ -557,13 +565,6 @@ are we working on the next or previous cursors?")
       (mc/unmark-previous-like-this)
     (mc/skip-to-next-like-this))
   (mc/mmlte--message))
-
-(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
-
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") 'mc/mmlte--up)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") 'mc/mmlte--down)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<left>") 'mc/mmlte--left)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<right>") 'mc/mmlte--right)
 
 (defvar mc--restrict-mark-all-to-symbols nil)
 
@@ -705,7 +706,7 @@ already there."
     (mc/maybe-multiple-cursors-mode)))
 
 ;;;###autoload
-(defalias 'mc/add-cursor-on-click 'mc/toggle-cursor-on-click)
+(defalias 'mc/add-cursor-on-click #'mc/toggle-cursor-on-click)
 
 ;;;###autoload
 (defun mc/mark-sgml-tag-pair ()
