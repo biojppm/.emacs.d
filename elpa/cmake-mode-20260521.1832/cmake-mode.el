@@ -1,9 +1,11 @@
-;;; cmake-mode.el --- major-mode for editing CMake sources
+;;; cmake-mode.el --- major-mode for editing CMake sources -*- lexical-binding: t; -*-
 
+;; Package-Version: 20260521.1832
+;; Package-Revision: 06cc1d04d8d5
 ;; Package-Requires: ((emacs "24.1"))
 
 ; Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
-; file Copyright.txt or https://cmake.org/licensing for details.
+; file LICENSE.rst or https://cmake.org/licensing for details.
 
 ;------------------------------------------------------------------------------
 
@@ -182,14 +184,14 @@ set the path with these commands:
     )
   )
 
-(defun cmake-point-in-indendation ()
-  (string-match "^[ \\t]*$" (buffer-substring (point-at-bol) (point))))
+(defun cmake-point-in-indentation ()
+  (string-match "^[ \\t]*$" (buffer-substring (line-beginning-position) (point))))
 
 (defun cmake-indent-line-to (column)
   "Indent the current line to COLUMN.
 If point is within the existing indentation it is moved to the end of
 the indentation.  Otherwise it retains the same position on the line"
-  (if (cmake-point-in-indendation)
+  (if (cmake-point-in-indentation)
       (indent-line-to column)
     (save-excursion (indent-line-to column))))
 
@@ -258,15 +260,6 @@ Return t unless search stops due to end of buffer."
       (forward-line)
       t)))
 
-(defun cmake-mark-defun ()
-  "Mark the current CMake function or macro.
-
-This puts the mark at the end, and point at the beginning."
-  (interactive)
-  (cmake-end-of-defun)
-  (push-mark nil :nomsg :activate)
-  (cmake-beginning-of-defun))
-
 
 ;------------------------------------------------------------------------------
 
@@ -288,7 +281,7 @@ This puts the mark at the end, and point at the beginning."
 
 ;------------------------------------------------------------------------------
 
-(defun cmake--syntax-propertize-until-bracket-close (syntax)
+(defun cmake--syntax-propertize-until-bracket-close (syntax end)
   ;; This function assumes that a previous search has matched the
   ;; beginning of a bracket_comment or bracket_argument and that the
   ;; second capture group has matched the equal signs between the two
@@ -316,10 +309,10 @@ This puts the mark at the end, and point at the beginning."
   (syntax-propertize-rules
    ("\\(#\\)\\[\\(=*\\)\\["
     (1
-     (prog1 "!" (cmake--syntax-propertize-until-bracket-close "!"))))
+     (prog1 "!" (cmake--syntax-propertize-until-bracket-close "!" end))))
    ("\\(\\[\\)\\(=*\\)\\["
     (1
-     (prog1 "|" (cmake--syntax-propertize-until-bracket-close "|"))))))
+     (prog1 "|" (cmake--syntax-propertize-until-bracket-close "|" end))))))
 
 ;; Syntax table for this mode.
 (defvar cmake-mode-syntax-table nil
@@ -346,6 +339,10 @@ This puts the mark at the end, and point at the beginning."
 (define-derived-mode cmake-mode prog-mode "CMake"
   "Major mode for editing CMake source files."
 
+  ;; Setup jumping to beginning/end of a CMake function/macro.
+  (set (make-local-variable 'beginning-of-defun-function) #'cmake-beginning-of-defun)
+  (set (make-local-variable 'end-of-defun-function) #'cmake-end-of-defun)
+
   ; Setup font-lock mode.
   (set (make-local-variable 'font-lock-defaults) '(cmake-font-lock-keywords))
   ; Setup indentation function.
@@ -355,11 +352,6 @@ This puts the mark at the end, and point at the beginning."
   ;; Setup syntax propertization
   (set (make-local-variable 'syntax-propertize-function) cmake--syntax-propertize-function)
   (add-hook 'syntax-propertize-extend-region-functions #'syntax-propertize-multiline nil t))
-
-;; Default cmake-mode key bindings
-(define-key cmake-mode-map "\e\C-a" #'cmake-beginning-of-defun)
-(define-key cmake-mode-map "\e\C-e" #'cmake-end-of-defun)
-(define-key cmake-mode-map "\e\C-h" #'cmake-mark-defun)
 
 
 ; Help mode starts here
@@ -490,7 +482,8 @@ and store the result as a list in LISTVAR."
 
 ;;;###autoload
 (defun cmake-help ()
-  "Queries for any of the four available help topics and prints out the appropriate page."
+  "Queries for any of the four available help topics and prints out the
+appropriate page."
   (interactive)
   (let* ((default-entry (cmake-symbol-at-point))
          (command-list (cmake-get-list "command"))
