@@ -4116,7 +4116,6 @@ mode.
      flx-ido
      flycheck
      flycheck-rust
-     flycheck-ycmd
      flymake-yaml
      forge
      fzf

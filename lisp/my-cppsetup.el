@@ -230,7 +230,7 @@
 
 (defun my-universal-tags-hook ()
   (interactive)
-  (load "my-ycmd-setup")
+  ;;(load "my-ycmd-setup")
   )
 
 (defun my-rtags-hook ()
