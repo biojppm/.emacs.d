@@ -6,11 +6,10 @@
 ;;         Marshall T. Vandegrift <llasram@gmail.com>
 ;; Maintainer: Vasilij Schneidermann <mail@vasilij.de>
 ;; URL: https://github.com/yoshiki/yaml-mode
-;; Package-Version: 20230329.723
-;; Package-Commit: b153150e0e77b4ec462d741cdb16956c6ae270d6
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: data yaml
-;; Version: 0.0.15
+;; Package-Version: 20260420.156
+;; Package-Revision: 62cbd8050776
 
 ;; This file is not part of Emacs
 
@@ -105,7 +104,7 @@ that key is pressed to begin a block literal."
 
 (defface yaml-tab-face
   '((((class color)) (:background "red" :foreground "red" :bold t))
-    (t (:reverse-video t)))
+    (t (:inverse-video t)))
   "Face to use for highlighting tabs in YAML files."
   :group 'faces
   :group 'yaml)
@@ -125,7 +124,7 @@ that key is pressed to begin a block literal."
   "Regexp matching a line containing only (valid) whitespace.")
 
 (defconst yaml-directive-re "^\\(?:--- \\)? *%\\(\\w+\\)"
-  "Regexp matching a line contatining a YAML directive.")
+  "Regexp matching a line containing a YAML directive.")
 
 (defconst yaml-document-delimiter-re "^\\(?:---\\|[.][.][.]\\)"
   "Rexexp matching a YAML document delimiter line.")
@@ -224,9 +223,11 @@ that key is pressed to begin a block literal."
   :syntax-table yaml-mode-syntax-table
   (set (make-local-variable 'comment-start) "# ")
   (set (make-local-variable 'comment-start-skip) "#+ *")
+  (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'indent-line-function) 'yaml-indent-line)
   (set (make-local-variable 'indent-tabs-mode) nil)
   (set (make-local-variable 'fill-paragraph-function) 'yaml-fill-paragraph)
+  (set (make-local-variable 'page-delimiter) "^---\\([ \t].*\\)*\n")
 
   (set (make-local-variable 'syntax-propertize-function)
        'yaml-mode-syntax-propertize-function)
@@ -272,7 +273,8 @@ that key is pressed to begin a block literal."
              (sps (save-excursion (syntax-ppss (1- pt)))))
         (when (not (nth 8 sps))
           (cond
-           ((and (char-equal ?' (char-before (1- pt)))
+           ((and (char-before (1- pt))
+                 (char-equal ?' (char-before (1- pt)))
                  (char-equal ?' (char-before pt)))
             (put-text-property (- pt 2) pt
                                'syntax-table (string-to-syntax "w"))
