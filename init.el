@@ -3896,6 +3896,21 @@ SEQ may be an atom or a sequence."
 
 
 ;;-----------------------------------------------------------------------------
+
+(use-package elfeed
+  :commands elfeed elfeed-tree
+  :defer t
+  :init
+  (message "elfeed init")
+  :init
+  (message "elfeed config")
+  (setf url-queue-timeout 30)
+  (setq-default elfeed-search-filter "")
+  (load-file (concat emacs-dir "elfeed-feeds.el"))
+  )
+
+
+;;-----------------------------------------------------------------------------
 ;; google-this
 ;; http://pragmaticemacs.com/emacs/google-search-from-inside-emacs/
 
@@ -4091,6 +4106,7 @@ mode.
      drag-stuff
      dtrt-indent
      dumb-jump
+     elfeed
      elisp-slime-nav
      elpy
      fd-dired

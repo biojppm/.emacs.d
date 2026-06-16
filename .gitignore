@@ -9,6 +9,7 @@
 .lsp-session-*
 .python-version
 .yas-compiled-snippets.el
+/elfeed/
 /elpy/
 /image-dired/
 /local.sds.gitlab.el
