@@ -4,8 +4,8 @@
 
 ;; Author: Vasilij Schneidermann <mail@vasilij.de>
 ;; URL: https://depp.brause.cc/nov.el
-;; Package-Version: 20250615.1051
-;; Package-Revision: 933816c19063
+;; Package-Version: 20251213.1501
+;; Package-Revision: 874daf5e4791
 ;; Package-Requires: ((esxml "0.3.6") (emacs "25.1"))
 ;; Keywords: hypermedia, multimedia, epub
 
@@ -794,15 +794,18 @@ Takes an optional COUNT, goes forward if COUNT is negative."
   (when target
     (let ((pos (point-min))
           done)
-      (while (and (not done)
-                  (setq pos (next-single-property-change pos 'shr-target-id)))
+      (while (and (not done) pos)
         (let ((property (get-text-property pos 'shr-target-id)))
-          (when (or (equal property target)
-                    ;; NOTE: as of Emacs 28.1 this may be a list of targets
-                    (and (consp property) (member target property)))
-            (goto-char pos)
-            (recenter (1- (max 1 scroll-margin)))
-            (setq done t))))
+          (if (or (equal property target)
+                  ;; NOTE: as of Emacs 28.1 this may be a list of targets
+                  (and (consp property) (member target property)))
+              (progn
+                (goto-char pos)
+                (recenter (1- (max 1 scroll-margin)))
+                (setq done t))
+            ;; NOTE: to catch the case of cursor starting out at the
+            ;; `shr-target-id' property, change pos *after* checking
+            (setq pos (next-single-property-change pos 'shr-target-id)))))
       (when (not done)
         (error "Couldn't locate target")))))
 
