@@ -150,7 +150,7 @@
    ("http://cssanalytics.wordpress.com/feed/" finance) ;;<outline type="rss" text="CSSA" title="CSSA" xmlUrl="http://cssanalytics.wordpress.com/feed/" htmlUrl="https://cssanalytics.wordpress.com"/>
    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8Vq8rpqluEF07NSt9ipCkQ" finance) ;;<outline type="rss" text="The Solari Report | Catherine Austin Fitts" title="The Solari Report | Catherine Austin Fitts" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC8Vq8rpqluEF07NSt9ipCkQ" htmlUrl="https://www.youtube.com/channel/UC8Vq8rpqluEF07NSt9ipCkQ"/>
    ("http://marketmovers.blogspot.com/feeds/posts/default?alt=rss" finance) ;;<outline type="rss" text="Trade ideas" title="Trade ideas" xmlUrl="http://marketmovers.blogspot.com/feeds/posts/default?alt=rss" htmlUrl="https://www.trade-ideas.com"/>
-   ("http://mises.org/dailyarticles.xml" finance) ;;<outline type="rss" text="Mises Institute" title="Mises Institute" xmlUrl="http://mises.org/dailyarticles.xml" htmlUrl="https://mises.org/"/>
+   ("http://mises.org/dailyarticles.xml" finance economics politics) ;;<outline type="rss" text="Mises Institute" title="Mises Institute" xmlUrl="http://mises.org/dailyarticles.xml" htmlUrl="https://mises.org/"/>
    ("http://jonathankinlay.com/index.php/feed/" finance) ;;<outline type="rss" text="Quantitative Research And Trading" title="Quantitative Research And Trading" xmlUrl="http://jonathankinlay.com/index.php/feed/" htmlUrl="https://jonathankinlay.com/"/>
    ("https://www.aqr.com/cliffs-perspective/rss-feeds/commentary-rss-feed" finance) ;;<outline type="rss" text="Cliff's Perspective" title="Cliff's Perspective" xmlUrl="https://www.aqr.com/cliffs-perspective/rss-feeds/commentary-rss-feed" htmlUrl="https://www.aqr.com/Insights/Perspectives/RSS-Feeds/Commentary-RSS-Feed"/>
    ("http://sniperinmahwah.wordpress.com/feed/" finance) ;;<outline type="rss" text="Sniper In Mahwah &amp; friends" title="Sniper In Mahwah &amp; friends" xmlUrl="http://sniperinmahwah.wordpress.com/feed/" htmlUrl="https://sniperinmahwah.wordpress.com"/>
@@ -182,6 +182,7 @@
    ("http://www.dynamist.com/rss.xml" politics) ;;<outline type="rss" text="Virginia Postrel" title="Virginia Postrel" xmlUrl="http://www.dynamist.com/rss.xml" htmlUrl="https://vpostrel.com/"/>
    ("http://libertarianhome.co.uk/feed/" politics) ;;<outline type="rss" text="Libertarian Home" title="Libertarian Home" xmlUrl="http://libertarianhome.co.uk/feed/" htmlUrl="https://libertarianhome.co.uk"/>
    ("http://tucker.liberty.me/feed/" politics) ;;<outline type="rss" text="Free the People" title="Free the People" xmlUrl="http://tucker.liberty.me/feed/" htmlUrl="https://freethepeople.org/"/>
+   ("https://jeffreytucker.me/feed/" politics)
    ("http://www.stephankinsella.com/feed/" politics) ;;<outline type="rss" text="StephanKinsella.com" title="StephanKinsella.com" xmlUrl="http://www.stephankinsella.com/feed/" htmlUrl="https://stephankinsella.com"/>
    ("https://brownstone.org/feed/" politics) ;;<outline type="rss" text="Brownstone Institute" title="Brownstone Institute" xmlUrl="https://brownstone.org/feed/" htmlUrl="https://brownstone.org/"/>
    ("https://jrnyquist.blog/feed/" politics) ;;<outline type="rss" text="J.R. Nyquist Blog" title="J.R. Nyquist Blog" xmlUrl="https://jrnyquist.blog/feed/" htmlUrl="https://jrnyquist.blog"/>
