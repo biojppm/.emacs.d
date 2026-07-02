@@ -4,6 +4,7 @@ export MYENV_PROCESSED=true
 
 export PATH=$PATH:$HOME/bin:$HOME/local/bin:$HOME/.local/bin
 export LSP_USE_PLISTS=true
+export AKDIR=$HOME/Dropbox/files
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 export DEBUGINFOD_URLS="https://debuginfod.archlinux.org"
 export C4_EXTERN_DIR=~/proj/c4extern

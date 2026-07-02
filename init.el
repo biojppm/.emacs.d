@@ -52,6 +52,13 @@
   (set-buffer-file-coding-system 'undecided-dos)
   )
 
+(defun slurp-file (file-name)
+  (with-temp-buffer
+    (insert-file-contents file-name)
+    (buffer-string))
+  )
+
+
 ;-------------------------------------------------------------------------------
 ;;setup backup stuff
 ;(require 'backup-dir)
@@ -1318,9 +1325,39 @@ With a prefix argument P, isearch for the symbol at point."
      (if p #'isearch-forward-symbol-at-point
        #'isearch-forward))))
 
+(defun my/isearch-backward-symbol-with-prefix (p)
+  "Like isearch, unless prefix argument is provided.
+With a prefix argument P, isearch for the symbol at point."
+  (interactive "P")
+  (let ((current-prefix-arg nil))
+    (call-interactively
+     (if p #'isearch-backward-symbol-at-point
+       #'isearch-backward))))
+
 ;; C-u C-s
 (global-set-key [remap isearch-forward]
                 #'my/isearch-forward-symbol-with-prefix)
+
+;; C-u C-r
+(global-set-key [remap isearch-backward]
+                #'my/isearch-backward-symbol-with-prefix)
+
+
+;;-------------------------------------------------------------------------
+;; AI
+
+(defun slurpk (name) (slurp-file (concat (getenv "AKDIR") "/" name)))
+
+(use-package gptel
+  :config
+  (setq gptel-api-key (slurpk "zzz.gptel"))
+  )
+
+;; see also:
+;;  * https://github.com/xenodium/agent-shell
+;;  * https://github.com/dakra/ghostel
+;;  * https://github.com/MatthewZMD/aidermacs
+
 
 
 ;;-------------------------------------------------------------------------
@@ -4134,6 +4171,7 @@ mode.
      go-tag
      godoctor
      google-this
+     gptel
      hemisu-theme
      highlight-symbol
      hungry-delete
