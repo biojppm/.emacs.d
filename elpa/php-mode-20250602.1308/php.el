@@ -5,7 +5,6 @@
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2018
-;; Version: 1.24.3
 ;; Keywords: languages, php
 ;; Homepage: https://github.com/emacs-php/php-mode
 ;; License: GPL-3.0-or-later
@@ -49,11 +48,23 @@
   :link '(url-link :tag "Official Site" "https://github.com/emacs-php/php-mode")
   :link '(url-link :tag "PHP Mode Wiki" "https://github.com/emacs-php/php-mode/wiki"))
 
-(defcustom php-executable (or (executable-find "php") "/usr/bin/php")
+(defcustom php-executable (or (executable-find "php") "php")
   "The location of the PHP executable."
   :group 'php
   :tag "PHP Executable"
   :type 'string)
+
+(defcustom php-phpdbg-executable (list "phpdbg")
+  "The location of the PHPDBG executable."
+  :group 'php
+  :tag "PHP PHPDBG Executable"
+  :type '(repeat string))
+
+(defcustom php-php-parse-executabe nil
+  "The location of the php-parse executable."
+  :group 'php
+  :tag "PHP php-parse Executable"
+  :type '(repeat string))
 
 (defcustom php-site-url "https://www.php.net/"
   "Default PHP.net site URL.
@@ -99,8 +110,8 @@ You can replace \"en\" with your ISO language code."
   "Function to search PHP Manual at cursor position."
   :group 'php
   :tag "PHP Search Documentation Function"
-  :type '(choice (const :tag "Use online documentation" #'php-search-web-documentation)
-                 (const :tag "Use local documentation" #'php-local-manual-search)
+  :type '(choice (const :tag "Use online documentation" php-search-web-documentation)
+                 (const :tag "Use local documentation" php-local-manual-search)
                  (function :tag "Use other function")))
 
 (defcustom php-search-documentation-browser-function nil
@@ -203,10 +214,35 @@ a completion list."
   :type 'integer
   :link '(url-link :tag "Built-in web server"
                    "https://www.php.net/manual/features.commandline.webserver.php"))
+
+(defcustom php-topsy-separator " > "
+  "Separator string for `php-topsy-beginning-of-defun-with-class'."
+  :group 'php
+  :tag "PHP Topsy Separator"
+  :type 'string)
+
+(defcustom php-function-call 'php-function-call-traditional
+  "Face name to use for method call."
+  :group 'php
+  :tag "PHP Function Call"
+  :type 'face)
+
+(defcustom php-method-call 'php-method-call-traditional
+  "Face name to use for method call."
+  :group 'php
+  :tag "PHP Method Call"
+  :type 'face)
+
+(defcustom php-static-method-call 'php-static-method-call-traditional
+  "Face name to use for method call."
+  :group 'php
+  :tag "PHP Static Method Call"
+  :type 'face)
 
 ;;; PHP Keywords
 (defconst php-magical-constants
-  (list "__LINE__" "__FILE__" "__FUNCTION__" "__CLASS__" "__TRAIT__" "__METHOD__" "__NAMESPACE__")
+  '("__CLASS__" "__DIR__" "__FILE__" "__FUNCTION__" "__LINE__"
+    "__METHOD__" "__NAMESPACE__" "__TRAIT__")
   "Magical keyword that is expanded at compile time.
 
 These are different from \"constants\" in strict terms.
@@ -261,12 +297,12 @@ an integer (the current comment nesting)."
     "Make a regular expression for methods with the given VISIBILITY.
 
 VISIBILITY must be a string that names the visibility for a PHP
-method, e.g. \'public\'.  The parameter VISIBILITY can itself also
+method, e.g. `public'.  The parameter VISIBILITY can itself also
 be a regular expression.
 
 The regular expression this function returns will check for other
-keywords that can appear in method signatures, e.g. \'final\' and
-\'static\'.  The regular expression will have one capture group
+keywords that can appear in method signatures, e.g. `final' and
+`static'.  The regular expression will have one capture group
 which will be the name of the method."
     (when (stringp visibility)
       (setq visibility (list visibility)))
@@ -293,19 +329,25 @@ which will be the name of the method."
                            '((* any) line-end))))))
 
   (defun php-create-regexp-for-classlike (type)
-    "Accepts a `TYPE' of a \'classlike\' object as a string, such as
-\'class\' or \'interface\', and returns a regexp as a string which
+    "Accepts a `TYPE' of a `classlike' object as a string, such as
+`class' or `interface', and returns a regexp as a string which
 can be used to match against definitions for that classlike."
     (concat
      ;; First see if 'abstract' or 'final' appear, although really these
      ;; are not valid for all values of `type' that the function
      ;; accepts.
-     "^\\s-*\\(?:\\(?:abstract\\|final\\)\\s-+\\)?"
+     (eval-when-compile
+       (rx line-start
+           (* (syntax whitespace))
+           (? (or "abstract" "final" "readonly")
+              (+ (syntax whitespace)))))
      ;; The classlike type
      type
      ;; Its name, which is the first captured group in the regexp.  We
      ;; allow backslashes in the name to handle namespaces, but again
      ;; this is not necessarily correct for all values of `type'.
+     ;; (rx (+ (syntax whitespace))
+     ;;     (group (+ (or (syntax word) "\\" (syntax symbol)))))
      "\\s-+\\(\\(?:\\sw\\|\\\\\\|\\s_\\)+\\)")))
 
 (defconst php-imenu-generic-expression-default
@@ -428,7 +470,7 @@ can be used to match against definitions for that classlike."
 
 (defcustom php-imenu-generic-expression 'php-imenu-generic-expression-default
   "Default Imenu generic expression for PHP Mode.  See `imenu-generic-expression'."
-  :type '(choice (alist :key-type string :value-type list)
+  :type '(choice (alist :key-type string :value-type (list string))
                  (const php-imenu-generic-expression-legacy)
                  (const php-imenu-generic-expression-simple)
                  variable)
@@ -440,7 +482,7 @@ can be used to match against definitions for that classlike."
 
 (defconst php--re-classlike-pattern
   (eval-when-compile
-    (php-create-regexp-for-classlike (regexp-opt '("class" "interface" "trait")))))
+    (php-create-regexp-for-classlike (regexp-opt '("class" "interface" "trait" "enum")))))
 
 (defvar php--analysis-syntax-table
   (eval-when-compile
@@ -528,15 +570,14 @@ The order is reversed by calling as follows:
               (c-backward-token-2 1 nil))
          collect
          (cond
-          ((when-let (bounds (php--thing-at-point-bounds-of-string-at-point))
+          ((when-let* ((bounds (php--thing-at-point-bounds-of-string-at-point)))
              (prog1 (buffer-substring-no-properties (car bounds) (cdr bounds))
                (goto-char (car bounds)))))
           ((looking-at php-re-token-symbols)
            (prog1 (match-string-no-properties 0)
              (goto-char (match-beginning 0))))
-          (t
-             (buffer-substring-no-properties (point)
-                                             (save-excursion (php--c-end-of-token) (point))))))))))
+          ((buffer-substring-no-properties (point)
+                                           (save-excursion (php--c-end-of-token) (point))))))))))
 
 (defun php-get-pattern ()
   "Find the pattern we want to complete.
@@ -621,6 +662,15 @@ Look at the `php-executable' variable instead of the constant \"php\" command."
     (or mode php-default-major-mode)))
 
 ;;;###autoload
+(define-derived-mode php-base-mode prog-mode "PHP"
+  "Generic major mode for editing PHP.
+
+This mode is intended to be inherited by concrete major modes.
+Currently there are `php-mode' and `php-ts-mode'."
+  :group 'php
+  nil)
+
+;;;###autoload
 (defun php-mode-maybe ()
   "Select PHP mode or other major mode."
   (interactive)
@@ -631,17 +681,15 @@ Look at the `php-executable' variable instead of the constant \"php\" command."
 (defun php-current-class ()
   "Insert current class name if cursor in class context."
   (interactive)
-  (let ((matched (php-get-current-element php--re-classlike-pattern)))
-    (when matched
-      (insert (concat matched php-class-suffix-when-insert)))))
+  (when-let* ((matched (php-get-current-element php--re-classlike-pattern)))
+    (insert (concat matched php-class-suffix-when-insert))))
 
 ;;;###autoload
 (defun php-current-namespace ()
   "Insert current namespace if cursor in namespace context."
   (interactive)
-  (let ((matched (php-get-current-element php--re-namespace-pattern)))
-    (when matched
-      (insert (concat matched php-namespace-suffix-when-insert)))))
+  (when-let* ((matched (php-get-current-element php--re-namespace-pattern)))
+    (insert (concat matched php-namespace-suffix-when-insert))))
 
 ;;;###autoload
 (defun php-copyit-fqsen ()
@@ -653,6 +701,33 @@ Look at the `php-executable' variable instead of the constant \"php\" command."
     (kill-new (concat (if (string= namespace "") "" namespace)
                       (if (string= class "") "" (concat "\\" class "::"))
                       (if (string= namedfunc "") "" (concat namedfunc "()"))))))
+
+(defun php-topsy-beginning-of-defun-with-class ()
+  "Return function signature and class name string for header line in topsy.
+
+You can add the function to topsy with the code below:
+
+    (add-to-list \\='topsy-mode-functions
+                 \\='(php-mode . php-topsy-beginning-of-defun-with-class))"
+  (save-excursion
+    (goto-char (window-start))
+    (mapconcat
+     #'identity
+     (append
+      (save-match-data
+        (save-excursion
+          (when (re-search-backward php--re-classlike-pattern nil t)
+            (font-lock-ensure (point) (line-end-position))
+            (list (string-trim (buffer-substring (point) (line-end-position)))))))
+      (progn
+        (beginning-of-defun)
+        (font-lock-ensure (point) (line-end-position))
+        (list (string-trim
+               (replace-regexp-in-string
+                (eval-when-compile (rx bos "<?php"))
+                ""
+                (buffer-substring (point) (line-end-position)))))))
+     php-topsy-separator)))
 
 ;;;###autoload
 (defun php-run-builtin-web-server (router-or-dir hostname port &optional document-root)
@@ -739,6 +814,30 @@ When `DOCUMENT-ROOT' is NIL, the document root is obtained from `ROUTER-OR-DIR'.
                       nil nil nil
                       #'file-exists-p))))
   (find-file file))
+
+
+(defun php-phpdbg-disassemble-file (file)
+  "Read PHP FILE and print opcodes."
+  (interactive (list (if (or buffer-file-name (zerop (prefix-numeric-value current-prefix-arg)))
+                         buffer-file-name
+                       (expand-file-name
+                        (read-file-name "Select PHP file: " default-directory buffer-file-name)))))
+  (let ((args `(,@php-phpdbg-executable "-dopcache.enable_cli=1" "-p*" ,file)))
+    (compile (mapconcat #'shell-quote-argument args " "))))
+
+(defun php-parse-file (file)
+  "Parse PHP FILE and print node tree."
+  (interactive (list (if (or buffer-file-name (zerop (prefix-numeric-value current-prefix-arg)))
+                         buffer-file-name
+                       (expand-file-name
+                        (read-file-name "Select PHP file: " default-directory buffer-file-name)))))
+  (let* ((project-dir (php-project-get-root-dir))
+         (executable (or php-php-parse-executabe
+                         (file-executable-p (expand-file-name "vendor/bin/php-parse" project-dir))
+                         (executable-find "php-parse")
+                         (user-error "`php-parse' command not found")))
+         (args `(,@(if (listp executable) executable (list executable)) ,file)))
+    (compile (mapconcat #'shell-quote-argument args " "))))
 
 (provide 'php)
 ;;; php.el ends here
