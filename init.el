@@ -2526,16 +2526,9 @@ original line and use the absolute value."
        ("pyls.plugins.pyls_isort.enabled" t t)))
     :hook
     ((python-mode . lsp)))
-  (message "python mode: lsp ui")
-  (use-package lsp-ui
-    :commands lsp-ui-mode)
-  (message "python mode: lsp ms")
-  (use-package lsp-python-ms
-    :ensure t
-    :init (setq lsp-python-ms-auto-install-server t)
-    :hook (python-mode . (lambda ()
-                           (require 'lsp-python-ms)
-                           (lsp))))  ; or lsp-deferred
+  ;;(message "python mode: lsp ui")
+  ;;(use-package lsp-ui
+  ;;  :commands lsp-ui-mode)
   (message "python mode: lsp finished")
   )
 
@@ -4185,7 +4178,6 @@ mode.
      levenshtein
      lsp-java
      lsp-mode
-     lsp-python-ms
      lsp-ui
      lua-mode
      magit
