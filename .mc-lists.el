@@ -33,6 +33,7 @@
         kill-region
         kill-visual-line
         kmacro-end-or-call-macro
+        markdown-end-of-line
         markdown-outdent-or-delete
         my-cc-curly-brackets
         my-open-init-el
