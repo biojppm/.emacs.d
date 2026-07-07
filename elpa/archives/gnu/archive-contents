@@ -543,12 +543,12 @@
       (:maintainer "Daniel Mendler" . "mail@daniel-mendler.de")
       (:commit . "9bb68cf3941eb618fff18bd7626164951c70eb8a"))])
  (consult-denote
-  . [(0 5 0) ((emacs (28 1)) (denote (4 0 0)) (consult (2 2)))
+  . [(0 5 1) ((emacs (28 1)) (denote (4 0 0)) (consult (2 2)))
      "Use Consult in tandem with Denote" tar
      ((:url . "https://github.com/protesilaos/consult-denote")
       (:maintainer "Protesilaos" . "info@protesilaos.com")
       (:authors ("Protesilaos" . "info@protesilaos.com"))
-      (:commit . "f12c9903a0aa5c534503d9daa07fa5057dc7133c"))])
+      (:commit . "0fbd723e7f4d824902b0a4b712b92c66a1eaf97e"))])
  (consult-hoogle
   . [(0 7 0) ((emacs (28 1)) (consult (2 0)))
      "Hoogle frontend using consult" tar
@@ -768,12 +768,12 @@
       (:authors ("Protesilaos" . "info@protesilaos.com"))
       (:commit . "841cf148a56a6c62fb483d5529a45c689b04049e"))])
  (denote-silo
-  . [(0 3 0) ((emacs (28 1)) (denote (4 0 0)))
+  . [(0 3 2) ((emacs (28 1)) (denote (4 0 0)))
      "Convenience functions for using Denote in multiple silos" tar
      ((:url . "https://github.com/protesilaos/denote-silo")
       (:maintainer "Protesilaos" . "info@protesilaos.com")
       (:authors ("Protesilaos" . "info@protesilaos.com"))
-      (:commit . "342d5e7e1bd63ce742a0362911c47da1ec63e868"))])
+      (:commit . "41985759d29d4a673055a0d0bd08e2ada88cffe8"))])
  (detached
   . [(0 10 1) ((emacs (27 1)))
      "A package to launch, and manage, detached processes" tar
@@ -2389,12 +2389,12 @@
       (:url . "https://elpa.gnu.org/packages/osc.html")
       (:commit . "6b6dbb4176f45f9ff3a783c816c4556ca2931a22"))])
  (osm
-  . [(2 3) ((emacs (29 1)) (compat (31))) "OpenStreetMap viewer" tar
+  . [(2 4) ((emacs (29 1)) (compat (31))) "OpenStreetMap viewer" tar
      ((:url . "https://github.com/minad/osm")
       (:keywords "network" "multimedia" "hypermedia" "mouse")
       (:maintainer "Daniel Mendler" . "mail@daniel-mendler.de")
       (:authors ("Daniel Mendler" . "mail@daniel-mendler.de"))
-      (:commit . "a9e76ce08fb86e40a9f3efc42b38045c9b58fa95"))])
+      (:commit . "d6167ca4f99bead657ac6f7f163c1fcf9b34267f"))])
  (other-frame-window
   . [(1 0 6) ((emacs (24 4)))
      "Minor mode to enable global prefix keys for other frame/window buffer placement"
@@ -3191,13 +3191,13 @@
       (:url . "https://elpa.gnu.org/packages/temp-buffer-browse.html")
       (:commit . "db6041b0413fdeefb1f1285e1d9c1039c10fbf04"))])
  (tempel
-  . [(1 13) ((emacs (29 1)) (compat (31)))
+  . [(1 14) ((emacs (29 1)) (compat (31)))
      "Tempo templates/snippets with in-buffer field editing" tar
      ((:url . "https://github.com/minad/tempel")
       (:keywords "abbrev" "languages" "tools" "text")
       (:maintainer "Daniel Mendler" . "mail@daniel-mendler.de")
       (:authors ("Daniel Mendler" . "mail@daniel-mendler.de"))
-      (:commit . "ab6d67c2e8abcb9bd20bfe56cba930a5ea093ae0"))])
+      (:commit . "c5fdc3806b486d9d86a54c50efac3d4a141e789d"))])
  (termint
   . [(0 2 3) ((emacs (29 1))) "Run REPLs in a terminal backend" tar
      ((:url . "https://github.com/milanglacier/termint.el")
