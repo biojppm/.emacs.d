@@ -2393,6 +2393,8 @@ original line and use the absolute value."
 (use-package nov-mode
   :defer t
   :mode (("\\.epub\\'" . nov-mode))
+  :config
+  (setq nov-text-width 80)
   )
 
 
