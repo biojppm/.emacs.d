@@ -37,6 +37,7 @@ org-clock-save.el
 persp-confs/
 projects
 projectile-bookmarks.eld
+projectile-frecency.eld
 projectile.cache
 recentf
 scratch-persist/*.txt
