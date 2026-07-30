@@ -36,55 +36,6 @@ GCC14 = https://github.com/xpack-dev-tools/gcc-xpack/releases/download/v14.2.0-2
 
 CMANY_COMPILER ?=
 
-CLANG_VERSION ?= 11.0.0
-CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
-CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
-CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
-CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
-CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--build-dir $(CLANG_BUILD_DIR) \
-	--install-dir $(CLANG_INSTALL_DIR) \
-        -V CLANG_VERSION=$(CLANG_VERSION) \
-	$(CLANG_SRC_DIR)
-
-CCLS_REPO ?= https://github.com/MaskRay/ccls
-CCLS_BRANCH ?= master  # may also be a tag
-CCLS_DIR ?= $(LOCAL_SRC_DIR)/ccls
-CCLS_SRC_DIR ?= $(CCLS_DIR)/src
-CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
-CCLS_INSTALL_DIR ?= $(CCLS_DIR)/install
-CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--build-dir $(CCLS_BUILD_DIR) \
-	--install-dir $(CCLS_INSTALL_DIR) \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
-	$(CCLS_SRC_DIR)
-
-
-RTAGS_REPO ?= https://github.com/Andersbakken/rtags
-RTAGS_BRANCH ?= master  # may also be a tag
-RTAGS_DIR ?= $(LOCAL_SRC_DIR)/rtags
-RTAGS_SRC_DIR ?= $(RTAGS_DIR)/src
-RTAGS_BUILD_DIR ?= $(RTAGS_DIR)/build
-RTAGS_INSTALL_DIR ?= $(RTAGS_DIR)/install
-RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--build-dir $(RTAGS_BUILD_DIR) \
-	--install-dir $(RTAGS_INSTALL_DIR) \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
-	$(RTAGS_SRC_DIR)
-
-CQUERY_REPO ?= https://github.com/cquery-project/cquery
-CQUERY_BRANCH ?= master  # may also be a tag
-CQUERY_DIR ?= $(LOCAL_SRC_DIR)/cquery
-CQUERY_SRC_DIR ?= $(CQUERY_DIR)/src
-CQUERY_BUILD_DIR ?= $(CQUERY_DIR)/build
-CQUERY_INSTALL_DIR ?= $(CQUERY_DIR)/install
-CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
-	--build-dir $(CQUERY_BUILD_DIR) \
-	--install-dir $(CQUERY_INSTALL_DIR) \
-	-V SYSTEM_CLANG=ON \
-	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
-	$(CQUERY_SRC_DIR)
-
 # https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
     OS := Windows
@@ -462,29 +413,79 @@ venv_base: $(VENV_ROOT)
 
 #----------------------------------------------------------------------
 
-.PHONY: rtags rtags_install rtags_build rtags_config rtags_clone
-rtags: $(RTAGS_INSTALL_DIR)
-rtags_build: $(RTAGS_INSTALL_DIR)
-rtags_config: $(RTAGS_BUILD_DIR)
-rtags_clone: $(RTAGS_SRC_DIR)
-
-.PHONY: cquery cquery_install cquery_build cquery_config cquery_clone
-cquery: $(CQUERY_INSTALL_DIR)
-cquery_build: $(CQUERY_INSTALL_DIR)
-cquery_config: $(CQUERY_BUILD_DIR)
-cquery_clone: $(CQUERY_SRC_DIR)
-
-.PHONY: ccls ccls_install ccls_build ccls_config ccls_clone
-ccls: $(CCLS_INSTALL_DIR)
-ccls_build: $(CCLS_INSTALL_DIR)
-ccls_config: $(CCLS_BUILD_DIR)
-ccls_clone: $(CCLS_SRC_DIR)
+CLANG_VERSION ?= 11.0.0
+CLANG_DIR ?= $(LOCAL_SRC_DIR)/clang
+CLANG_SRC_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/src
+CLANG_BUILD_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/build
+CLANG_INSTALL_DIR ?= $(CLANG_DIR)/$(CLANG_VERSION)/install
+CLANG_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(CLANG_BUILD_DIR) \
+	--install-dir $(CLANG_INSTALL_DIR) \
+        -V CLANG_VERSION=$(CLANG_VERSION) \
+	$(CLANG_SRC_DIR)
 
 .PHONY: clang clang_install clang_build clang_config clang_clone
 clang: $(CLANG_INSTALL_DIR)
 clang_build: $(CLANG_INSTALL_DIR)
 clang_config: $(CLANG_BUILD_DIR)
 clang_download: $(CLANG_SRC_DIR)
+
+
+RTAGS_REPO ?= https://github.com/Andersbakken/rtags
+RTAGS_BRANCH ?= master  # may also be a tag
+RTAGS_DIR ?= $(LOCAL_SRC_DIR)/rtags
+RTAGS_SRC_DIR ?= $(RTAGS_DIR)/src
+RTAGS_BUILD_DIR ?= $(RTAGS_DIR)/build
+RTAGS_INSTALL_DIR ?= $(RTAGS_DIR)/install
+RTAGS_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(RTAGS_BUILD_DIR) \
+	--install-dir $(RTAGS_INSTALL_DIR) \
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(RTAGS_SRC_DIR)
+
+.PHONY: rtags rtags_install rtags_build rtags_config rtags_clone
+rtags: $(RTAGS_INSTALL_DIR)
+rtags_build: $(RTAGS_INSTALL_DIR)
+rtags_config: $(RTAGS_BUILD_DIR)
+rtags_clone: $(RTAGS_SRC_DIR)
+
+
+CQUERY_REPO ?= https://github.com/cquery-project/cquery
+CQUERY_BRANCH ?= master  # may also be a tag
+CQUERY_DIR ?= $(LOCAL_SRC_DIR)/cquery
+CQUERY_SRC_DIR ?= $(CQUERY_DIR)/src
+CQUERY_BUILD_DIR ?= $(CQUERY_DIR)/build
+CQUERY_INSTALL_DIR ?= $(CQUERY_DIR)/install
+CQUERY_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(CQUERY_BUILD_DIR) \
+	--install-dir $(CQUERY_INSTALL_DIR) \
+	-V SYSTEM_CLANG=ON \
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(CQUERY_SRC_DIR)
+.PHONY: cquery cquery_install cquery_build cquery_config cquery_clone
+cquery: $(CQUERY_INSTALL_DIR)
+cquery_build: $(CQUERY_INSTALL_DIR)
+cquery_config: $(CQUERY_BUILD_DIR)
+cquery_clone: $(CQUERY_SRC_DIR)
+
+
+CCLS_REPO ?= https://github.com/MaskRay/ccls
+CCLS_BRANCH ?= master  # may also be a tag
+CCLS_DIR ?= $(LOCAL_SRC_DIR)/ccls
+CCLS_SRC_DIR ?= $(CCLS_DIR)/src
+CCLS_BUILD_DIR ?= $(CCLS_DIR)/build
+CCLS_INSTALL_DIR ?= $(CCLS_DIR)/install
+CCLS_CMANY_ARGS ?= $(CMANY_COMPILER) \
+	--build-dir $(CCLS_BUILD_DIR) \
+	--install-dir $(CCLS_INSTALL_DIR) \
+	-V CMAKE_PREFIX_PATH="$(LOCAL_DIR);$(CLANG_BUILD_DIR);$(CLANG_BUILD_DIR)/tools/clang;$(CLANG_SRC_DIR);$(CLANG_SRC_DIR)/tools/clang" \
+	$(CCLS_SRC_DIR)
+
+.PHONY: ccls ccls_install ccls_build ccls_config ccls_clone
+ccls: $(CCLS_INSTALL_DIR)
+ccls_build: $(CCLS_INSTALL_DIR)
+ccls_config: $(CCLS_BUILD_DIR)
+ccls_clone: $(CCLS_SRC_DIR)
 
 
 rtags_install: $(LOCAL_DIR) $(RTAGS_INSTALL_DIR)
