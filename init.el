@@ -1354,9 +1354,14 @@ With a prefix argument P, isearch for the symbol at point."
   )
 
 ;; see also:
-;;  * https://github.com/xenodium/agent-shell
-;;  * https://github.com/dakra/ghostel
-;;  * https://github.com/MatthewZMD/aidermacs
+;;  - https://github.com/xenodium/agent-shell
+;;  - agents:
+;;    - codex https://github.com/openai/codex
+;;    - claude code https://code.claude.com/docs/en/setup
+;;  - agent access control
+;;    - https://github.com/nolabs-ai/nono
+;;  - https://github.com/dakra/ghostel
+;;  - https://github.com/MatthewZMD/aidermacs
 
 
 
@@ -4118,6 +4123,7 @@ mode.
  '(package-selected-packages
    '(
      ag
+     agent-shell
      anzu
      arduino-mode
      auto-highlight-symbol
