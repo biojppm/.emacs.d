@@ -119,6 +119,35 @@ linuxinstalltgz = \
 	) ; \
 	rm -rf $(DL_DIR)/$$fn.extract
 
+# create a symlink
+# $1=src (full filename)
+# $2=dst (full filename)
+mklink = \
+	src=$1 ; \
+	dst=$2 ; \
+	echo "src=$$src" ; \
+	echo "dst=$$dst" ; \
+	set -xe ; \
+	if [ ! -e $$dst ] ; then \
+	  ln -fs $$src $$dst ; \
+	elif [ ! -L $$dst ] ; then \
+	  echo "error: $$dst exists and is not a link" ; \
+	  exit 1 ; \
+	else \
+	  expected=`realpath $$src` ; \
+	  actual=`readlink -f $$dst` ; \
+	  if [ "$$expected" != "$$actual" ] ; then \
+	    echo "error: $$dst exists and points at a different target: expected=$$expected actual=$$actual" ; \
+	    exit 1 ; \
+          fi ; \
+	fi ; \
+
+# create a symlink
+# $1=src (full filename)
+# $2=dstdir (full directory name)
+mklink_indir = \
+	@$(call mklink,$1,$2/`basename $1`)
+
 
 #----------------------------------------------------------------------
 
@@ -146,6 +175,11 @@ system_only: linux_only
 endif
 windows_only: tcpview iperf irfanview depends22_x86 depends22
 linux_only:
+
+
+conf-links:
+	$(call mklink_indir,$(EMACS_DIR)/conf.home/.myenv.sh,$(HOME))
+	$(call mklink_indir,$(EMACS_DIR)/conf.home/.config/ghostty,$(HOME)/.config)
 
 
 #----------------------------------------------------------------------

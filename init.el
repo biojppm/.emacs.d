@@ -4166,6 +4166,7 @@ mode.
      flymake-yaml
      forge
      fzf
+     ghostel
      git-timemachine
      glsl-mode
      go-mode

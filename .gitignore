@@ -26,6 +26,8 @@ ede-projects.el
 eln-cache/
 elpa/*/*.so
 elpa/*/build/
+elpa/ghostel-*/.zig-cache
+elpa/ghostel-*/zig-pkg
 eshell/
 forge-database.sqlite
 history
