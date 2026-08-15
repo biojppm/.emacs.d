@@ -31,6 +31,10 @@ DEPENDS22_ZIP = https://www.dependencywalker.com/depends22_x64.zip
 WGET_ZIP = http://downloads.sourceforge.net/gnuwin32/wget-1.11.4-1-bin.zip
 DISCOUNT_REPO = https://github.com/Orc/discount
 
+LSP_BOOSTER_VERSION = 0.2.1
+LSP_BOOSTER_WIN = https://github.com/blahgeek/emacs-lsp-booster/releases/download/v$(LSP_BOOSTER_VERSION)/emacs-lsp-booster_v$(LSP_BOOSTER_VERSION)_x86_64-pc-windows-gnu.zip
+LSP_BOOSTER_LNX = https://github.com/blahgeek/emacs-lsp-booster/releases/download/v$(LSP_BOOSTER_VERSION)/emacs-lsp-booster_v$(LSP_BOOSTER_VERSION)_x86_64-unknown-linux-musl.zip
+
 GCC14 = https://github.com/xpack-dev-tools/gcc-xpack/releases/download/v14.2.0-2/xpack-gcc-14.2.0-2-linux-x64.tar.gz
 
 
@@ -118,7 +122,8 @@ linuxinstalltgz = \
 
 #----------------------------------------------------------------------
 
-all: ripgrep \
+all: \
+	ripgrep \
 	ag \
 	fzf \
 	fd \
@@ -131,7 +136,8 @@ all: ripgrep \
 	system_only \
 	marp \
 	swig \
-	discount
+	discount \
+	lsp-booster
 
 ifeq ($(OS),Windows_NT)
 system_only: windows_only
@@ -364,7 +370,7 @@ depends22: $(LOCAL_DIR)/bin
 
 .PHONY: dropbox
 dropbox:
-	 # https://forum.manjaro.org/t/cannot-upgrade-dropbox-key-issue/71432
+	@# https://forum.manjaro.org/t/cannot-upgrade-dropbox-key-issue/71432
 	set -x ; set -e ; \
 	if [ "$(OS)" == "Windows" ] ; then \
 	   aaaaaaaa not done ; \
@@ -407,6 +413,18 @@ venv: venv_base
 venv_base: $(VENV_ROOT)
 	python -m venv --system-site-packages --symlinks $(VENV_BASE)
 	source $(VENV_BASE)/bin/activate && pip install uv
+
+
+.PHONY: lsp-booster
+lsp-booster:
+	set -xe ; \
+	if [ "$(OS)" == "Windows" ] ; then \
+	   $(call wininstallzip,$(LSP_BOOSTER_WIN),emacs-lsp-booster.exe) ; \
+	elif [ "$(OS)" == "Linux" ] ; then \
+	   $(call wininstallzip,$(LSP_BOOSTER_LNX),emacs-lsp-booster) ; \
+	else \
+	   bbbbbbbb not done ; \
+	fi
 
 
 
