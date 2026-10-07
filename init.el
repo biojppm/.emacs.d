@@ -1558,6 +1558,12 @@ With a prefix argument P, isearch for the symbol at point."
 ;; Smooth scrolling
 ;; http://www.emacswiki.org/emacs/SmoothScrolling
 
+(use-package smooth-scrolling
+  :ensure t
+  :custom (smooth-scroll-margin 3)
+  :init (smooth-scrolling-mode))
+
+
 ;; scroll one line at a time (less "jumpy" than defaults)
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
@@ -4237,6 +4243,7 @@ mode.
      smart-shift
      smartparens
      smex
+     smooth-scrolling
      solarized-theme
      string-inflection
      sudo-edit
