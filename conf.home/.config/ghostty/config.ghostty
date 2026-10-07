@@ -1,4 +1,6 @@
 theme = Terminal Basic Dark
-cursor-style = bar
-cursor-style-blink = false
+# put this before cursor-style!
 shell-integration-features = no-cursor
+cursor-style = block
+# disable font ligatures
+font-feature = -calt, -liga, -dlig
