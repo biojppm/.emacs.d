@@ -966,7 +966,7 @@
 ;;-------------------------------------------------------------------------
 ;; DIRED
 
-(setq dired-listing-switches "-lFA")
+
 (defun my-dired-toggle-hidden ()
   (interactive)
   (if (string-match "[Aa]" dired-actual-switches)
@@ -984,25 +984,44 @@
   (revert-buffer)
   )
 
-;; enable dired-x: dired extensions
-(add-hook 'dired-load-hook
-          (lambda ()
-            (load "dired-x")
-            ;; Set dired-x global variables here. For example:
-            ;;(setq dired-guess-shell-gnutar "gtar")
-            ;;(setq dired-x-hands-off-my-keys nil)
-            ))
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (disable-line-wrapping)
-            ;; Set dired-x buffer-local variables here. For example:
-            ;; (dired-omit-mode 1)
-            (local-set-key (kbd "M-<up>") 'dired-up-directory)
-            (local-set-key (kbd ")") 'my-dired-toggle-hidden)
-            ))
 
-;; use fd in dired
-(use-package fd-dired)
+(use-package dired
+  :init
+  (message "dired:init")
+  (message "dired:init: loading dired-x")
+  (require 'dired-x)
+  (message "dired:init: loading fd-dired")
+  (require 'fd-dired) ;; use fd in dired
+  (message "dired:init: done")
+  :hook
+  (dired-mode
+   .
+   (lambda ()
+     (message "dired:hook")
+     (disable-line-wrapping)
+     ;;(dired-omit-mode) ;; hide omitted files by default
+                         ;; see config below
+     (message "dired:hook: done")
+     )
+   )
+  :bind
+  (:map dired-mode-map
+        ("M-<up>" . dired-up-directory)
+        (")" . my-dired-toggle-hidden)
+        ("." . my-dired-toggle-hidden)
+        ("v" . dired-omit-mode) ;;v means toggle View omitted
+        )
+  :config
+  (message "dired:config")
+  ;;(setq dired-guess-shell-gnutar "gtar")
+  ;;(setq dired-x-hands-off-my-keys nil)
+  (setq dired-listing-switches "-lFA")
+  (setq dired-actual-switches "-lFA")
+  ;; configure files+extensions to omit:
+  ;;(setq dired-omit-files (concat dired-omit-files "regex|regex"))
+  ;;(add-to-list 'dired-omit-extensions '".ext")
+  (message "dired:config: done")
+  )
 
 
 ;;-------------------------------------------------------------------------
