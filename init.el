@@ -1452,6 +1452,7 @@ With a prefix argument P, isearch for the symbol at point."
   :commands idomenu
   )
 
+
 ;; Dumb Jump
 ;; https://github.com/jacktasia/dumb-jump
 (use-package dumb-jump
@@ -2818,6 +2819,7 @@ original line and use the absolute value."
 ;
 ;; (setq inferior-lisp-program "sbcl --dynamic-space-size 1024"))
 
+
 ;;-------------------------------------------------------------------------
 ;; Running Compilations under Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html
 ;;
@@ -2936,12 +2938,12 @@ original line and use the absolute value."
 (defun my-compile()
   "run compile"
   (interactive)
-  (my-call-compile-or-recompile (lambda () (call-interactively 'compile)))
+  (my-call-compile-or-recompile (lambda () (call-interactively 'ghostel-compile)))
   )
 (defun my-recompile()
   "run recompile"
   (interactive)
-  (my-call-compile-or-recompile (lambda () (recompile)))
+  (my-call-compile-or-recompile (lambda () (ghostel-recompile)))
   )
 (defun my-compile-fuzzy()
   ;; see https://xenodium.com/fuzzy-search-emacs-compile-history/
@@ -2951,7 +2953,7 @@ original line and use the absolute value."
     (message "my-command: %s" my-command)
     (setq compile-command my-command)
     (add-to-list 'compile-history my-command)
-    (my-call-compile-or-recompile (lambda () (compile my-command)))
+    (my-call-compile-or-recompile (lambda () (ghostel-compile my-command)))
     )
   )
 (defun my-compilation-hook()
@@ -3021,6 +3023,21 @@ and doesn't work in windows"
 (add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer)
 (add-hook 'compilation-mode-hook 'my-compilation-hook)
 (add-hook 'compilation-finish-functions 'my-after-compilation-hook)
+
+
+;;-------------------------------------------------------------------------
+;; ghostel terminal
+;; https://dakra.github.io/ghostel/
+;; https://github.com/dakra/ghostel
+
+(use-package ghostel
+  :defer t
+  :commands ghostel ghostel-compile ghostel-recompile
+  :init
+  (require 'ghostel-compile)
+  :config
+  (ghostel-compile-global-mode)
+  )
 
 
 ;;-------------------------------------------------------------------------
