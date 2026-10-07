@@ -1,1 +1,4 @@
 theme = Terminal Basic Dark
+cursor-style = bar
+cursor-style-blink = false
+shell-integration-features = no-cursor
