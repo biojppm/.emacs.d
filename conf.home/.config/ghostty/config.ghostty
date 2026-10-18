@@ -4,3 +4,4 @@ shell-integration-features = no-cursor
 cursor-style = block
 # disable font ligatures
 font-feature = -calt, -liga, -dlig
+copy-on-select = clipboard
